@@ -33,39 +33,57 @@
 </div>
 
 <script>
+// Funktion för att säkerställa att URL:en har https:// i början
 function fixURL(url){
     url = url.trim();
     if(!/^https?:\/\//i.test(url)) return 'https://' + url;
     return url;
 }
 
+// Funktion för att öppna sökresultat i ett nytt fönster/flik
+function searchInNewTab(query){
+    const q = encodeURIComponent(query);
+    // Använd Bing för sökning (kan bytas till Google eller DuckDuckGo)
+    const searchUrl = 'https://www.bing.com/search?q=' + q;
+    
+    // Öppnar sökresultatet i en ny flik
+    window.open(searchUrl, '_blank');
+}
+
+// Huvudnavigeringsfunktion, anropas av "Go" och Enter
 function navigate(){
     const raw = document.getElementById('urlInput').value.trim();
     if(!raw) return;
 
     let url;
-    if(/\s/.test(raw) || !raw.includes('.')){
-        const q = encodeURIComponent(raw);
-        url = 'https://duckduckgo.com/?q=' + q;
+    
+    // Logik: Om inmatningen innehåller mellanslag ELLER saknar punkt (och är kort), antas det vara en sökterm.
+    if(/\s/.test(raw) || (!raw.includes('.') && raw.length > 0 && raw.length < 20)){
+        // Om sökterm, anropa funktionen som öppnar i ny flik
+        searchInNewTab(raw);
+        return; 
     } else {
+        // Om URL (t.ex. example.com), försök ladda den i iFramen
         url = fixURL(raw);
+        document.getElementById('contentFrame').src = url;
     }
-
-    document.getElementById('contentFrame').src = url;
 }
 
+// Anropas när "Sök"-knappen klickas.
 function search(){
     const raw = document.getElementById('urlInput').value.trim();
     if(!raw) return;
-    const q = encodeURIComponent(raw);
-    document.getElementById('contentFrame').src = 'https://www.bing.com/search?q=' + q; // Bing är mer tolerant för iframe
+    // Använder alltid nytt fönster för sökning
+    searchInNewTab(raw);
 }
 
+// Anropas från exempelknapparna
 function openTest(v){
     document.getElementById('urlInput').value = v;
     navigate();
 }
 
+// Hantera Enter-tryck i input-fältet
 document.getElementById('urlInput').addEventListener('keypress', function(e){
     if(e.key === 'Enter'){
         navigate();
