@@ -1,4 +1,31 @@
-<div class="tabs" id="tabs"></div>
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtuell Browser – Ny flik</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; }
+        .topbar { background:#222; padding:10px; display:flex; gap:10px; }
+        input { flex:1; padding:8px; border-radius:6px; border:none; }
+        button { padding:8px 14px; border:none; border-radius:6px; background:#4a90e2; color:white; cursor:pointer; }
+        .samples { padding:12px; display:flex; gap:8px; background:#fff; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <input id="urlInput" placeholder="Ange webbadress eller sök...">
+    <button onclick="navigate()">Go</button>
+    <button onclick="search()">Sök</button>
+</div>
+
+<div class="samples">
+    <button onclick="openTest('karwan.tv')">karwan.tv</button>
+    <button onclick="openTest('example.com')">example.com</button>
+    <button onclick="openTest('wikipedia.org')">wikipedia.org</button>
+    <button onclick="openTest('borrelia behandling')">Sök borrelia</button>
+</div>
 
 <script>
 function fixURL(url){
@@ -11,15 +38,29 @@ function navigate(){
     const raw = document.getElementById('urlInput').value.trim();
     if(!raw) return;
     let url = fixURL(raw);
-
-    // Öppna i ny riktig flik
+    // Öppna alltid i ny flik
     window.open(url, '_blank');
-
-    // Lägg till en "flikknapp" i din virtuella browser som minne
-    const tabs = document.getElementById('tabs');
-    const btn = document.createElement('button');
-    btn.textContent = raw;
-    btn.onclick = () => window.open(url, '_blank');
-    tabs.appendChild(btn);
 }
+
+function search(){
+    const raw = document.getElementById('urlInput').value.trim();
+    if(!raw) return;
+    const q = encodeURIComponent(raw);
+    const searchUrl = 'https://www.bing.com/search?q=' + q;
+    window.open(searchUrl, '_blank');
+}
+
+function openTest(v){
+    document.getElementById('urlInput').value = v;
+    navigate();
+}
+
+document.getElementById('urlInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter'){
+        navigate();
+    }
+});
 </script>
+
+</body>
+</html>
