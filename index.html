@@ -1,3 +1,37 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Browser – Embedded iFrame Version</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; }
+        .topbar { background:#222; padding:10px; display:flex; gap:10px; }
+        input { flex:1; padding:8px; border-radius:6px; border:none; }
+        button { padding:8px 14px; border:none; border-radius:6px; background:#4a90e2; color:white; cursor:pointer; }
+        .samples { padding:12px; display:flex; gap:8px; background:#fff; }
+        .iframe-container { width:100%; height:80vh; margin-top:10px; border:1px solid #ccc; border-radius:6px; overflow:hidden; }
+        iframe { width:100%; height:100%; border:none; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <input id="urlInput" placeholder="Ange webbadress eller sök...">
+    <button onclick="navigate()">Go</button>
+    <button onclick="search()">Sök</button>
+</div>
+
+<div class="samples">
+    <button onclick="openTest('example.com')">example.com</button>
+    <button onclick="openTest('wikipedia.org')">wikipedia.org</button>
+    <button onclick="openTest('borrelia behandling')">Sök borrelia</button>
+</div>
+
+<div class="iframe-container">
+    <iframe id="contentFrame" src=""></iframe>
+</div>
+
 <script>
 // Funktion för att säkerställa att URL:en har https:// i början
 function fixURL(url){
@@ -6,42 +40,38 @@ function fixURL(url){
     return url;
 }
 
-// Funktion för att öppna sökresultat i ett nytt fönster/flik
-function searchInNewTab(query){
-    const q = encodeURIComponent(query);
-    const searchUrl = 'https://www.bing.com/search?q=' + q;
-    window.open(searchUrl, '_blank');
-}
-
-// NY FUNKTION: Försöker ladda URL:en via Google Translate som en proxy
+// Funktion: Försöker ladda URL:en via Google Translate som en proxy
 function loadViaProxy(targetUrl) {
     const encodedTarget = encodeURIComponent(targetUrl);
-    // Använd Google Translate som proxy för att försöka kringgå iFrame-begränsningar
+    // Använder Google Translate som proxy för att försöka kringgå inbäddningsblockeringar
     const proxyUrl = 'https://translate.google.com/translate?sl=auto&tl=sv&u=' + encodedTarget;
     document.getElementById('contentFrame').src = proxyUrl;
 }
 
-// Huvudnavigeringsfunktion, anropas av "Go" och Enter
+// Huvudnavigeringsfunktion, anropas av "Go", "Sök" och Enter
 function navigate(){
     const raw = document.getElementById('urlInput').value.trim();
     if(!raw) return;
+
+    let targetUrl;
     
-    // Logik: Om sökterm (innehåller mellanslag eller saknar punkt och är kort)
+    // Logik: Om sökterm (innehåller mellanslag ELLER saknar punkt och är kort)
     if(/\s/.test(raw) || (!raw.includes('.') && raw.length > 0 && raw.length < 20)){
-        searchInNewTab(raw); // Öppna sökning i nytt fönster
-        return; 
+        // Skapa en Bing sök-URL för att ladda i iFramen via proxy
+        const q = encodeURIComponent(raw);
+        targetUrl = 'https://www.bing.com/search?q=' + q;
     } else {
-        // Om URL (t.ex. google.com), försök ladda den via proxyn
-        const urlToProxy = fixURL(raw);
-        loadViaProxy(urlToProxy);
+        // Om det ser ut som en direkt URL
+        targetUrl = fixURL(raw);
     }
+    
+    // Ladda BÅDE sökresultat och direkta URL:er via proxy i iFramen (Virtual Browser)
+    loadViaProxy(targetUrl);
 }
 
-// Anropas när "Sök"-knappen klickas.
+// Anropas när "Sök"-knappen klickas. Den anropar nu navigate()
 function search(){
-    const raw = document.getElementById('urlInput').value.trim();
-    if(!raw) return;
-    searchInNewTab(raw); // Använder alltid nytt fönster för sökning
+    navigate();
 }
 
 // Anropas från exempelknapparna
@@ -57,3 +87,6 @@ document.getElementById('urlInput').addEventListener('keypress', function(e){
     }
 });
 </script>
+
+</body>
+</html>
