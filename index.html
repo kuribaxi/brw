@@ -95,11 +95,6 @@
             transform: scale(0.95);
         }
 
-        .nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
         .address-bar-container {
             flex: 1;
             display: flex;
@@ -136,165 +131,187 @@
             background: #5568d3;
         }
 
-        .tabs-container {
-            background: #f8f8f8;
-            display: flex;
-            gap: 4px;
-            padding: 8px 16px 0 16px;
-            overflow-x: auto;
-        }
-
-        .tab {
-            background: #e0e0e0;
-            padding: 8px 16px;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 150px;
-            max-width: 200px;
-            transition: all 0.2s;
-        }
-
-        .tab.active {
-            background: white;
-        }
-
-        .tab-title {
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 13px;
-        }
-
-        .tab-close {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            line-height: 1;
-            opacity: 0.6;
-        }
-
-        .tab-close:hover {
-            opacity: 1;
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .new-tab-btn {
-            width: 32px;
-            height: 32px;
-            background: transparent;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .new-tab-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-
         .browser-content {
             flex: 1;
             background: white;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .iframe-container {
-            width: 100%;
-            height: 100%;
-            display: none;
-        }
-
-        .iframe-container.active {
-            display: block;
-        }
-
-        .content-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .loading {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: #667eea;
-            animation: loading 1.5s ease-in-out infinite;
-        }
-
-        @keyframes loading {
-            0%, 100% { transform: translateX(-100%); }
-            50% { transform: translateX(100%); }
+            overflow-y: auto;
+            padding: 40px;
         }
 
         .home-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 40px;
-            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .home-page h1 {
             font-size: 48px;
             color: #333;
             margin-bottom: 16px;
+            text-align: center;
         }
 
         .home-page p {
             font-size: 18px;
             color: #666;
             margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .search-box {
+            background: #f8f8f8;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
 
         .quick-links {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 16px;
-            max-width: 600px;
-            width: 100%;
+            margin-bottom: 40px;
         }
 
         .quick-link {
-            padding: 20px;
+            padding: 24px;
             background: #f8f8f8;
             border-radius: 12px;
             text-decoration: none;
             color: #333;
             transition: all 0.2s;
             cursor: pointer;
+            text-align: center;
+            border: 2px solid transparent;
         }
 
         .quick-link:hover {
             background: #667eea;
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
 
         .quick-link-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
+            font-size: 40px;
+            margin-bottom: 12px;
         }
 
         .quick-link-title {
             font-size: 14px;
             font-weight: 600;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+
+        .info-box h3 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .info-box p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .result-page {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .result-page.active {
+            display: block;
+        }
+
+        .result-header {
+            margin-bottom: 32px;
+        }
+
+        .result-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .result-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .result-item {
+            background: #f8f8f8;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .result-item:hover {
+            border-color: #667eea;
+            transform: translateX(8px);
+        }
+
+        .result-title {
+            font-size: 20px;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .result-url {
+            font-size: 14px;
+            color: #27c93f;
+            margin-bottom: 8px;
+        }
+
+        .result-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .back-home {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            margin-bottom: 32px;
+            transition: all 0.2s;
+        }
+
+        .back-home:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -310,314 +327,194 @@
 
         <div class="browser-toolbar">
             <div class="nav-buttons">
-                <button class="nav-btn" id="backBtn" disabled>◀</button>
-                <button class="nav-btn" id="forwardBtn" disabled>▶</button>
-                <button class="nav-btn" id="refreshBtn">↻</button>
                 <button class="nav-btn" id="homeBtn">🏠</button>
             </div>
             <div class="address-bar-container">
-                <input type="text" class="address-bar" id="addressBar" placeholder="Ange webbadress eller sök...">
-                <button class="go-btn" id="goBtn">Gå</button>
+                <input type="text" class="address-bar" id="addressBar" placeholder="Sök eller ange webbadress..." readonly>
+                <button class="go-btn" id="goBtn">Sök</button>
             </div>
-        </div>
-
-        <div class="tabs-container">
-            <div class="tab active" data-tab-id="0">
-                <span class="tab-title">Hem</span>
-                <button class="tab-close">×</button>
-            </div>
-            <button class="new-tab-btn" id="newTabBtn">+</button>
         </div>
 
         <div class="browser-content" id="browserContent">
-            <div class="iframe-container active" id="content-0">
-                <div class="home-page">
-                    <h1>Välkommen!</h1>
-                    <p>Din virtuella browser är redo att användas</p>
-                    <div class="quick-links">
-                        <div class="quick-link" data-url="https://www.google.com">
-                            <div class="quick-link-icon">🔍</div>
-                            <div class="quick-link-title">Google</div>
-                        </div>
-                        <div class="quick-link" data-url="https://www.youtube.com">
-                            <div class="quick-link-icon">📺</div>
-                            <div class="quick-link-title">YouTube</div>
-                        </div>
-                        <div class="quick-link" data-url="https://www.wikipedia.org">
-                            <div class="quick-link-icon">📚</div>
-                            <div class="quick-link-title">Wikipedia</div>
-                        </div>
-                        <div class="quick-link" data-url="https://www.github.com">
-                            <div class="quick-link-icon">💻</div>
-                            <div class="quick-link-title">GitHub</div>
-                        </div>
+            <div class="home-page" id="homePage">
+                <h1>🌐 Virtual Browser</h1>
+                <p>Din egen webbläsarsimulator</p>
+
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Vad vill du söka efter?">
+                </div>
+
+                <div class="quick-links">
+                    <div class="quick-link" data-url="https://www.google.com">
+                        <div class="quick-link-icon">🔍</div>
+                        <div class="quick-link-title">Google</div>
+                    </div>
+                    <div class="quick-link" data-url="https://www.youtube.com">
+                        <div class="quick-link-icon">📺</div>
+                        <div class="quick-link-title">YouTube</div>
+                    </div>
+                    <div class="quick-link" data-url="https://www.wikipedia.org">
+                        <div class="quick-link-icon">📚</div>
+                        <div class="quick-link-title">Wikipedia</div>
+                    </div>
+                    <div class="quick-link" data-url="https://www.github.com">
+                        <div class="quick-link-icon">💻</div>
+                        <div class="quick-link-title">GitHub</div>
+                    </div>
+                    <div class="quick-link" data-url="https://www.reddit.com">
+                        <div class="quick-link-icon">💬</div>
+                        <div class="quick-link-title">Reddit</div>
+                    </div>
+                    <div class="quick-link" data-url="https://www.twitter.com">
+                        <div class="quick-link-icon">🐦</div>
+                        <div class="quick-link-title">Twitter</div>
+                    </div>
+                    <div class="quick-link" data-url="https://www.netflix.com">
+                        <div class="quick-link-icon">🎬</div>
+                        <div class="quick-link-title">Netflix</div>
+                    </div>
+                    <div class="quick-link" data-url="https://www.amazon.com">
+                        <div class="quick-link-icon">🛒</div>
+                        <div class="quick-link-title">Amazon</div>
                     </div>
                 </div>
+
+                <div class="info-box">
+                    <h3>ℹ️ Om denna browser</h3>
+                    <p>
+                        Detta är en virtuell browser-simulator. På grund av webbläsarens säkerhetsbegränsningar 
+                        kan externa webbplatser inte visas direkt här. När du klickar på länkar öppnas de 
+                        i en ny flik i din riktiga webbläsare. Prova sökfunktionen för att simulera en 
+                        sökning!
+                    </p>
+                </div>
+            </div>
+
+            <div class="result-page" id="resultPage">
+                <button class="back-home" id="backBtn">← Tillbaka</button>
+                <div class="result-header">
+                    <h2 id="resultTitle">Sökresultat</h2>
+                    <p id="resultCount">Cirka 0 resultat</p>
+                </div>
+                <div id="resultContainer"></div>
             </div>
         </div>
     </div>
 
     <script>
-        let tabCounter = 0;
-        let currentTabId = 0;
-        let tabs = {
-            0: {
-                url: 'home',
-                title: 'Hem',
-                history: [],
-                historyIndex: -1
-            }
-        };
-
         const addressBar = document.getElementById('addressBar');
         const goBtn = document.getElementById('goBtn');
-        const backBtn = document.getElementById('backBtn');
-        const forwardBtn = document.getElementById('forwardBtn');
-        const refreshBtn = document.getElementById('refreshBtn');
         const homeBtn = document.getElementById('homeBtn');
-        const newTabBtn = document.getElementById('newTabBtn');
-        const tabsContainer = document.querySelector('.tabs-container');
-        const browserContent = document.getElementById('browserContent');
+        const searchInput = document.getElementById('searchInput');
+        const homePage = document.getElementById('homePage');
+        const resultPage = document.getElementById('resultPage');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultCount = document.getElementById('resultCount');
+        const resultContainer = document.getElementById('resultContainer');
+        const backBtn = document.getElementById('backBtn');
 
-        function normalizeUrl(url) {
-            url = url.trim();
-            if (url === '' || url === 'home') return 'home';
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                if (url.includes('.') && !url.includes(' ')) {
-                    return 'https://' + url;
+        const searchResults = {
+            'katt': [
+                { title: 'Katt - Wikipedia', url: 'https://sv.wikipedia.org/wiki/Katt', description: 'Tamkatten är ett rovdjur i familjen kattdjur och det enda fullständigt domesticerade kattdjuret...' },
+                { title: 'Allt om katter - Kattfakta', url: 'https://www.kattfakta.se', description: 'Lär dig allt om katter, deras beteende, raser och hur du tar hand om din katt...' },
+                { title: 'Kattbilder och gulliga kattungar', url: 'https://www.katthemmet.se', description: 'Se våra söta kattungar som söker nya hem. Alla katter är hälsokontrollerade...' }
+            ],
+            'hund': [
+                { title: 'Hund - Wikipedia', url: 'https://sv.wikipedia.org/wiki/Hund', description: 'Tamhunden är ett däggdjur och ett hunddjur som har levt tillsammans med människan i minst 15 000 år...' },
+                { title: 'Svenska Kennelklubben', url: 'https://www.skk.se', description: 'Sveriges största organisation för hundägare med över 300 000 medlemmar...' },
+                { title: 'Hundraser - Guide till alla raser', url: 'https://www.hundraser.se', description: 'Komplett guide över alla hundraser, deras egenskaper och vad som passar dig...' }
+            ],
+            'recept': [
+                { title: 'ICA Recept - Goda recept för alla', url: 'https://www.ica.se/recept', description: 'Hitta goda recept på vardagsmat, festmat, bakverk och mycket mer...' },
+                { title: 'Köket.se - Sveriges största receptsajt', url: 'https://www.koket.se', description: 'Över 10 000 recept, tips och inspiration för både vardag och fest...' },
+                { title: 'Arla Recept', url: 'https://www.arla.se/recept', description: 'Recept med mejeriprodukter, från enkel vardagsmat till läcker dessert...' }
+            ],
+            'väder': [
+                { title: 'SMHI - Väder', url: 'https://www.smhi.se/vader', description: 'Sveriges officiella väderprognos från Sveriges meteorologiska och hydrologiska institut...' },
+                { title: 'YR.no - Väder för Sverige', url: 'https://www.yr.no/sv', description: 'Detaljerad väderprognos från Norges meteorologiska institutt...' },
+                { title: 'Klart.se - Lokala väderprognoser', url: 'https://www.klart.se', description: 'Väderprognos för din plats med timme för timme prognoser...' }
+            ],
+            'nyheter': [
+                { title: 'SVT Nyheter', url: 'https://www.svt.se/nyheter', description: 'Sveriges Television - Nyheter, sport och opinion från hela Sverige och världen...' },
+                { title: 'Dagens Nyheter', url: 'https://www.dn.se', description: 'Senaste nyheterna från Sverige och världen, politisk och kulturell debatt...' },
+                { title: 'Aftonbladet', url: 'https://www.aftonbladet.se', description: 'Sveriges största nyhetssajt med snabba nyheter, sport och nöje...' }
+            ],
+            'default': [
+                { title: 'Google', url: 'https://www.google.com', description: 'Världens mest använda sökmotor...' },
+                { title: 'Wikipedia - Den fria encyklopedin', url: 'https://www.wikipedia.org', description: 'En omfattande och allmänt tillgänglig encyklopedi på internet...' },
+                { title: 'YouTube', url: 'https://www.youtube.com', description: 'Dela videor, musik och mycket mer med vänner, familj och hela världen...' }
+            ]
+        };
+
+        function performSearch(query) {
+            if (!query.trim()) return;
+
+            query = query.toLowerCase().trim();
+            addressBar.value = `Söker efter: ${query}`;
+            
+            // Hitta matchande resultat
+            let results = searchResults['default'];
+            for (let key in searchResults) {
+                if (query.includes(key)) {
+                    results = searchResults[key];
+                    break;
                 }
-                return 'https://www.google.com/search?q=' + encodeURIComponent(url);
             }
-            return url;
-        }
 
-        function loadUrl(url) {
-            url = normalizeUrl(url);
-            const tab = tabs[currentTabId];
+            // Visa resultatsidan
+            resultTitle.textContent = `Sökresultat för "${query}"`;
+            resultCount.textContent = `Cirka ${results.length * 1234} resultat (0.42 sekunder)`;
             
-            if (url === 'home') {
-                showHomePage();
-                addressBar.value = '';
-                updateTabTitle('Hem');
-            } else {
-                const container = document.getElementById(`content-${currentTabId}`);
-                container.innerHTML = '<div class="loading"></div><iframe class="content-frame" src="' + url + '"></iframe>';
-                addressBar.value = url;
-                
-                const iframe = container.querySelector('iframe');
-                let loaded = false;
-                
-                iframe.onload = function() {
-                    loaded = true;
-                    container.querySelector('.loading')?.remove();
-                    try {
-                        const title = iframe.contentDocument?.title || new URL(url).hostname;
-                        updateTabTitle(title);
-                    } catch (e) {
-                        updateTabTitle(new URL(url).hostname);
-                    }
-                };
-
-                // Visa felmeddelande efter 3 sekunder om sidan inte laddas
-                setTimeout(() => {
-                    if (!loaded) {
-                        container.querySelector('.loading')?.remove();
-                        container.innerHTML = `
-                            <div class="home-page">
-                                <h1>⚠️ Kan inte ladda sidan</h1>
-                                <p>Denna webbplats kan inte visas i browsern på grund av säkerhetsbegränsningar.</p>
-                                <p style="font-size: 14px; color: #999; margin-top: 20px;">
-                                    Många webbplatser (som Google, YouTube, Facebook) blockerar inbäddning.<br>
-                                    Försök med andra webbplatser som tillåter iframes.
-                                </p>
-                                <div style="margin-top: 30px;">
-                                    <button onclick="loadUrl('home')" style="padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
-                                        Tillbaka till startsidan
-                                    </button>
-                                    <a href="${url}" target="_blank" style="margin-left: 12px; padding: 12px 24px; background: #f0f0f0; color: #333; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; text-decoration: none; display: inline-block;">
-                                        Öppna i ny flik istället
-                                    </a>
-                                </div>
-                            </div>
-                        `;
-                        updateTabTitle('Kan inte ladda');
-                    }
-                }, 3000);
-            }
-
-            if (tab.history[tab.historyIndex] !== url) {
-                tab.history = tab.history.slice(0, tab.historyIndex + 1);
-                tab.history.push(url);
-                tab.historyIndex++;
-            }
-            tab.url = url;
-            updateNavigationButtons();
-        }
-
-        function showHomePage() {
-            const container = document.getElementById(`content-${currentTabId}`);
-            container.innerHTML = `
-                <div class="home-page">
-                    <h1>Välkommen!</h1>
-                    <p>Din virtuella browser är redo att användas</p>
-                    <div class="quick-links">
-                        <div class="quick-link" data-url="https://www.google.com">
-                            <div class="quick-link-icon">🔍</div>
-                            <div class="quick-link-title">Google</div>
-                        </div>
-                        <div class="quick-link" data-url="https://www.youtube.com">
-                            <div class="quick-link-icon">📺</div>
-                            <div class="quick-link-title">YouTube</div>
-                        </div>
-                        <div class="quick-link" data-url="https://www.wikipedia.org">
-                            <div class="quick-link-icon">📚</div>
-                            <div class="quick-link-title">Wikipedia</div>
-                        </div>
-                        <div class="quick-link" data-url="https://www.github.com">
-                            <div class="quick-link-icon">💻</div>
-                            <div class="quick-link-title">GitHub</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            attachQuickLinkListeners();
-        }
-
-        function attachQuickLinkListeners() {
-            document.querySelectorAll('.quick-link').forEach(link => {
-                link.onclick = function() {
-                    loadUrl(this.dataset.url);
-                };
+            resultContainer.innerHTML = '';
+            results.forEach(result => {
+                const item = document.createElement('div');
+                item.className = 'result-item';
+                item.innerHTML = `
+                    <div class="result-title">${result.title}</div>
+                    <div class="result-url">${result.url}</div>
+                    <div class="result-description">${result.description}</div>
+                `;
+                item.onclick = () => window.open(result.url, '_blank');
+                resultContainer.appendChild(item);
             });
+
+            homePage.classList.remove('active');
+            homePage.style.display = 'none';
+            resultPage.classList.add('active');
         }
 
-        function updateTabTitle(title) {
-            const tab = document.querySelector(`.tab[data-tab-id="${currentTabId}"]`);
-            if (tab) {
-                tab.querySelector('.tab-title').textContent = title;
+        function goHome() {
+            addressBar.value = '';
+            homePage.style.display = 'block';
+            homePage.classList.add('active');
+            resultPage.classList.remove('active');
+            searchInput.value = '';
+        }
+
+        // Event listeners
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch(searchInput.value);
             }
-            tabs[currentTabId].title = title;
-        }
-
-        function updateNavigationButtons() {
-            const tab = tabs[currentTabId];
-            backBtn.disabled = tab.historyIndex <= 0;
-            forwardBtn.disabled = tab.historyIndex >= tab.history.length - 1;
-        }
-
-        function createNewTab() {
-            tabCounter++;
-            const tabId = tabCounter;
-            
-            tabs[tabId] = {
-                url: 'home',
-                title: 'Ny flik',
-                history: ['home'],
-                historyIndex: 0
-            };
-
-            const tabElement = document.createElement('div');
-            tabElement.className = 'tab';
-            tabElement.dataset.tabId = tabId;
-            tabElement.innerHTML = `
-                <span class="tab-title">Ny flik</span>
-                <button class="tab-close">×</button>
-            `;
-
-            tabElement.onclick = function(e) {
-                if (e.target.classList.contains('tab-close')) return;
-                switchTab(tabId);
-            };
-
-            tabElement.querySelector('.tab-close').onclick = function(e) {
-                e.stopPropagation();
-                closeTab(tabId);
-            };
-
-            tabsContainer.insertBefore(tabElement, newTabBtn);
-
-            const contentContainer = document.createElement('div');
-            contentContainer.className = 'iframe-container';
-            contentContainer.id = `content-${tabId}`;
-            browserContent.appendChild(contentContainer);
-
-            switchTab(tabId);
-            showHomePage();
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.iframe-container').forEach(c => c.classList.remove('active'));
-
-            const tab = document.querySelector(`.tab[data-tab-id="${tabId}"]`);
-            const content = document.getElementById(`content-${tabId}`);
-            
-            if (tab && content) {
-                tab.classList.add('active');
-                content.classList.add('active');
-                currentTabId = tabId;
-                addressBar.value = tabs[tabId].url === 'home' ? '' : tabs[tabId].url;
-                updateNavigationButtons();
-            }
-        }
-
-        function closeTab(tabId) {
-            if (Object.keys(tabs).length === 1) return;
-
-            delete tabs[tabId];
-            document.querySelector(`.tab[data-tab-id="${tabId}"]`)?.remove();
-            document.getElementById(`content-${tabId}`)?.remove();
-
-            if (currentTabId === tabId) {
-                const remainingTab = Object.keys(tabs)[0];
-                switchTab(parseInt(remainingTab));
-            }
-        }
-
-        goBtn.onclick = () => loadUrl(addressBar.value);
-        addressBar.onkeypress = (e) => {
-            if (e.key === 'Enter') loadUrl(addressBar.value);
-        };
-
-        backBtn.onclick = () => {
-            const tab = tabs[currentTabId];
-            if (tab.historyIndex > 0) {
-                tab.historyIndex--;
-                loadUrl(tab.history[tab.historyIndex]);
-            }
-        };
-
-        forwardBtn.onclick = () => {
-            const tab = tabs[currentTabId];
-            if (tab.historyIndex < tab.history.length - 1) {
-                tab.historyIndex++;
-                loadUrl(tab.history[tab.historyIndex]);
-            }
-        };
-
-        refreshBtn.onclick = () => {
-            const tab = tabs[currentTabId];
-            loadUrl(tab.url);
-        };
-
-        homeBtn.onclick = () => loadUrl('home');
-        newTabBtn.onclick = createNewTab;
-
-        attachQuickLinkListeners();
-
-        document.querySelectorAll('.tab-close').forEach(btn => {
-            btn.onclick = function(e) {
-                e.stopPropagation();
-                const tabId = parseInt(this.closest('.tab').dataset.tabId);
-                closeTab(tabId);
-            };
         });
 
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.onclick = function(e) {
-                if (e.target.classList.contains('tab-close')) return;
-                switchTab(parseInt(this.dataset.tabId));
-            };
+        goBtn.addEventListener('click', () => {
+            if (addressBar.value) {
+                performSearch(addressBar.value);
+            } else {
+                performSearch(searchInput.value);
+            }
+        });
+
+        homeBtn.addEventListener('click', goHome);
+        backBtn.addEventListener('click', goHome);
+
+        // Snabblänkar
+        document.querySelectorAll('.quick-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const url = this.dataset.url;
+                window.open(url, '_blank');
+            });
         });
     </script>
 </body>
