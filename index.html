@@ -25,6 +25,7 @@
     <button onclick="openTest('karwan.tv')">karwan.tv</button>
     <button onclick="openTest('example.com')">example.com</button>
     <button onclick="openTest('wikipedia.org')">wikipedia.org</button>
+    <button onclick="openTest('borrelia behandling')">Sök borrelia</button>
 </div>
 
 <div class="iframe-container">
@@ -41,10 +42,17 @@ function fixURL(url){
 function navigate(){
     const raw = document.getElementById('urlInput').value.trim();
     if(!raw) return;
-    let url = fixURL(raw);
 
-    // Ladda via proxyservern
-    document.getElementById('contentFrame').src = 'http://localhost:3000/proxy?url=' + encodeURIComponent(url);
+    // Om det ser ut som en sökterm (innehåller mellanslag eller saknar punkt)
+    if(/\s/.test(raw) || !raw.includes('.')){
+        const q = encodeURIComponent(raw);
+        const searchUrl = 'https://www.bing.com/search?q=' + q;
+        document.getElementById('contentFrame').src = 'http://localhost:3000/proxy?url=' + encodeURIComponent(searchUrl);
+    } else {
+        // Annars behandla som URL
+        let url = fixURL(raw);
+        document.getElementById('contentFrame').src = 'http://localhost:3000/proxy?url=' + encodeURIComponent(url);
+    }
 }
 
 function openTest(v){
