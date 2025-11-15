@@ -33,14 +33,14 @@
 </div>
 
 <script>
-// Funktion för att säkerställa att URL:en har https:// i början
+// Säkerställer att URL:en har https:// i början
 function fixURL(url){
     url = url.trim();
     if(!/^https?:\/\//i.test(url)) return 'https://' + url;
     return url;
 }
 
-// Funktion: Försöker ladda URL:en via Google Translate som en proxy
+// Försöker ladda URL:en via Google Translate som en proxy
 function loadViaProxy(targetUrl) {
     const encodedTarget = encodeURIComponent(targetUrl);
     // Använder Google Translate som proxy för att försöka kringgå inbäddningsblockeringar
@@ -55,21 +55,29 @@ function navigate(){
 
     let targetUrl;
     
+    // NY LOGIK: Undantag för karwan.tv
+    if (raw.toLowerCase().includes('karwan.tv')) {
+        // Om det är karwan.tv, tvinga den att öppnas i en ny flik (fungerar garanterat)
+        targetUrl = fixURL(raw);
+        window.open(targetUrl, '_blank');
+        return; 
+    }
+    
     // Logik: Om sökterm (innehåller mellanslag ELLER saknar punkt och är kort)
     if(/\s/.test(raw) || (!raw.includes('.') && raw.length > 0 && raw.length < 20)){
         // Skapa en Bing sök-URL för att ladda i iFramen via proxy
         const q = encodeURIComponent(raw);
         targetUrl = 'https://www.bing.com/search?q=' + q;
     } else {
-        // Om det ser ut som en direkt URL
+        // Om direkt URL (annan än karwan.tv)
         targetUrl = fixURL(raw);
     }
     
-    // Ladda BÅDE sökresultat och direkta URL:er via proxy i iFramen (Virtual Browser)
+    // Ladda BÅDE sökresultat och direkta URL:er via proxy i iFramen
     loadViaProxy(targetUrl);
 }
 
-// Anropas när "Sök"-knappen klickas. Den anropar nu navigate()
+// Anropas när "Sök"-knappen klickas.
 function search(){
     navigate();
 }
