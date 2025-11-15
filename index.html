@@ -405,7 +405,10 @@
                 addressBar.value = url;
                 
                 const iframe = container.querySelector('iframe');
+                let loaded = false;
+                
                 iframe.onload = function() {
+                    loaded = true;
                     container.querySelector('.loading')?.remove();
                     try {
                         const title = iframe.contentDocument?.title || new URL(url).hostname;
@@ -414,6 +417,32 @@
                         updateTabTitle(new URL(url).hostname);
                     }
                 };
+
+                // Visa felmeddelande efter 3 sekunder om sidan inte laddas
+                setTimeout(() => {
+                    if (!loaded) {
+                        container.querySelector('.loading')?.remove();
+                        container.innerHTML = `
+                            <div class="home-page">
+                                <h1>⚠️ Kan inte ladda sidan</h1>
+                                <p>Denna webbplats kan inte visas i browsern på grund av säkerhetsbegränsningar.</p>
+                                <p style="font-size: 14px; color: #999; margin-top: 20px;">
+                                    Många webbplatser (som Google, YouTube, Facebook) blockerar inbäddning.<br>
+                                    Försök med andra webbplatser som tillåter iframes.
+                                </p>
+                                <div style="margin-top: 30px;">
+                                    <button onclick="loadUrl('home')" style="padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                                        Tillbaka till startsidan
+                                    </button>
+                                    <a href="${url}" target="_blank" style="margin-left: 12px; padding: 12px 24px; background: #f0f0f0; color: #333; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; text-decoration: none; display: inline-block;">
+                                        Öppna i ny flik istället
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        updateTabTitle('Kan inte ladda');
+                    }
+                }, 3000);
             }
 
             if (tab.history[tab.historyIndex] !== url) {
