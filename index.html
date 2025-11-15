@@ -1,534 +1,288 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Browser</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Virtual Browser — Search Fix</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .browser-window {
-            width: 100%;
-            max-width: 1400px;
-            height: 85vh;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .browser-header {
-            background: #f0f0f0;
-            padding: 12px 16px;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .window-controls {
-            display: flex;
-            gap: 8px;
-        }
-
-        .control-btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-        }
-
-        .control-btn.close { background: #ff5f56; }
-        .control-btn.minimize { background: #ffbd2e; }
-        .control-btn.maximize { background: #27c93f; }
-
-        .browser-toolbar {
-            background: white;
-            padding: 12px 16px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .nav-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: all 0.2s;
-        }
-
-        .nav-btn:hover {
-            background: #f5f5f5;
-        }
-
-        .nav-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .address-bar-container {
-            flex: 1;
-            display: flex;
-            gap: 8px;
-        }
-
-        .address-bar {
-            flex: 1;
-            padding: 8px 16px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            font-size: 14px;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .address-bar:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .go-btn {
-            padding: 8px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .go-btn:hover {
-            background: #5568d3;
-        }
-
-        .browser-content {
-            flex: 1;
-            background: white;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .page {
-            width: 100%;
-            height: 100%;
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .home-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            overflow-y: auto;
-        }
-
-        .home-page h1 {
-            font-size: 48px;
-            color: #333;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .home-page > p {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .quick-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 16px;
-            max-width: 800px;
-            width: 100%;
-        }
-
-        .quick-link {
-            padding: 24px;
-            background: #f8f8f8;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #333;
-            transition: all 0.2s;
-            cursor: pointer;
-            text-align: center;
-            border: 2px solid transparent;
-        }
-
-        .quick-link:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .quick-link-icon {
-            font-size: 40px;
-            margin-bottom: 12px;
-        }
-
-        .quick-link-title {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .iframe-page {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        .content-frame {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .loading {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: #667eea;
-            z-index: 10;
-            animation: loading 1.5s ease-in-out infinite;
-        }
-
-        @keyframes loading {
-            0%, 100% { transform: translateX(-100%); }
-            50% { transform: translateX(100%); }
-        }
-
-        .error-message {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .error-message h2 {
-            font-size: 32px;
-            color: #333;
-            margin-bottom: 16px;
-        }
-
-        .error-message p {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 24px;
-            max-width: 600px;
-        }
-
-        .error-btn {
-            padding: 12px 24px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 8px;
-            transition: all 0.2s;
-        }
-
-        .error-btn:hover {
-            background: #5568d3;
-        }
-
-        .info-box {
-            background: #e8f4fd;
-            border: 2px solid #2196f3;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 40px;
-            max-width: 800px;
-        }
-
-        .info-box h3 {
-            color: #1976d2;
-            margin-bottom: 8px;
-            font-size: 18px;
-        }
-
-        .info-box p {
-            color: #1976d2;
-            font-size: 14px;
-            line-height: 1.6;
-            text-align: left;
-        }
+        *{box-sizing:border-box}
+        body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+        .browser-window{width:100%;max-width:1400px;height:85vh;background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden}
+        .browser-toolbar{padding:12px 16px;border-bottom:1px solid #e0e0e0;display:flex;gap:12px;align-items:center;background:white}
+        .nav-buttons{display:flex;gap:8px}
+        .nav-btn{width:36px;height:36px;border:1px solid #ddd;background:white;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .nav-btn:disabled{opacity:.4;cursor:not-allowed}
+        .address-bar{flex:1;padding:8px 14px;border-radius:20px;border:1px solid #ddd;font-size:14px;outline:none}
+        .go-btn{padding:8px 18px;border-radius:20px;border:none;background:#667eea;color:white;cursor:pointer}
+        .browser-content{flex:1;position:relative;background:white}
+        .page{position:absolute;inset:0;display:none}
+        .page.active{display:block}
+        .loading{position:absolute;left:0;right:0;top:0;height:3px;background:#667eea;z-index:10;animation:loading 1.5s ease-in-out infinite}
+        @keyframes loading{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+        .home{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;padding:24px}
+        .error{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;padding:24px;text-align:center}
+        iframe.content-frame{width:100%;height:100%;border:0}
     </style>
 </head>
 <body>
     <div class="browser-window">
-        <div class="browser-header">
-            <div class="window-controls">
-                <button class="control-btn close"></button>
-                <button class="control-btn minimize"></button>
-                <button class="control-btn maximize"></button>
-            </div>
-        </div>
-
         <div class="browser-toolbar">
             <div class="nav-buttons">
-                <button class="nav-btn" id="backBtn" disabled onclick="goBack()">◀</button>
-                <button class="nav-btn" id="forwardBtn" disabled onclick="goForward()">▶</button>
+                <button class="nav-btn" id="backBtn" onclick="goBack()" disabled>◀</button>
+                <button class="nav-btn" id="forwardBtn" onclick="goForward()" disabled>▶</button>
                 <button class="nav-btn" onclick="refresh()">↻</button>
                 <button class="nav-btn" onclick="goHome()">🏠</button>
             </div>
-            <div class="address-bar-container">
-                <input type="text" class="address-bar" id="addressBar" placeholder="Ange webbadress..." onkeypress="if(event.key==='Enter') navigate()">
-                <button class="go-btn" onclick="navigate()">Gå</button>
-            </div>
+            <input id="addressBar" class="address-bar" placeholder="Sök eller skriv URL (t.ex. example.com eller \"borrelia behandling\")" onkeydown="if(event.key==='Enter'){goToAddress()}">
+            <button class="go-btn" onclick="goToAddress()">Gå</button>
         </div>
 
         <div class="browser-content">
-            <!-- STARTSIDA -->
             <div class="page active" id="homePage">
-                <div class="home-page">
-                    <h1>🌐 Virtual Browser</h1>
-                    <p>Klicka på en länk för att börja surfa</p>
-
-                    <div class="quick-links">
-                        <div class="quick-link" onclick="loadUrl('https://karwan.tv')">
-                            <div class="quick-link-icon">📺</div>
-                            <div class="quick-link-title">Karwan TV</div>
-                        </div>
-                        <div class="quick-link" onclick="loadUrl('https://www.wikipedia.org')">
-                            <div class="quick-link-icon">📚</div>
-                            <div class="quick-link-title">Wikipedia</div>
-                        </div>
-                        <div class="quick-link" onclick="loadUrl('https://www.example.com')">
-                            <div class="quick-link-icon">🌍</div>
-                            <div class="quick-link-title">Example</div>
-                        </div>
-                        <div class="quick-link" onclick="loadUrl('https://www.github.com')">
-                            <div class="quick-link-icon">💻</div>
-                            <div class="quick-link-title">GitHub</div>
-                        </div>
-                        <div class="quick-link" onclick="loadUrl('https://news.ycombinator.com')">
-                            <div class="quick-link-icon">📰</div>
-                            <div class="quick-link-title">Hacker News</div>
-                        </div>
-                        <div class="quick-link" onclick="loadUrl('https://www.reddit.com')">
-                            <div class="quick-link-icon">💬</div>
-                            <div class="quick-link-title">Reddit</div>
-                        </div>
-                    </div>
-
-                    <div class="info-box">
-                        <h3>ℹ️ Tips</h3>
-                        <p>
-                            <strong>Karwan TV</strong> och vissa andra webbplatser ska fungera direkt i browsern! 
-                            Om en sida inte laddas beror det på att webbplatsen blockerar inbäddning av säkerhetsskäl. 
-                            Du kan alltid öppna sidan i en ny flik istället.
-                        </p>
-                    </div>
+                <div class="home" style="gap:16px">
+                    <h1 style="margin:0">🌐 Virtual Browser</h1>
+                    <p style="color:#444;max-width:800px">Skriv en webbadress eller en sökfråga i adressfältet. Om sidan blockerar inbäddning öppnas den i en ny flik via felsidan.</p>
                 </div>
             </div>
 
-            <!-- IFRAME SIDA -->
             <div class="page" id="iframePage">
-                <div class="iframe-page">
-                    <div class="loading" id="loadingBar"></div>
-                    <iframe class="content-frame" id="contentFrame"></iframe>
-                </div>
+                <div id="loadingBar" class="loading" style="display:none"></div>
+                <iframe id="contentFrame" class="content-frame"></iframe>
             </div>
 
-            <!-- FEL SIDA -->
             <div class="page" id="errorPage">
-                <div class="error-message">
-                    <h2>⚠️ Kan inte ladda sidan</h2>
-                    <p>Denna webbplats blockerar inbäddning av säkerhetsskäl. Många stora webbplatser som Google, YouTube och Facebook tillåter inte att de visas i en iframe.</p>
-                    <div>
-                        <button class="error-btn" onclick="goHome()">← Tillbaka till startsidan</button>
-                        <button class="error-btn" id="openNewTab">Öppna i ny flik →</button>
+                <div class="error">
+                    <h2>⚠️ Kunde inte ladda sidan</h2>
+                    <p id="errorText"></p>
+                    <div style="margin-top:12px">
+                        <button class="go-btn" onclick="openInNewTab()">Öppna i ny flik</button>
+                        <button class="go-btn" style="background:#999;margin-left:8px" onclick="goHome()">Till startsidan</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        let history = ['home'];
-        let historyIndex = 0;
-        let currentUrl = 'home';
+<script>
+/* --- State --- */
+let historyList = ['home'];
+let historyIndex = 0;
+let currentUrl = 'home';
 
-        const addressBar = document.getElementById('addressBar');
-        const homePage = document.getElementById('homePage');
-        const iframePage = document.getElementById('iframePage');
-        const errorPage = document.getElementById('errorPage');
-        const contentFrame = document.getElementById('contentFrame');
-        const loadingBar = document.getElementById('loadingBar');
-        const backBtn = document.getElementById('backBtn');
-        const forwardBtn = document.getElementById('forwardBtn');
+const addressBar = document.getElementById('addressBar');
+const contentFrame = document.getElementById('contentFrame');
+const loadingBar = document.getElementById('loadingBar');
+const homePage = document.getElementById('homePage');
+const iframePage = document.getElementById('iframePage');
+const errorPage = document.getElementById('errorPage');
+const errorText = document.getElementById('errorText');
+const backBtn = document.getElementById('backBtn');
+const forwardBtn = document.getElementById('forwardBtn');
 
-        function showPage(page) {
-            homePage.classList.remove('active');
-            iframePage.classList.remove('active');
-            errorPage.classList.remove('active');
-            page.classList.add('active');
+function showPage(el){
+    homePage.classList.remove('active');
+    iframePage.classList.remove('active');
+    errorPage.classList.remove('active');
+    el.classList.add('active');
+}
+
+/* Normalkontroll om användartext är URL eller sök */
+function looksLikeSearch(input){
+    const trimmed = input.trim();
+    if(!trimmed) return false;
+    // Om innehåller mellanslag -> sök
+    if(/\s+/.test(trimmed)) return true;
+    // Om inte innehåller punkt (.) -> sannolikt sök
+    if(!trimmed.includes('.')) return true;
+    // Om börjar med ord (inga protokoll) men innehåller spaces? handled above
+    return false;
+}
+
+function normalizeUrl(input){
+    let url = input.trim();
+    // Om är sökterm så returnera null (hanteras av goToAddress)
+    if(looksLikeSearch(url)) return null;
+    // Lägg på https:// om det fattas
+    if(!/^https?:\/\//i.test(url)){
+        url = 'https://' + url;
+    }
+    return url;
+}
+
+function openInNewTab(){
+    if(currentUrl && currentUrl !== 'home'){
+        window.open(currentUrl, '_blank');
+    }
+}
+
+/* Ladda URL och hantera iframe-laddning.
+   pushHistory = true betyder: lägg till i historiken (normalt via adressfältet).
+*/
+function loadUrl(url, pushHistory = false){
+    if(!url || url === 'home'){
+        goHome();
+        return;
+    }
+
+    const normalized = normalizeUrl(url) || url; // normalizeUrl returnerar null för söktermer; men här url alltid en riktig URL
+    currentUrl = normalized;
+    addressBar.value = normalized;
+
+    // Visa loading
+    loadingBar.style.display = 'block';
+    showPage(iframePage);
+
+    // Ladda i iframe
+    contentFrame.src = normalized;
+
+    let loaded = false;
+    const t = setTimeout(()=>{
+        if(!loaded){
+            // troligt att sidan blockerar inbäddning eller timeout
+            showError(normalized, 'Sidan laddades inte i iframe (kan blockera inbäddning eller svara långsamt).');
         }
+    },5000);
 
-        function loadUrl(url) {
-            if (!url || url === 'home') {
-                goHome();
-                return;
-            }
+    contentFrame.onload = () => {
+        loaded = true;
+        clearTimeout(t);
+        loadingBar.style.display = 'none';
+    };
+    contentFrame.onerror = () => {
+        loaded = true;
+        clearTimeout(t);
+        showError(normalized, 'Ett fel uppstod vid laddning i iframe.');
+    };
 
-            // Normalisera URL
-            url = url.trim();
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
-            }
-
-            currentUrl = url;
-            addressBar.value = url;
-
-            // Visa loading
-            loadingBar.style.display = 'block';
-            showPage(iframePage);
-
-            // Ladda iframe
-            contentFrame.src = url;
-
-            // Timer för att kolla om det laddas
-            let loaded = false;
-            const timeout = setTimeout(() => {
-                if (!loaded) {
-                    showError(url);
-                }
-            }, 5000);
-
-            contentFrame.onload = () => {
-                loaded = true;
-                clearTimeout(timeout);
-                loadingBar.style.display = 'none';
-            };
-
-            contentFrame.onerror = () => {
-                loaded = true;
-                clearTimeout(timeout);
-                showError(url);
-            };
-
-            // Lägg till i historik
-            if (history[historyIndex] !== url) {
-                history = history.slice(0, historyIndex + 1);
-                history.push(url);
-                historyIndex++;
-                updateNavButtons();
-            }
-        }
-
-        function showError(url) {
-            loadingBar.style.display = 'none';
-            showPage(errorPage);
-            document.getElementById('openNewTab').onclick = () => {
-                window.open(url, '_blank');
-            };
-        }
-
-        function goHome() {
-            currentUrl = 'home';
-            addressBar.value = '';
-            showPage(homePage);
-            contentFrame.src = '';
-            
-            if (history[historyIndex] !== 'home') {
-                history = history.slice(0, historyIndex + 1);
-                history.push('home');
-                historyIndex++;
-                updateNavButtons();
-            }
-        }
-
-        function navigate() {
-            const url = addressBar.value.trim();
-            if (url) {
-                loadUrl(url);
-            }
-        }
-
-        function goBack() {
-            if (historyIndex > 0) {
-                historyIndex--;
-                const url = history[historyIndex];
-                if (url === 'home') {
-                    goHome();
-                } else {
-                    loadUrl(url);
-                }
-            }
-        }
-
-        function goForward() {
-            if (historyIndex < history.length - 1) {
-                historyIndex++;
-                const url = history[historyIndex];
-                if (url === 'home') {
-                    goHome();
-                } else {
-                    loadUrl(url);
-                }
-            }
-        }
-
-        function refresh() {
-            if (currentUrl !== 'home') {
-                loadUrl(currentUrl);
-            }
-        }
-
-        function updateNavButtons() {
-            backBtn.disabled = historyIndex <= 0;
-            forwardBtn.disabled = historyIndex >= history.length - 1;
-        }
-
+    // Hantera historik (spara normaliserad url)
+    if(pushHistory){
+        const normalizedForHistory = normalized;
+        historyList = historyList.slice(0, historyIndex + 1);
+        historyList.push(normalizedForHistory);
+        historyIndex++;
         updateNavButtons();
-    </script>
+    }
+}
+
+function loadUrlNoHistory(url){
+    // Samma som loadUrl utan att pushHistory
+    if(!url || url === 'home'){ goHome(); return; }
+    const normalized = normalizeUrl(url) || url;
+    currentUrl = normalized;
+    addressBar.value = normalized;
+
+    loadingBar.style.display = 'block';
+    showPage(iframePage);
+    contentFrame.src = normalized;
+
+    let loaded = false;
+    const t = setTimeout(()=>{
+        if(!loaded){
+            showError(normalized, 'Tidsgräns — kunde inte ladda i iframe.');
+        }
+    },5000);
+
+    contentFrame.onload = () => { loaded = true; clearTimeout(t); loadingBar.style.display = 'none'; };
+    contentFrame.onerror = () => { loaded = true; clearTimeout(t); showError(normalized, 'Ett fel uppstod vid laddning i iframe.'); };
+}
+
+function showError(url, message){
+    currentUrl = url;
+    errorText.textContent = message + ' (' + url + ')';
+    loadingBar.style.display = 'none';
+    showPage(errorPage);
+}
+
+/* Gå till adressfältets innehåll (sök eller URL) */
+function goToAddress(){
+    const raw = addressBar.value.trim();
+    if(!raw) return;
+
+    if(looksLikeSearch(raw)){
+        // Gör en sökning via DuckDuckGo
+        const q = encodeURIComponent(raw);
+        const searchUrl = 'https://duckduckgo.com/?q=' + q;
+        // Push normalized searchUrl to history
+        historyList = historyList.slice(0, historyIndex + 1);
+        historyList.push(searchUrl);
+        historyIndex++;
+        loadUrl(searchUrl, false); // loadUrl utan pushHistory eftersom vi redan pushat normaliserad sök-URL
+        updateNavButtons();
+        return;
+    }
+
+    // Annars: försök normalisera URL och ladda
+    const normalized = normalizeUrl(raw);
+    if(!normalized){
+        // fallback — behandla som sök
+        const q = encodeURIComponent(raw);
+        const searchUrl = 'https://duckduckgo.com/?q=' + q;
+        historyList = historyList.slice(0, historyIndex + 1);
+        historyList.push(searchUrl);
+        historyIndex++;
+        loadUrl(searchUrl, false);
+        updateNavButtons();
+        return;
+    }
+
+    // Normal URL: lägg till i historik och ladda
+    loadUrl(normalized, true);
+}
+
+/* Navigation */
+function goHome(){
+    currentUrl = 'home';
+    addressBar.value = '';
+    showPage(homePage);
+    contentFrame.src = '';
+    // push 'home' to history if not already current
+    if(historyList[historyIndex] !== 'home'){
+        historyList = historyList.slice(0, historyIndex + 1);
+        historyList.push('home');
+        historyIndex++;
+        updateNavButtons();
+    }
+}
+
+function goBack(){
+    if(historyIndex > 0){
+        historyIndex--;
+        const url = historyList[historyIndex];
+        if(url === 'home'){
+            goHome();
+        } else {
+            loadUrlNoHistory(url);
+        }
+        updateNavButtons();
+    }
+}
+
+function goForward(){
+    if(historyIndex < historyList.length - 1){
+        historyIndex++;
+        const url = historyList[historyIndex];
+        if(url === 'home'){
+            goHome();
+        } else {
+            loadUrlNoHistory(url);
+        }
+        updateNavButtons();
+    }
+}
+
+function refresh(){
+    if(currentUrl && currentUrl !== 'home'){
+        loadUrl(currentUrl, false);
+    }
+}
+
+function updateNavButtons(){
+    backBtn.disabled = historyIndex <= 0;
+    forwardBtn.disabled = historyIndex >= historyList.length - 1;
+}
+
+/* Init */
+updateNavButtons();
+</script>
 </body>
 </html>
