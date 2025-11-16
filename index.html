@@ -3,15 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Virtuell Browser – GitHub Pages</title>
+  <title>Virtuell Browser</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4a90e2">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; }
-    .topbar { background:#222; padding:10px; display:flex; gap:10px; }
-    input { flex:1; padding:8px; border-radius:6px; border:none; }
-    button { padding:8px 14px; border:none; border-radius:6px; background:#4a90e2; color:white; cursor:pointer; }
-    .samples { padding:12px; display:flex; gap:8px; background:#fff; }
-    .iframe-container { width:100%; height:80vh; margin-top:10px; border:1px solid #ccc; border-radius:6px; overflow:hidden; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f9f9f9; }
+    .topbar { background:#222; padding:8px; display:flex; flex-wrap:wrap; gap:6px; }
+    input { flex:1; min-width:150px; padding:10px; border-radius:6px; border:none; font-size:16px; }
+    button { padding:10px; border:none; border-radius:6px; background:#4a90e2; color:white; cursor:pointer; font-size:16px; }
+    .samples { padding:8px; display:flex; flex-wrap:wrap; gap:6px; background:#fff; }
+    .samples button { flex:1 1 45%; font-size:14px; }
+    .iframe-container { width:100%; height:60vh; margin-top:8px; border:1px solid #ccc; border-radius:6px; overflow:auto; }
+    .zoom-wrapper { transform-origin: top left; transition: transform 0.2s ease; }
     iframe { width:100%; height:100%; border:none; }
+    .statusbar { background:#333; color:#eee; padding:10px; font-size:14px; font-family:monospace; text-align:center; }
+    .error { color:#ff6b6b; font-weight:bold; }
+    .history, .stats, .favorites { background:#fff; padding:10px; font-size:14px; margin-top:8px; }
+    .history h3, .stats h3, .favorites h3 { margin:0 0 6px 0; display:flex; justify-content:space-between; align-items:center; font-size:16px; }
+    .history ul, .favorites ul { list-style:none; padding:0; margin:0; }
+    .history li, .favorites li { margin:4px 0; font-size:14px; }
+    .history a, .favorites a { color:#4a90e2; text-decoration:none; margin-right:8px; }
+    .history a:hover, .favorites a:hover { text-decoration:underline; }
+    .clear-btn, .latest-btn, .fav-btn { padding:6px 10px; font-size:12px; border-radius:4px; border:none; cursor:pointer; }
+    .clear-btn { background:#ff6b6b; color:#fff; }
+    .latest-btn { background:#4caf50; color:#fff; margin-left:6px; }
+    .fav-btn { background:#ffa500; color:#fff; margin-left:6px; }
+    .tooltip { position: relative; display: inline-block; cursor: help; }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #555;
+      color: #fff;
+      text-align: left;
+      border-radius: 6px;
+      padding: 6px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
   </style>
 </head>
 <body>
@@ -28,31 +62,95 @@
   <button onclick="openTest('borrelia behandling')">Sök borrelia</button>
 </div>
 
+<div style="padding:10px; background:#fff;">
+  <label for="zoomRange">Zoom: <span id="zoomLabel">100%</span></label>
+  <input type="range" id="zoomRange" min="100" max="800" step="50" value="100" style="width:100%;">
+</div>
+
 <div class="iframe-container">
-  <iframe id="contentFrame"></iframe>
+  <div id="zoomWrapper" class="zoom-wrapper">
+    <iframe id="contentFrame"></iframe>
+  </div>
+</div>
+
+<div class="statusbar" id="status">Ingen URL laddad ännu...</div>
+
+<div class="history">
+  <h3>
+    Tidigare URL:er
+    <div>
+      <button class="clear-btn" onclick="clearHistory()">Rensa</button>
+      <button class="latest-btn" onclick="openLatest()">Senaste</button>
+    </div>
+  </h3>
+  <ul id="historyList"></ul>
+</div>
+
+<div class="favorites">
+  <h3>Favoriter</h3>
+  <ul id="favoritesList"></ul>
+</div>
+
+<div class="stats">
+  <h3>Statistik</h3>
+  <p id="statsText">Totalt blockerade objekt denna session: 0</p>
 </div>
 
 <script>
-// ✅ Din Vercel-proxy är live här:
 const PROXY_BASE = 'https://virtual-browser-ctq2ot7h4-kuribaxis-projects.vercel.app/api/proxy?url=';
+let totalBlocked = 0;
 
-function fixURL(url){
-  url = url.trim();
-  if(!/^https?:\/\//i.test(url)) return 'https://' + url;
-  return url;
-}
+window.onload = function() {
+  const savedHistory = JSON.parse(localStorage.getItem('proxyHistory')) || [];
+  savedHistory.forEach(url => addToHistory(url, false));
+  const savedFavorites = JSON.parse(localStorage.getItem('proxyFavorites')) || [];
+  savedFavorites.forEach(url => addToFavorites(url, false));
+};
 
-function navigate(){
+document.getElementById('zoomRange').addEventListener('input', function(){
+  const zoom = parseInt(this.value);
+  document.getElementById('zoomWrapper').style.transform = `scale(${zoom / 100})`;
+  document.getElementById('zoomLabel').textContent = `${zoom}%`;
+});
+
+async function navigate(){
   const raw = document.getElementById('urlInput').value.trim();
   if(!raw) return;
 
+  let finalUrl;
   if(/\s/.test(raw) || !raw.includes('.')){
     const q = encodeURIComponent(raw);
-    const searchUrl = 'https://www.bing.com/search?q=' + q;
-    document.getElementById('contentFrame').src = PROXY_BASE + encodeURIComponent(searchUrl);
+    finalUrl = PROXY_BASE + encodeURIComponent('https://www.bing.com/search?q=' + q);
   } else {
-    let url = fixURL(raw);
-    document.getElementById('contentFrame').src = PROXY_BASE + encodeURIComponent(url);
+    finalUrl = PROXY_BASE + encodeURIComponent(raw.startsWith('http') ? raw : 'https://' + raw);
+  }
+
+  try {
+    const res = await fetch(finalUrl);
+    const blockedCount = parseInt(res.headers.get('x-blocked-count') || '0');
+    const html = await res.text();
+
+    totalBlocked += blockedCount;
+    document.getElementById('statsText').textContent =
+      `Totalt blockerade objekt denna session: ${totalBlocked}`;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const blobUrl = URL.createObjectURL(blob);
+    document.getElementById('contentFrame').src = blobUrl;
+
+    let icon = '🟢', tooltipText = 'Inga objekt blockerades';
+    if (blockedCount > 10) { icon = '🔴'; tooltipText = 'Många objekt blockerades'; }
+    else if (blockedCount > 0) { icon = '🟡'; tooltipText = 'Några objekt blockerades'; }
+
+    document.getElementById('status').innerHTML =
+      `<span class="tooltip">${icon}<span class="tooltiptext">${tooltipText}</span></span> ` +
+      `Laddar: ${finalUrl} (Blockerade: ${blockedCount})`;
+
+    addToHistory(finalUrl, true);
+
+  } catch (err) {
+    document.getElementById('status').innerHTML =
+      `<span class='error'>Fel: kunde inte ladda ${finalUrl}</span>`;
   }
 }
 
@@ -61,12 +159,17 @@ function openTest(v){
   navigate();
 }
 
-document.getElementById('urlInput').addEventListener('keypress', function(e){
-  if(e.key === 'Enter'){
-    navigate();
-  }
-});
-</script>
-
-</body>
-</html>
+function addToHistory(url, save){
+  const list = document.getElementById('historyList');
+  const li = document.createElement('li');
+  const a = document.createElement('a');
+  a.href = "#"; a.textContent = url;
+  a.onclick = () => {
+    document.getElementById('contentFrame').src = url;
+    document.getElementById('status').textContent = "Laddar från historik: " + url;
+  };
+  const favBtn = document.createElement('button');
+  favBtn.textContent = "★ Favorit";
+  favBtn.className = "fav-btn";
+  favBtn.onclick = () => addToFavorites(url, true);
+  li.appendChild(a); li.appendChild(f
