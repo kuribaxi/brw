@@ -1,40 +1,5 @@
-<!DOCTYPE html>
-<html lang="sv">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Virtuell Browser – GitHub Pages</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; }
-    .topbar { background:#222; padding:10px; display:flex; gap:10px; }
-    input { flex:1; padding:8px; border-radius:6px; border:none; }
-    button { padding:8px 14px; border:none; border-radius:6px; background:#4a90e2; color:white; cursor:pointer; }
-    .samples { padding:12px; display:flex; gap:8px; background:#fff; }
-    .iframe-container { width:100%; height:80vh; margin-top:10px; border:1px solid #ccc; border-radius:6px; overflow:hidden; }
-    iframe { width:100%; height:100%; border:none; }
-  </style>
-</head>
-<body>
-
-<div class="topbar">
-  <input id="urlInput" placeholder="Ange webbadress eller sök...">
-  <button onclick="navigate()">Go</button>
-</div>
-
-<div class="samples">
-  <button onclick="openTest('karwan.tv')">karwan.tv</button>
-  <button onclick="openTest('example.com')">example.com</button>
-  <button onclick="openTest('wikipedia.org')">wikipedia.org</button>
-  <button onclick="openTest('borrelia behandling')">Sök borrelia</button>
-</div>
-
-<div class="iframe-container">
-  <iframe id="contentFrame"></iframe>
-</div>
-
 <script>
-// Din Vercel-proxyadress:
-const PROXY_BASE = 'https://virtual-browser-kuribaxi.vercel.app/proxy?url=';
+const PROXY_BASE = 'https://brw-sigma.vercel.app/proxy?url=';
 
 function fixURL(url){
   url = url.trim();
@@ -67,6 +32,3 @@ document.getElementById('urlInput').addEventListener('keypress', function(e){
   }
 });
 </script>
-
-</body>
-</html>
