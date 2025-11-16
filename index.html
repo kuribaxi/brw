@@ -3,170 +3,447 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Virtuell Browser</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4a90e2">
+  <title>Smart Web Viewer</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f9f9f9; }
-    .topbar { background:#222; padding:8px; display:flex; flex-wrap:wrap; gap:6px; }
-    input { flex:1; min-width:150px; padding:10px; border-radius:6px; border:none; font-size:16px; }
-    button { padding:10px; border:none; border-radius:6px; background:#4a90e2; color:white; cursor:pointer; font-size:16px; }
-    .samples { padding:8px; display:flex; flex-wrap:wrap; gap:6px; background:#fff; }
-    .samples button { flex:1 1 45%; font-size:14px; }
-    .iframe-container { width:100%; height:60vh; margin-top:8px; border:1px solid #ccc; border-radius:6px; overflow:auto; }
-    .zoom-wrapper { transform-origin: top left; transition: transform 0.2s ease; }
-    iframe { width:100%; height:100%; border:none; }
-    .statusbar { background:#333; color:#eee; padding:10px; font-size:14px; font-family:monospace; text-align:center; }
-    .error { color:#ff6b6b; font-weight:bold; }
-    .history, .stats, .favorites { background:#fff; padding:10px; font-size:14px; margin-top:8px; }
-    .history h3, .stats h3, .favorites h3 { margin:0 0 6px 0; display:flex; justify-content:space-between; align-items:center; font-size:16px; }
-    .history ul, .favorites ul { list-style:none; padding:0; margin:0; }
-    .history li, .favorites li { margin:4px 0; font-size:14px; }
-    .history a, .favorites a { color:#4a90e2; text-decoration:none; margin-right:8px; }
-    .history a:hover, .favorites a:hover { text-decoration:underline; }
-    .clear-btn, .latest-btn, .fav-btn { padding:6px 10px; font-size:12px; border-radius:4px; border:none; cursor:pointer; }
-    .clear-btn { background:#ff6b6b; color:#fff; }
-    .latest-btn { background:#4caf50; color:#fff; margin-left:6px; }
-    .fav-btn { background:#ffa500; color:#fff; margin-left:6px; }
-    .tooltip { position: relative; display: inline-block; cursor: help; }
-    .tooltip .tooltiptext {
-      visibility: hidden;
-      width: 200px;
-      background-color: #555;
-      color: #fff;
-      text-align: left;
-      border-radius: 6px;
-      padding: 6px;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      margin-left: -100px;
-      opacity: 0;
-      transition: opacity 0.3s;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
     }
-    .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .url-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .url-bar input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    .url-bar input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-secondary {
+      background: #f5f5f5;
+      color: #333;
+    }
+    
+    .btn-secondary:hover {
+      background: #e0e0e0;
+    }
+    
+    .mode-selector {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      background: #f5f5f5;
+      border-radius: 10px;
+    }
+    
+    .mode-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .mode-btn.active {
+      background: white;
+      color: #667eea;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .viewer-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      padding: 24px;
+      min-height: 600px;
+    }
+    
+    .iframe-viewer {
+      width: 100%;
+      height: 600px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: white;
+    }
+    
+    .content-viewer {
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      background: #fafafa;
+    }
+    
+    .content-viewer h1, .content-viewer h2, .content-viewer h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .content-viewer p {
+      margin-bottom: 12px;
+      line-height: 1.6;
+      color: #555;
+    }
+    
+    .content-viewer a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    
+    .content-viewer a:hover {
+      text-decoration: underline;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .status {
+      padding: 12px 20px;
+      border-radius: 10px;
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .status-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .status-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .status-info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .quick-link {
+      padding: 12px;
+      background: #f5f5f5;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    .quick-link:hover {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+    
+    .info-box {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    
+    .info-box h4 {
+      margin-bottom: 8px;
+      color: #856404;
+    }
+    
+    .info-box p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #856404;
+    }
   </style>
 </head>
 <body>
 
-<div class="topbar">
-  <input id="urlInput" placeholder="Ange webbadress eller sök...">
-  <button onclick="navigate()">Go</button>
-</div>
-
-<div class="samples">
-  <button onclick="openTest('karwan.tv')">karwan.tv</button>
-  <button onclick="openTest('wikipedia.org')">wikipedia.org</button>
-  <button onclick="openTest('borrelia behandling')">Sök borrelia</button>
-</div>
-
-<div style="padding:10px; background:#fff;">
-  <label for="zoomRange">Zoom: <span id="zoomLabel">100%</span></label>
-  <input type="range" id="zoomRange" min="100" max="800" step="50" value="100" style="width:100%;">
-</div>
-
-<div class="iframe-container">
-  <div id="zoomWrapper" class="zoom-wrapper">
-    <iframe id="contentFrame"></iframe>
+<div class="container">
+  <div class="header">
+    <h1>🌐 Smart Web Viewer</h1>
+    
+    <div class="url-bar">
+      <input 
+        type="text" 
+        id="urlInput" 
+        placeholder="Ange webbadress (t.ex. karwan.tv)"
+        onkeypress="if(event.key==='Enter') loadPage()"
+      >
+      <button class="btn btn-primary" onclick="loadPage()">Visa</button>
+      <button class="btn btn-secondary" onclick="openDirect()">Öppna direkt</button>
+    </div>
+    
+    <div class="mode-selector">
+      <button class="mode-btn active" onclick="setMode('iframe')" id="modeIframe">
+        📺 Försök iframe
+      </button>
+      <button class="mode-btn" onclick="setMode('content')" id="modeContent">
+        📄 Textversion
+      </button>
+      <button class="mode-btn" onclick="setMode('direct')" id="modeDirect">
+        🚀 Direkt länk
+      </button>
+    </div>
+    
+    <div class="quick-links">
+      <div class="quick-link" onclick="quickLoad('karwan.tv')">📺 Karwan.tv</div>
+      <div class="quick-link" onclick="quickLoad('example.com')">📄 Example</div>
+      <div class="quick-link" onclick="quickLoad('wikipedia.org')">📚 Wikipedia</div>
+      <div class="quick-link" onclick="quickLoad('github.com')">💻 GitHub</div>
+    </div>
+    
+    <div id="statusBar"></div>
+    
+    <div class="info-box">
+      <h4>💡 Tips</h4>
+      <p>
+        <strong>Iframe-läge:</strong> Försöker visa sidan direkt (fungerar sällan pga säkerhet)<br>
+        <strong>Textversion:</strong> Hämtar och visar sidans textinnehåll (fungerar ofta!)<br>
+        <strong>Direkt länk:</strong> Öppnar sidan i samma flik (alltid fungerar)
+      </p>
+    </div>
+  </div>
+  
+  <div class="viewer-container" id="viewerContainer">
+    <div style="text-align:center; padding:60px 20px; color:#999;">
+      <h2>👆 Ange en webbadress ovan för att börja</h2>
+      <p style="margin-top:12px;">Prova t.ex: karwan.tv, example.com, eller wikipedia.org</p>
+    </div>
   </div>
 </div>
 
-<div class="statusbar" id="status">Ingen URL laddad ännu...</div>
-
-<div class="history">
-  <h3>
-    Tidigare URL:er
-    <div>
-      <button class="clear-btn" onclick="clearHistory()">Rensa</button>
-      <button class="latest-btn" onclick="openLatest()">Senaste</button>
-    </div>
-  </h3>
-  <ul id="historyList"></ul>
-</div>
-
-<div class="favorites">
-  <h3>Favoriter</h3>
-  <ul id="favoritesList"></ul>
-</div>
-
-<div class="stats">
-  <h3>Statistik</h3>
-  <p id="statsText">Totalt blockerade objekt denna session: 0</p>
-</div>
-
 <script>
-const PROXY_BASE = 'https://virtual-browser-ctq2ot7h4-kuribaxis-projects.vercel.app/proxy?url=';
-let totalBlocked = 0;
+let currentUrl = '';
+let currentMode = 'iframe';
 
-window.onload = function() {
-  const savedHistory = JSON.parse(localStorage.getItem('proxyHistory')) || [];
-  savedHistory.forEach(url => addToHistory(url, false));
-  const savedFavorites = JSON.parse(localStorage.getItem('proxyFavorites')) || [];
-  savedFavorites.forEach(url => addToFavorites(url, false));
-};
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('mode' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+  
+  if (currentUrl) {
+    loadPage();
+  }
+}
 
-document.getElementById('zoomRange').addEventListener('input', function(){
-  const zoom = parseInt(this.value);
-  document.getElementById('zoomWrapper').style.transform = `scale(${zoom / 100})`;
-  document.getElementById('zoomLabel').textContent = `${zoom}%`;
-});
+function quickLoad(url) {
+  document.getElementById('urlInput').value = url;
+  loadPage();
+}
 
-async function navigate(){
-  const raw = document.getElementById('urlInput').value.trim();
-  if(!raw) return;
-
-  let finalUrl;
-  if(/\s/.test(raw) || !raw.includes('.')){
-    const q = encodeURIComponent(raw);
-    finalUrl = PROXY_BASE + encodeURIComponent('https://www.bing.com/search?q=' + q);
+function loadPage() {
+  const input = document.getElementById('urlInput').value.trim();
+  if (!input) {
+    showStatus('⚠️ Ange en webbadress!', 'error');
+    return;
+  }
+  
+  currentUrl = input.startsWith('http') ? input : 'https://' + input;
+  
+  if (currentMode === 'iframe') {
+    loadIframe();
+  } else if (currentMode === 'content') {
+    loadContent();
   } else {
-    finalUrl = PROXY_BASE + encodeURIComponent(raw.startsWith('http') ? raw : 'https://' + raw);
+    openDirect();
   }
+}
 
+function loadIframe() {
+  const container = document.getElementById('viewerContainer');
+  showStatus('⏳ Försöker ladda i iframe...', 'info');
+  
+  container.innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Laddar ${currentUrl}...</p>
+      <p style="margin-top:12px; color:#999; font-size:14px;">Om inget visas, prova "Textversion" eller "Direkt länk"</p>
+    </div>
+  `;
+  
+  setTimeout(() => {
+    container.innerHTML = `
+      <iframe class="iframe-viewer" src="${currentUrl}" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+    `;
+    showStatus('✅ Iframe laddad (om du ser "blockerad", byt till Textversion)', 'info');
+  }, 1000);
+}
+
+async function loadContent() {
+  const container = document.getElementById('viewerContainer');
+  showStatus('⏳ Hämtar textinnehåll...', 'info');
+  
+  container.innerHTML = `
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Hämtar innehåll från ${currentUrl}...</p>
+    </div>
+  `;
+  
   try {
-    const res = await fetch(finalUrl);
-    const blockedCount = parseInt(res.headers.get('x-blocked-count') || '0');
-    const html = await res.text();
-
-    totalBlocked += blockedCount;
-    document.getElementById('statsText').textContent =
-      `Totalt blockerade objekt denna session: ${totalBlocked}`;
-
-    const blob = new Blob([html], { type: 'text/html' });
-    const blobUrl = URL.createObjectURL(blob);
-    document.getElementById('contentFrame').src = blobUrl;
-
-    let icon = '🟢', tooltipText = 'Inga objekt blockerades';
-    if (blockedCount > 10) { icon = '🔴'; tooltipText = 'Många objekt blockerades'; }
-    else if (blockedCount > 0) { icon = '🟡'; tooltipText = 'Några objekt blockerades'; }
-
-    document.getElementById('status').innerHTML =
-      `<span class="tooltip">${icon}<span class="tooltiptext">${tooltipText}</span></span> ` +
-      `Laddar: ${raw} (Blockerade: ${blockedCount})`;
-
-    addToHistory(raw, true);
-
-  } catch (err) {
-    document.getElementById('status').innerHTML =
-      `<span class='error'>Fel: kunde inte ladda ${raw}</span>`;
+    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(currentUrl);
+    const response = await fetch(proxyUrl);
+    const data = await response.json();
+    
+    if (data.contents) {
+      // Parse HTML och extrahera text
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.contents, 'text/html');
+      
+      // Ta bort script och style tags
+      doc.querySelectorAll('script, style, noscript').forEach(el => el.remove());
+      
+      // Extrahera titel
+      const title = doc.querySelector('title')?.textContent || 'Ingen titel';
+      
+      // Extrahera huvudinnehåll
+      const body = doc.querySelector('body');
+      const content = body ? body.innerHTML : 'Inget innehåll hittades';
+      
+      container.innerHTML = `
+        <div class="content-viewer">
+          <h1>${title}</h1>
+          <p style="color:#999; font-size:14px; margin-bottom:20px;">Källa: ${currentUrl}</p>
+          <hr style="margin:20px 0; border:none; border-top:1px solid #e0e0e0;">
+          ${content}
+        </div>
+      `;
+      
+      showStatus('✅ Innehåll hämtat! (Formatering kan saknas)', 'success');
+    } else {
+      throw new Error('Inget innehåll returnerades');
+    }
+    
+  } catch (error) {
+    container.innerHTML = `
+      <div class="content-viewer">
+        <h2 style="color:#e74c3c;">❌ Kunde inte hämta innehåll</h2>
+        <p>Webbplatsen blockerar extern åtkomst eller proxyn fungerar inte.</p>
+        <p style="margin-top:20px;"><strong>Försök istället:</strong></p>
+        <ul style="margin-top:10px; margin-left:20px;">
+          <li>Klicka på "Öppna direkt" för att besöka sidan</li>
+          <li>Prova en annan webbplats (t.ex. example.com)</li>
+        </ul>
+      </div>
+    `;
+    showStatus('❌ Kunde inte hämta innehåll: ' + error.message, 'error');
   }
 }
 
-function openTest(v){
-  document.getElementById('urlInput').value = v;
-  navigate();
+function openDirect() {
+  if (!currentUrl) {
+    const input = document.getElementById('urlInput').value.trim();
+    if (!input) {
+      showStatus('⚠️ Ange en webbadress först!', 'error');
+      return;
+    }
+    currentUrl = input.startsWith('http') ? input : 'https://' + input;
+  }
+  
+  showStatus('🚀 Öppnar ' + currentUrl + ' direkt...', 'success');
+  setTimeout(() => {
+    window.location.href = currentUrl;
+  }, 500);
 }
 
-function addToHistory(url, save){
-  const list = document.getElementById('historyList');
-  const li = document.createElement('li');
-  const a = document.createElement('a');
-  a.href = "#"; a.textContent = url;
-  a.onclick = () => {
-    document.getElementById('urlInput').value = url;
-    navigate();
-  };
-  const favBtn = document.createElement('button');
-  favBtn.textContent = "★ Favorit";
-  favBtn.class
+function showStatus(message, type) {
+  const statusBar = document.getElementById('statusBar');
+  statusBar.innerHTML = `<div class="status status-${type}">${message}</div>`;
+}
+</script>
+
+</body>
+</html>
