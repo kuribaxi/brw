@@ -22,10 +22,10 @@
 </div>
 
 <div class="samples">
-  <button onclick="openTest('https://karwan.tv')">karwan.tv</button>
-  <button onclick="openTest('https://example.com')">example.com</button>
-  <button onclick="openTest('https://wikipedia.org')">wikipedia.org</button>
-  <button onclick="openTest('https://www.bing.com/search?q=borrelia+behandling')">Sök borrelia</button>
+  <button onclick="openTest('karwan.tv')">karwan.tv</button>
+  <button onclick="openTest('example.com')">example.com</button>
+  <button onclick="openTest('wikipedia.org')">wikipedia.org</button>
+  <button onclick="openTest('borrelia behandling')">Sök borrelia</button>
 </div>
 
 <div class="iframe-container">
@@ -33,6 +33,9 @@
 </div>
 
 <script>
+// Din Vercel-proxyadress:
+const PROXY_BASE = 'https://virtual-browser-kuribaxi.vercel.app/proxy?url=';
+
 function fixURL(url){
   url = url.trim();
   if(!/^https?:\/\//i.test(url)) return 'https://' + url;
@@ -46,10 +49,10 @@ function navigate(){
   if(/\s/.test(raw) || !raw.includes('.')){
     const q = encodeURIComponent(raw);
     const searchUrl = 'https://www.bing.com/search?q=' + q;
-    document.getElementById('contentFrame').src = searchUrl;
+    document.getElementById('contentFrame').src = PROXY_BASE + encodeURIComponent(searchUrl);
   } else {
     let url = fixURL(raw);
-    document.getElementById('contentFrame').src = url;
+    document.getElementById('contentFrame').src = PROXY_BASE + encodeURIComponent(url);
   }
 }
 
