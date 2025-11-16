@@ -57,7 +57,6 @@
 
 <div class="samples">
   <button onclick="openTest('karwan.tv')">karwan.tv</button>
-  <button onclick="openTest('example.com')">example.com</button>
   <button onclick="openTest('wikipedia.org')">wikipedia.org</button>
   <button onclick="openTest('borrelia behandling')">Sök borrelia</button>
 </div>
@@ -97,7 +96,7 @@
 </div>
 
 <script>
-const PROXY_BASE = 'https://virtual-browser-ctq2ot7h4-kuribaxis-projects.vercel.app/api/proxy?url=';
+const PROXY_BASE = 'https://virtual-browser-ctq2ot7h4-kuribaxis-projects.vercel.app/proxy?url=';
 let totalBlocked = 0;
 
 window.onload = function() {
@@ -144,13 +143,13 @@ async function navigate(){
 
     document.getElementById('status').innerHTML =
       `<span class="tooltip">${icon}<span class="tooltiptext">${tooltipText}</span></span> ` +
-      `Laddar: ${finalUrl} (Blockerade: ${blockedCount})`;
+      `Laddar: ${raw} (Blockerade: ${blockedCount})`;
 
-    addToHistory(finalUrl, true);
+    addToHistory(raw, true);
 
   } catch (err) {
     document.getElementById('status').innerHTML =
-      `<span class='error'>Fel: kunde inte ladda ${finalUrl}</span>`;
+      `<span class='error'>Fel: kunde inte ladda ${raw}</span>`;
   }
 }
 
@@ -165,11 +164,9 @@ function addToHistory(url, save){
   const a = document.createElement('a');
   a.href = "#"; a.textContent = url;
   a.onclick = () => {
-    document.getElementById('contentFrame').src = url;
-    document.getElementById('status').textContent = "Laddar från historik: " + url;
+    document.getElementById('urlInput').value = url;
+    navigate();
   };
   const favBtn = document.createElement('button');
   favBtn.textContent = "★ Favorit";
-  favBtn.className = "fav-btn";
-  favBtn.onclick = () => addToFavorites(url, true);
-  li.appendChild(a); li.appendChild(f
+  favBtn.class
