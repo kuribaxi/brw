@@ -274,9 +274,83 @@
     @media (max-width:360px){
       .form-row{grid-template-columns:1fr;gap:8px}
     }
+    @media (max-width:340px){
+      .hdr{padding:10px 8px}
+      .dhdr{padding:10px 8px}
+      .hdr-toprow,.dhdr-toprow{gap:6px}
+      .hdr-actions{gap:3px}
+      .hdr-logo,.dhdr-avatar{width:34px;height:34px;font-size:15px;border-radius:10px}
+      .icon-btn{width:36px;height:36px;border-radius:11px}
+      .icon-btn svg{width:17px;height:17px}
+      .save-btn,.pdf-btn,.back-btn{width:36px;height:36px}
+      .cal-btn{width:36px;height:36px}
+      .hdr-title{font-size:14px}
+      .hdr-sub{font-size:10px}
+    }
+
+    /* ===== LOGIN ===== */
+    body.locked > .page,body.locked > .bot-nav{display:none}
+    .login-ov{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
+    .login-ov.h{display:none}
+    .login-card{width:100%;max-width:360px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:32px 24px;box-shadow:var(--shadow);text-align:center}
+    .login-logo{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,var(--primary),#9B59E8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;margin:0 auto 18px;box-shadow:0 4px 14px var(--primary-glow)}
+    .login-title{font-size:19px;font-weight:900;color:var(--text)}
+    .login-sub{font-size:13px;color:var(--text3);font-weight:600;margin-top:4px;margin-bottom:20px}
+    .login-input{width:100%;height:54px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 16px;font-family:var(--font);font-size:17px;font-weight:700;color:var(--text);outline:none;text-align:center;letter-spacing:2px;transition:border .2s}
+    .login-input:focus{border-color:var(--primary)}
+    .login-err{font-size:13px;font-weight:700;color:var(--rose);margin-top:10px}
+    .login-err.h{display:none}
+    .login-btn{width:100%;height:54px;border-radius:var(--rsm);border:none;margin-top:14px;background:linear-gradient(135deg,var(--primary) 0%,#9B59E8 100%);color:#fff;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px var(--primary-glow);transition:opacity .2s,transform .1s}
+    .login-btn:active{transform:scale(.98);opacity:.92}
+    .login-reset{margin-top:16px;font-size:12px;font-weight:700;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--font)}
+
+    /* ===== PC-LÄGE (större knappar/ytor för dator) ===== */
+    body.pc-mode .home-body,body.pc-mode .detail-body{max-width:980px}
+    body.pc-mode .hdr-toprow,body.pc-mode .dhdr-toprow{gap:14px}
+    body.pc-mode .hdr-logo,body.pc-mode .dhdr-avatar{width:56px;height:56px;font-size:24px;border-radius:16px}
+    body.pc-mode .hdr-title{font-size:21px}
+    body.pc-mode .hdr-sub,body.pc-mode .dhdr-sub{font-size:13px}
+    body.pc-mode .dhdr-name{font-size:21px}
+    body.pc-mode .icon-btn{width:56px;height:56px;border-radius:16px;font-size:19px}
+    body.pc-mode .icon-btn svg{width:25px;height:25px}
+    body.pc-mode .cal-btn{width:56px;height:56px;font-size:23px;border-radius:16px}
+    body.pc-mode .save-btn,body.pc-mode .pdf-btn,body.pc-mode .back-btn{height:56px;width:auto;padding:0 22px;font-size:16px;gap:8px;border-radius:16px}
+    body.pc-mode .btn-label{display:inline}
+    body.pc-mode .date-block{padding:14px 20px}
+    body.pc-mode .date-clock{font-size:30px}
+    body.pc-mode .date-text{font-size:17px}
+    body.pc-mode .add-person-row input,body.pc-mode .form-input,body.pc-mode .form-select,body.pc-mode .reminder-input{height:60px;font-size:17px}
+    body.pc-mode .btn-add-person,body.pc-mode .btn-add-task{height:62px;font-size:18px}
+    body.pc-mode .sec-tab{height:54px;font-size:16px}
+    body.pc-mode .person-card{padding:24px 22px 22px}
+    body.pc-mode .person-card .card-avatar{width:64px;height:64px;font-size:28px;border-radius:18px}
+    body.pc-mode .person-card .card-name{font-size:19px}
+    body.pc-mode .stat-pill{font-size:14px;padding:7px 14px}
+    body.pc-mode .check-btn{width:44px;height:44px;border-radius:13px}
+    body.pc-mode .del-btn{width:46px;height:46px;font-size:18px}
+    body.pc-mode .task-text{font-size:17px}
+    body.pc-mode .task-item{padding:16px 14px}
+    body.pc-mode .tag{font-size:13px;padding:4px 12px}
+    body.pc-mode .nav-btn{height:64px;font-size:13px}
+    body.pc-mode .nav-btn i{font-size:23px}
+    body.pc-mode .modal-sheet{max-width:760px;border-radius:var(--r)}
+    body.pc-mode .modal-btn{height:58px;font-size:17px}
   </style>
 </head>
-<body>
+<body class="locked">
+
+<!-- ═══════ INLOGGNING ═══════ -->
+<div class="login-ov" id="loginOv">
+  <div class="login-card">
+    <div class="login-logo"><i class="fas fa-lock"></i></div>
+    <div class="login-title" id="loginTitle">Ange lösenord</div>
+    <div class="login-sub" id="loginSub">Skriv lösenordet för att fortsätta</div>
+    <input type="password" class="login-input" id="loginInput" placeholder="••••••" autocomplete="off" onkeydown="if(event.key==='Enter')submitLogin()">
+    <div class="login-err h" id="loginErr">Fel lösenord, försök igen</div>
+    <button class="login-btn" onclick="submitLogin()" id="loginSubmitBtn">Logga in</button>
+    <button class="login-reset" id="loginResetBtn" onclick="resetPassword()">Glömt lösenordet? Återställ</button>
+  </div>
+</div>
 
 <!-- ═══════ HOME PAGE ═══════ -->
 <div class="page" id="pageHome">
@@ -290,6 +364,9 @@
       <div class="hdr-actions">
         <button class="save-btn" onclick="saveAndConfirm()" title="Spara"><i class="fas fa-floppy-disk"></i><span class="btn-label"> Spara</span></button>
         <button class="pdf-btn" onclick="exportAllPDF()" title="PDF"><i class="fas fa-file-pdf"></i><span class="btn-label"> PDF</span></button>
+        <button class="icon-btn" onclick="togglePcMode()" title="PC-anpassad vy" id="pcModeBtn">
+          <i class="fas fa-desktop"></i>
+        </button>
         <button class="icon-btn" onclick="toggleNight()" title="Nattläge" id="nightBtn">
           <svg id="nightSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
@@ -485,6 +562,8 @@ function buildColorMap(){
 
 document.addEventListener('DOMContentLoaded',()=>{
   if(night)applyNight();
+  if(localStorage.getItem('pcMode')==='true')applyPcMode(true);
+  checkLoginState();
   rolloverOverdueTasks();
   updateClock(); setInterval(updateClock,1000);
   buildColorMap();
@@ -492,6 +571,65 @@ document.addEventListener('DOMContentLoaded',()=>{
   checkReminders(); setInterval(checkReminders,30000);
   if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
 });
+
+/* ===== INLOGGNING ===== */
+const PW_KEY='familyAppPassword';
+function checkLoginState(){
+  const savedPw=localStorage.getItem(PW_KEY);
+  const authed=sessionStorage.getItem('familyAppAuthed')==='true';
+  if(authed){unlockApp();return;}
+  if(savedPw){
+    document.getElementById('loginTitle').textContent='Ange lösenord';
+    document.getElementById('loginSub').textContent='Skriv lösenordet för att fortsätta';
+    document.getElementById('loginResetBtn').classList.remove('h');
+  }else{
+    document.getElementById('loginTitle').textContent='Skapa lösenord';
+    document.getElementById('loginSub').textContent='Ange ett lösenord som skyddar appen';
+    document.getElementById('loginResetBtn').classList.add('h');
+  }
+  document.getElementById('loginInput').value='';
+  setTimeout(()=>document.getElementById('loginInput').focus(),50);
+}
+function submitLogin(){
+  const val=document.getElementById('loginInput').value;
+  if(!val.trim())return;
+  const savedPw=localStorage.getItem(PW_KEY);
+  if(!savedPw){
+    localStorage.setItem(PW_KEY,val);
+    unlockApp();
+    toast('🔒 Lösenord skapat!');
+  }else if(val===savedPw){
+    unlockApp();
+  }else{
+    document.getElementById('loginErr').classList.remove('h');
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginInput').focus();
+  }
+}
+function unlockApp(){
+  sessionStorage.setItem('familyAppAuthed','true');
+  document.getElementById('loginOv').classList.add('h');
+  document.body.classList.remove('locked');
+}
+function resetPassword(){
+  if(confirm('Återställa lösenordet? Du kan då ange ett helt nytt lösenord.')){
+    localStorage.removeItem(PW_KEY);
+    checkLoginState();
+  }
+}
+
+/* ===== PC-LÄGE ===== */
+function applyPcMode(on){
+  document.body.classList.toggle('pc-mode',on);
+  const btn=document.getElementById('pcModeBtn');
+  if(btn)btn.style.color=on?'var(--primary)':'';
+}
+function togglePcMode(){
+  const on=!document.body.classList.contains('pc-mode');
+  applyPcMode(on);
+  localStorage.setItem('pcMode',on?'true':'false');
+  toast(on?'🖥️ PC-anpassad vy på':'📱 Mobilvy på');
+}
 
 function applyNight(){
   document.body.classList.toggle('night',night);
