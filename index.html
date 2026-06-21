@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
-    /* ... (CSS: samma som tidigare, oförändrad förutom tillägg för .task-note och .task-link) */
     :root {
       --bg:#F0EDF8; --surface:#fff; --surface2:#F7F5FC; --border:#E4DEFC;
       --primary:#6C47E8; --primary-soft:#EDE8FC; --primary-glow:rgba(108,71,232,0.18);
@@ -259,6 +258,42 @@
     .cal-day-detail .detail-desc{color:var(--text2);font-size:14px;margin-top:4px}
     .cal-day-detail .detail-flag{font-size:20px;margin-right:6px}
 
+    /* ===== SAVED PDF SECTION ===== */
+    .saved-pdf-section{padding:16px 18px 0}
+    .saved-pdf-section .pdf-card{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:12px}
+    .saved-pdf-section .pdf-card .pdf-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+    .saved-pdf-section .pdf-card .pdf-title{font-weight:800;font-size:15px;color:var(--text)}
+    .saved-pdf-section .pdf-card .pdf-meta{font-size:12px;color:var(--text3)}
+    .saved-pdf-section .pdf-card .pdf-actions{display:flex;gap:8px}
+    .saved-pdf-section .pdf-card .pdf-actions button{height:38px;padding:0 14px;border-radius:10px;border:none;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+    .saved-pdf-section .pdf-card .pdf-actions .print-btn{background:var(--primary);color:#fff}
+    .saved-pdf-section .pdf-card .pdf-actions .print-btn:active{opacity:.8;transform:scale(.96)}
+    .saved-pdf-section .pdf-card .pdf-actions .delete-pdf-btn{background:var(--rose-soft);color:var(--rose)}
+    .saved-pdf-section .pdf-card .pdf-actions .delete-pdf-btn:active{opacity:.8;transform:scale(.96)}
+    .saved-pdf-section .pdf-empty{text-align:center;padding:30px 16px;color:var(--text3)}
+
+    /* ===== UPLOAD PDF SECTION ===== */
+    .upload-pdf-section{padding:0 18px 16px}
+    .upload-pdf-section .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .2s}
+    .upload-pdf-section .upload-area:hover{border-color:var(--primary);background:var(--primary-soft)}
+    .upload-pdf-section .upload-area .upload-icon{font-size:32px;color:var(--text3);margin-bottom:8px}
+    .upload-pdf-section .upload-area .upload-text{font-weight:700;color:var(--text2)}
+    .upload-pdf-section .upload-area .upload-sub{font-size:13px;color:var(--text3)}
+    .upload-pdf-section .upload-area input[type="file"]{display:none}
+
+    /* ===== PDF PREVIEW IN MODAL ===== */
+    .pdf-preview-body{font-family:'Nunito',sans-serif;padding:20px;background:#fff;color:#1E1535}
+    .pdf-preview-body .pdf-header{padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px}
+    .pdf-preview-body .pdf-header h2{font-size:24px;color:#1E1535;margin:0}
+    .pdf-preview-body .pdf-header p{color:#7168A0;font-size:14px;margin:4px 0}
+    .pdf-preview-body .pdf-task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8}
+    .pdf-preview-body .pdf-check{font-size:18px;flex-shrink:0}
+    .pdf-preview-body .pdf-text{font-weight:700;color:#1E1535;flex:1}
+    .pdf-preview-body .pdf-text.done{text-decoration:line-through;color:#A89FCE}
+    .pdf-preview-body .pdf-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0}
+    .pdf-preview-body .pdf-person{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}
+    .pdf-preview-body .pdf-footer{text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px}
+
     /* ===== MOBILANPASSNING ===== */
     .add-person-row input,.form-select,.form-input{min-width:0}
     .form-row{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -370,11 +405,10 @@
       <div class="hdr-logo"><i class="fas fa-clipboard-list"></i></div>
       <div class="hdr-info">
         <div class="hdr-title">Familjens Planerare</div>
-        <div class="hdr-sub">Håll koll på familjens uppgifter</div>
+        <div class="hdr-sub"></div>
       </div>
       <div class="hdr-actions">
         <button class="save-btn" onclick="saveAndConfirm()" title="Spara"><i class="fas fa-floppy-disk"></i><span class="btn-label"> Spara</span></button>
-        <button class="pdf-btn" onclick="exportAllPDF()" title="PDF"><i class="fas fa-file-pdf"></i><span class="btn-label"> PDF</span></button>
         <button class="icon-btn" onclick="togglePcMode()" title="PC-anpassad vy" id="pcModeBtn">
           <i class="fas fa-desktop"></i>
         </button>
@@ -416,6 +450,26 @@
 
     <div class="cards-section">
       <div class="cards-grid" id="cardsGrid"></div>
+    </div>
+
+    <!-- SAVED PDFs SECTION -->
+    <div class="saved-pdf-section" id="savedPdfSection">
+      <div class="pdf-card" style="border-color:var(--primary);background:var(--primary-soft);margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--text)">
+          <i class="fas fa-file-pdf" style="color:var(--rose)"></i> Sparade PDF-filer
+        </div>
+      </div>
+      <div id="savedPdfList"></div>
+    </div>
+
+    <!-- UPLOAD PDF SECTION -->
+    <div class="upload-pdf-section">
+      <div class="upload-area" onclick="document.getElementById('pdfUpload').click()">
+        <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+        <div class="upload-text">Ladda upp PDF med uppgifter</div>
+        <div class="upload-sub">Välj en PDF-fil för att importera uppgifter till vald person</div>
+        <input type="file" id="pdfUpload" accept=".pdf" onchange="handlePDFUpload(event)">
+      </div>
     </div>
   </div>
 
@@ -537,6 +591,7 @@
     </div>
     <div class="modal-ftr">
       <button class="modal-btn mbtn-danger" onclick="downloadPDF()"><i class="fas fa-download"></i> Ladda ner PDF</button>
+      <button class="modal-btn mbtn-neutral" onclick="savePDFToApp()"><i class="fas fa-save"></i> Spara i appen</button>
       <button class="modal-btn mbtn-neutral" onclick="closePDF()">Stäng</button>
     </div>
   </div>
@@ -550,9 +605,6 @@ const PERSON_COLORS = ['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#EC489
 const TIME_LABELS   = {today:'Idag',tomorrow:'Imorgon',week:'Denna vecka',month:'Denna månad',thisyear:'Pågående år',nextyear:'Nästa år',future:'Framtiden',sometime:'Någon gång'};
 const TIME_ORDER    = ['today','tomorrow','week','month','thisyear','nextyear','future','sometime'];
 
-// === DATAHANTERING MED LOCALSTORAGE (SPARAS I WEBBLÄSAREN) ===
-// FÖR ATT DELA MELLAN ENHETER: ANVÄND EXEMPELVIS FIREBASE ELLER SYNKSERVER
-// DETTA ÄR EN ENKEL LÖSNING FÖR LOKAL LAGRING
 function sl(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
 let tasks        = sl('familyTasks',[]);
 let trash        = sl('familyTrash',[]);
@@ -571,6 +623,10 @@ let calMonth     = new Date().getMonth();
 let calYear      = new Date().getFullYear();
 let selectedCalDay = null;
 
+// Saved PDFs in app
+let savedPDFs = sl('savedPDFs', []);
+let tempPDFData = null;
+
 function buildColorMap(){
   colorMap['all'] = PERSON_COLORS[0];
   persons.forEach((p,i)=>{ colorMap[p] = PERSON_COLORS[(i+1)%PERSON_COLORS.length]; });
@@ -584,6 +640,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   updateClock(); setInterval(updateClock,1000);
   buildColorMap();
   renderCards();
+  renderSavedPDFs();
   checkReminders(); setInterval(checkReminders,30000);
   if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
 });
@@ -671,33 +728,33 @@ function sameDate(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===
 function getSwedishRedDays(year){
   const easter=easterSunday(year);
   const days = [
-    {d:new Date(year,0,1),name:'Nyårsdagen - Årets första dag, firas med fest och fyrverkerier'},
-    {d:new Date(year,0,6),name:'Trettondedag jul - Trettondagsafton, avslutar julhelgen'},
-    {d:addDays(easter,-2),name:'Långfredagen - Minnet av Jesu korsfästelse'},
-    {d:easter,name:'Påskdagen - Kristi uppståndelse, den viktigaste kristna högtiden'},
-    {d:addDays(easter,1),name:'Annandag påsk - Fortsättning på påskfirandet'},
-    {d:new Date(year,4,1),name:'Första maj - Arbetarrörelsens dag med demonstrationer och tal'},
-    {d:addDays(easter,39),name:'Kristi himmelsfärdsdag - Jesu himmelsfärd'},
-    {d:new Date(year,5,6),name:'Sveriges nationaldag - Firar att Sverige blev ett enat kungarike 1523'},
-    {d:addDays(easter,49),name:'Pingstdagen - Den helige Andes ankomst'},
-    {d:new Date(year,11,25),name:'Juldagen - Firar Jesu födelse med tomte, julklappar och familjemiddag'},
-    {d:new Date(year,11,26),name:'Annandag jul - Andra juledagen, ofta med släktkalas'},
+    {d:new Date(year,0,1),name:'Nyårsdagen'},
+    {d:new Date(year,0,6),name:'Trettondedag jul'},
+    {d:addDays(easter,-2),name:'Långfredagen'},
+    {d:easter,name:'Påskdagen'},
+    {d:addDays(easter,1),name:'Annandag påsk'},
+    {d:new Date(year,4,1),name:'Första maj'},
+    {d:addDays(easter,39),name:'Kristi himmelsfärdsdag'},
+    {d:new Date(year,5,6),name:'Sveriges nationaldag'},
+    {d:addDays(easter,49),name:'Pingstdagen'},
+    {d:new Date(year,11,25),name:'Juldagen'},
+    {d:new Date(year,11,26),name:'Annandag jul'},
   ];
   for(let day=20; day<=26; day++){
     const d = new Date(year, 5, day);
-    if(d.getDay() === 6) days.push({d, name:'Midsommarafton - Sveriges mest älskade högtid med dans, sill och jordgubbar! 🎉'});
+    if(d.getDay() === 6) days.push({d, name:'Midsommarafton'});
   }
   for(let day=31; day<=37; day++){
     const realDay = day>31 ? day-31 : day;
     const month = day>31 ? 10 : 9;
     const d = new Date(year, month, realDay);
-    if(d.getDay() === 6) days.push({d, name:'Alla helgons dag - Tänd ett ljus för bortgångna nära och kära 🕯️'});
+    if(d.getDay() === 6) days.push({d, name:'Alla helgons dag'});
   }
   for(let m=0; m<12; m++){
     for(let d=1; d<=31; d++){
       const date = new Date(year, m, d);
       if(date.getMonth()===m && date.getDay()===0){
-        days.push({d:date, name:'Söndag - Helgdag i Sverige'});
+        days.push({d:date, name:'Söndag'});
       }
     }
   }
@@ -717,7 +774,7 @@ function getIranianRedDaysForMonth(year, month){
     const [jy,jm,jd] = gregorianToJalali(year, month+1, day);
     const [hy,hm,hd] = gregorianToHijri(year, month+1, day);
     let name = null;
-    if(d.getDay()===5) name = 'جمعه (Fredag) - Veckans heliga dag i Iran';
+    if(d.getDay()===5) name = 'جمعه (Fredag)';
     const jKey = `${jm}-${jd}`;
     if(IRANIAN_JALALI_HOLIDAYS[jKey]) name = IRANIAN_JALALI_HOLIDAYS[jKey];
     const hKey = `${hm}-${hd}`;
@@ -734,21 +791,21 @@ function getSaudiRedDaysForMonth(year, month){
     const d = new Date(year, month, day);
     const [hy,hm,hd] = gregorianToHijri(year, month+1, day);
     let name = null;
-    if(d.getDay()===5) name = 'Jummah (Fredag) - Den heliga bönen, veckans heligaste dag';
+    if(d.getDay()===5) name = 'Jummah (Fredag)';
     const hKey = `${hm}-${hd}`;
     const saudiHijri = {
-      '1-1': 'Hijri New Year - Det islamiska nyåret, profetens utvandring till Medina',
-      '1-10': 'Ashura - Minnet av profeten Noas och Moses räddning',
-      '3-12': 'Mawlid - Profeten Muhammeds födelsedag, firas med glädje',
-      '9-1': 'Ramadan börjar - Den heliga fastemånadens början',
-      '10-1': 'Eid al-Fitr - Bryta fastan, stort firande efter Ramadan',
-      '12-10': 'Eid al-Adha - Offerhögtiden, minner om profeten Abrahams lydnad'
+      '1-1': 'Hijri New Year',
+      '1-10': 'Ashura',
+      '3-12': 'Mawlid',
+      '9-1': 'Ramadan börjar',
+      '10-1': 'Eid al-Fitr',
+      '12-10': 'Eid al-Adha'
     };
     if(saudiHijri[hKey]) name = saudiHijri[hKey];
     const gKey = `${d.getMonth()+1}-${d.getDate()}`;
     const saudiGreg = {
-      '1-1': 'Nyårsdagen - Internationella nyåret',
-      '9-23': 'Saudi Nationaldag - Firar kungarikets enande 1932'
+      '1-1': 'Nyårsdagen',
+      '9-23': 'Saudi Nationaldag'
     };
     if(saudiGreg[gKey]) name = saudiGreg[gKey];
     if(name) results.push({d, name});
@@ -902,7 +959,7 @@ function showDayDetail(day, redNamesStr){
   
   const redNames = redNamesStr ? redNamesStr.split('||') : [];
   if(calView === 0 && date.getDay() === 0 && !redNames.length){
-    redNames.push('Söndag - Helgdag i Sverige');
+    redNames.push('Söndag');
   }
   
   if(redNames.length > 0){
@@ -928,34 +985,34 @@ function showDayDetail(day, redNamesStr){
 }
 
 const IRANIAN_JALALI_HOLIDAYS={
-  '1-1':'نوروز (Nowruz) - Persiskt nyår, vårdagjämningen, naturens återfödelse',
-  '1-2':'نوروز (Nowruz) - Andra dagen av Nowruz, fortsättning på nyårsfirandet',
-  '1-3':'نوروز (Nowruz) - Tredje dagen av Nowruz, fortfarande helgdag',
-  '1-4':'نوروز (Nowruz) - Fjärde dagen av Nowruz, sista helgdagen av nyåret',
-  '1-12':'روز جمهوری اسلامی - Islamiska republikens dag, firar grundandet av den islamiska republiken Iran 1979',
-  '1-13':'سیزده بدر - Naturdagen (Sizdah Bedar), tradition att tillbringa dagen utomhus i naturen',
-  '3-14':'رحلت امام خمینی - Imam Khomeinis bortgång, sorgehögtid för revolutionens ledare',
-  '3-15':'قیام ۱۵ خرداد - Upproret 15 Khordad, minne av folkets uppror mot shahens regim 1963',
-  '11-22':'پیروزی انقلاب اسلامی - Den islamiska revolutionens seger, irans nationaldag 1979',
-  '12-29':'ملی شدن نفت - Nationaliseringsdagen av oljan, minns när Irans olja nationaliserades 1951'
+  '1-1':'نوروز (Nowruz)',
+  '1-2':'نوروز (Nowruz)',
+  '1-3':'نوروز (Nowruz)',
+  '1-4':'نوروز (Nowruz)',
+  '1-12':'روز جمهوری اسلامی',
+  '1-13':'سیزده بدر',
+  '3-14':'رحلت امام خمینی',
+  '3-15':'قیام ۱۵ خرداد',
+  '11-22':'پیروزی انقلاب اسلامی',
+  '12-29':'ملی شدن نفت'
 };
 const IRANIAN_HIJRI_HOLIDAYS={
-  '1-9':'تاسوعای حسینی - Tasua, sorgehögtid för Imam Husseins martyrskap i slaget vid Karbala',
-  '1-10':'عاشورا - Ashura, den viktigaste sorgehögtiden för shiamuslimer, Imam Husseins martyrskap',
-  '1-21':'حدیث چهلم (اربعین) - Arba\'in, 40 dagar efter Ashura, minne av Karbala-martyrierna',
-  '2-28':'رحلت پیامبر - Profeten Muhammeds bortgång och Imam Hassans martyrium, sorgedag',
-  '3-8':'شهادت امام رضا - Imam Rezas martyrium, den åttonde shiaimamens dödsdag',
-  '3-17':'میلاد پیامبر - Profeten Muhammeds födelsedag, firas med glädje och religiösa ceremonier',
-  '6-3':'شهادت حضرت فاطمه - Fatima al-Zahras martyrium, profetens dotter',
-  '7-13':'میلاد امام علی - Imam Alis födelsedag, den första shiaimamens och profetens kusin',
-  '7-27':'مبعث پیامبر - Profetens uppdragsdag, när Muhammed fick sin första uppenbarelse',
-  '8-15':'میلاد امام زمان - Imam al-Mahdis födelsedag, den tolfte och siste shiaimamens födelse',
-  '9-21':'شهادت امام علی - Imam Alis martyrskap, den första shiaimamens dödsdag',
-  '10-1':'عید فطر - Eid al-Fitr, slutet på Ramadan och början på Shawwal',
-  '10-2':'عید فطر - Andra dagen av Eid al-Fitr, fortsättning på firandet',
-  '10-25':'شهادت امام جعفر صادق - Imam Jafar al-Sadiqs martyrium, den sjätte shiaimamens dödsdag',
-  '12-10':'عید قربان - Eid al-Adha, offerhögtiden som minner om profeten Abraham',
-  '12-18':'عید غدیر - Eid al-Ghadir, firar profetens utnämning av Ali som hans efterträdare'
+  '1-9':'تاسوعای حسینی',
+  '1-10':'عاشورا',
+  '1-21':'حدیث چهلم (اربعین)',
+  '2-28':'رحلت پیامبر',
+  '3-8':'شهادت امام رضا',
+  '3-17':'میلاد پیامبر',
+  '6-3':'شهادت حضرت فاطمه',
+  '7-13':'میلاد امام علی',
+  '7-27':'مبعث پیامبر',
+  '8-15':'میلاد امام زمان',
+  '9-21':'شهادت امام علی',
+  '10-1':'عید فطر',
+  '10-2':'عید فطر',
+  '10-25':'شهادت امام جعفر صادق',
+  '12-10':'عید قربان',
+  '12-18':'عید غدیر'
 };
 
 function gregorianToJalali(gy,gm,gd){
@@ -1044,28 +1101,28 @@ function cycleCalendar(){
 }
 
 function checkSaudiRedDay(now, hy, hm, hd){
-  if(now.getDay()===5) return 'Jummah (Fredag) - Den heliga bönen, veckans heligaste dag';
+  if(now.getDay()===5) return 'Jummah (Fredag)';
   const hKey = `${hm}-${hd}`;
   const saudiHijri = {
-    '1-1': 'Hijri New Year - Det islamiska nyåret, profetens utvandring till Medina',
-    '1-10': 'Ashura - Minnet av profeten Noas och Moses räddning',
-    '3-12': 'Mawlid - Profeten Muhammeds födelsedag, firas med glädje',
-    '9-1': 'Ramadan börjar - Den heliga fastemånadens början',
-    '10-1': 'Eid al-Fitr - Bryta fastan, stort firande efter Ramadan',
-    '12-10': 'Eid al-Adha - Offerhögtiden, minner om profeten Abrahams lydnad'
+    '1-1': 'Hijri New Year',
+    '1-10': 'Ashura',
+    '3-12': 'Mawlid',
+    '9-1': 'Ramadan börjar',
+    '10-1': 'Eid al-Fitr',
+    '12-10': 'Eid al-Adha'
   };
   if(saudiHijri[hKey]) return saudiHijri[hKey];
   const gKey = `${now.getMonth()+1}-${now.getDate()}`;
   const saudiGreg = {
-    '1-1': 'Nyårsdagen - Internationella nyåret, observeras i Saudiarabien',
-    '9-23': 'Saudi Nationaldag - Firar kungarikets enande 1932, en stor nationell högtid'
+    '1-1': 'Nyårsdagen',
+    '9-23': 'Saudi Nationaldag'
   };
   if(saudiGreg[gKey]) return saudiGreg[gKey];
   return null;
 }
 
 function checkIranianRedDay(now,jy,jm,jd,hy,hm,hd){
-  if(now.getDay()===5) return 'جمعه (Fredag) - Veckans heliga dag i Iran, dagen för gemensam bön';
+  if(now.getDay()===5) return 'جمعه (Fredag)';
   const jKey=`${jm}-${jd}`;
   if(IRANIAN_JALALI_HOLIDAYS[jKey]) return IRANIAN_JALALI_HOLIDAYS[jKey];
   const hKey=`${hm}-${hd}`;
@@ -1227,7 +1284,7 @@ function goHome(){
   const detail=document.getElementById('pageDetail');
   const home=document.getElementById('pageHome');
   detail.classList.remove('open');
-  setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();},320);
+  setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();renderSavedPDFs();},320);
 }
 
 function switchTab(tab){
@@ -1354,9 +1411,9 @@ function moveToTrash(id){
 function generatePDFHTML(title, items, showPerson=false){
   const now = new Date().toLocaleDateString('sv-SE', {year:'numeric',month:'long',day:'numeric'});
   let html = `
-    <div class="pdf-header" style="font-family:'Nunito',sans-serif;padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px;">
-      <h2 style="font-size:24px;color:#1E1535;">📋 ${esc(title)}</h2>
-      <p style="color:#7168A0;font-size:14px;">Genererad: ${now}</p>
+    <div class="pdf-header">
+      <h2>📋 ${esc(title)}</h2>
+      <p>Genererad: ${now}</p>
       <p style="font-size:13px;color:#A89FCE;">${items.length} uppgifter totalt</p>
     </div>
   `;
@@ -1373,24 +1430,24 @@ function generatePDFHTML(title, items, showPerson=false){
     
     TIME_ORDER.forEach(tf => {
       if(grouped[tf] && grouped[tf].length > 0){
-        html += `<div style="margin-bottom:16px;font-family:'Nunito',sans-serif;">
+        html += `<div style="margin-bottom:16px;">
           <div style="font-weight:800;color:#7168A0;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;border-bottom:1px solid #E4DEFC;">${TIME_LABELS[tf]} (${grouped[tf].length})</div>`;
         grouped[tf].forEach(item => {
           const personLabel = item.person!=='all' ? (personLabels[item.person]||item.person) : null;
           const pcolor = colorMap[item.person] || '#999';
           const hasNote = item.note && item.note.trim() !== '';
           const hasLink = item.link && item.link.trim() !== '';
-          html += `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8;">
-            <div style="font-size:18px;flex-shrink:0;">${item.completed?'✅':'⬜'}</div>
+          html += `<div class="pdf-task-item">
+            <div class="pdf-check ${item.completed?'':'empty'}">${item.completed?'✅':'⬜'}</div>
             <div style="flex:1;">
-              <div style="${item.completed?'text-decoration:line-through;color:#A89FCE;':''}font-weight:700;color:#1E1535;">${esc(item.text)}</div>
+              <div class="pdf-text ${item.completed?'done':''}">${esc(item.text)}</div>
               ${hasNote ? `<div style="font-size:13px;color:#7168A0;margin-top:4px;"><i class="fas fa-pencil-alt"></i> ${esc(item.note)}</div>` : ''}
               ${hasLink ? `<div style="font-size:13px;color:#6C47E8;margin-top:4px;"><i class="fas fa-link"></i> <a href="${esc(item.link)}" style="color:#6C47E8;">${esc(item.link)}</a></div>` : ''}
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
-                <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0;">${TIME_LABELS[item.timeFrame]||'Någon gång'}</span>
-                ${showPerson && personLabel ? `<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:${pcolor};color:#fff;">${esc(personLabel)}</span>` : ''}
-                ${item.type==='shopping' ? '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#DCFDF2;color:#22C08A;">🛒</span>' : ''}
-                ${item.reminder ? `<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#FEF3C7;color:#92400E;">🔔 ${new Date(item.reminder).toLocaleDateString('sv-SE')}</span>` : ''}
+                <span class="pdf-tag">${TIME_LABELS[item.timeFrame]||'Någon gång'}</span>
+                ${showPerson && personLabel ? `<span class="pdf-person" style="background:${pcolor}">${esc(personLabel)}</span>` : ''}
+                ${item.type==='shopping' ? '<span class="pdf-tag">🛒</span>' : ''}
+                ${item.reminder ? `<span class="pdf-tag">🔔 ${new Date(item.reminder).toLocaleDateString('sv-SE')}</span>` : ''}
               </div>
             </div>
           </div>`;
@@ -1400,7 +1457,7 @@ function generatePDFHTML(title, items, showPerson=false){
     });
   }
   
-  html += `<div style="text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px;font-family:'Nunito',sans-serif;">Familjens Planerare · Genererad ${now}</div>`;
+  html += `<div class="pdf-footer">Familjens Planerare · Genererad ${now}</div>`;
   return html;
 }
 
@@ -1423,11 +1480,14 @@ function showPDFPreview(title, items, showPerson){
   const container = document.getElementById('pdfContent');
   container.innerHTML = generatePDFHTML(title, items, showPerson);
   document.getElementById('pdfModal').classList.remove('h');
+  // Store temp data for saving
+  tempPDFData = { title, items, showPerson, html: container.innerHTML };
 }
 
 function closePDF(){
   document.getElementById('pdfModal').classList.add('h');
   document.getElementById('pdfContent').innerHTML = '';
+  tempPDFData = null;
 }
 
 function downloadPDF(){
@@ -1443,11 +1503,91 @@ function downloadPDF(){
   toast('Genererar PDF...');
   html2pdf().set(opt).from(element).save().then(() => {
     toast('✅ PDF klar!');
-    closePDF();
   }).catch(err => {
     console.error(err);
     toast('❌ Kunde inte generera PDF','error');
   });
+}
+
+function savePDFToApp(){
+  if(!tempPDFData) return;
+  const id = Date.now();
+  const pdfEntry = {
+    id: id,
+    title: tempPDFData.title,
+    items: tempPDFData.items,
+    showPerson: tempPDFData.showPerson,
+    savedAt: new Date().toISOString(),
+    html: tempPDFData.html
+  };
+  savedPDFs.push(pdfEntry);
+  localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+  renderSavedPDFs();
+  toast('✅ PDF sparad i appen!');
+  closePDF();
+}
+
+function renderSavedPDFs(){
+  const container = document.getElementById('savedPdfList');
+  if(!savedPDFs.length){
+    container.innerHTML = `<div class="pdf-empty">Inga sparade PDF-filer ännu</div>`;
+    return;
+  }
+  container.innerHTML = savedPDFs.slice().reverse().map(pdf => `
+    <div class="pdf-card">
+      <div class="pdf-header">
+        <div>
+          <div class="pdf-title"><i class="fas fa-file-pdf" style="color:var(--rose)"></i> ${esc(pdf.title)}</div>
+          <div class="pdf-meta">${new Date(pdf.savedAt).toLocaleDateString('sv-SE')} · ${pdf.items.length} uppgifter</div>
+        </div>
+        <div class="pdf-actions">
+          <button class="print-btn" onclick="printSavedPDF(${pdf.id})"><i class="fas fa-print"></i> Skriv ut</button>
+          <button class="delete-pdf-btn" onclick="deleteSavedPDF(${pdf.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function printSavedPDF(id){
+  const pdf = savedPDFs.find(p => p.id === id);
+  if(!pdf) return;
+  const win = window.open('', '_blank');
+  if(win){
+    win.document.write(`
+      <html><head><title>${pdf.title}</title>
+      <style>
+        body{font-family:'Nunito',sans-serif;padding:20px;background:#fff;color:#1E1535;max-width:800px;margin:0 auto}
+        .pdf-header{padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px}
+        .pdf-header h2{font-size:24px;color:#1E1535;margin:0}
+        .pdf-header p{color:#7168A0;font-size:14px;margin:4px 0}
+        .pdf-task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8}
+        .pdf-check{font-size:18px;flex-shrink:0}
+        .pdf-text{font-weight:700;color:#1E1535;flex:1}
+        .pdf-text.done{text-decoration:line-through;color:#A89FCE}
+        .pdf-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0}
+        .pdf-person{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}
+        .pdf-footer{text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px}
+        @media print{body{padding:0} .pdf-header{background:#f5f3ff}}
+      </style>
+      </head><body>
+      ${pdf.html}
+      <script>
+        window.onload = function(){ window.print(); }
+      <\/script>
+      </body></html>
+    `);
+    win.document.close();
+  }
+}
+
+function deleteSavedPDF(id){
+  if(confirm('Ta bort den sparade PDF-filen?')){
+    savedPDFs = savedPDFs.filter(p => p.id !== id);
+    localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+    renderSavedPDFs();
+    toast('PDF borttagen');
+  }
 }
 
 function openTrash(){renderTrashModal();document.getElementById('trashModal').classList.remove('h');}
@@ -1518,6 +1658,80 @@ function toast(msg,type='success'){
 function spawnConfetti(){
   const em=['🎉','⭐','🎊','✨','💪','🏆','🌈'];
   for(let i=0;i<18;i++){const el=document.createElement('div');el.className='cp';el.textContent=em[Math.floor(Math.random()*em.length)];el.style.cssText=`left:${Math.random()*100}vw;top:-10px;font-size:${1.4+Math.random()*1.8}rem;animation-duration:${1.8+Math.random()*1.5}s`;document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+
+// ===== UPLOAD PDF =====
+function handlePDFUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  
+  // We need to parse the PDF content - since we can't parse PDFs directly in JS,
+  // we'll use a FileReader to read as text (though this won't parse PDF content).
+  // For demo purposes, we show a dialog to select which person to assign tasks to.
+  // In a real implementation, you'd use a PDF library like pdf.js to extract text.
+  
+  toast('PDF-läsning: Välj person att importera till');
+  
+  // Create a simple modal/dialog to choose person
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `
+    <div style="background:var(--surface);border-radius:var(--r);padding:24px;max-width:400px;width:100%;text-align:center;border:1.5px solid var(--border)">
+      <h3 style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px"><i class="fas fa-upload" style="color:var(--primary)"></i> Importera uppgifter</h3>
+      <p style="color:var(--text2);font-size:14px;margin-bottom:16px">Välj vilken person uppgifterna ska tillhöra</p>
+      <select id="importPersonSelect" style="width:100%;height:48px;border-radius:var(--rsm);border:2px solid var(--border);padding:0 14px;font-family:var(--font);font-size:15px;font-weight:700;color:var(--text);background:var(--surface2);margin-bottom:12px">
+        <option value="all">Alla</option>
+        ${persons.map(p => `<option value="${p}">${esc(personLabels[p]||p)}</option>`).join('')}
+      </select>
+      <div style="display:flex;gap:10px">
+        <button onclick="this.closest('div[style]').remove()" style="flex:1;height:44px;border-radius:var(--rsm);border:1.5px solid var(--border);background:var(--surface2);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:var(--text2)">Avbryt</button>
+        <button onclick="importTasksToPerson(this)" data-file="${file.name}" style="flex:1;height:44px;border-radius:var(--rsm);border:none;background:var(--primary);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:#fff">Importera</button>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:12px">OBS: PDF-innehåll kan inte tolkas automatiskt. Detta är en demonstration.</p>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  
+  // Reset file input
+  event.target.value = '';
+}
+
+function importTasksToPerson(btn){
+  const overlay = btn.closest('div[style]');
+  const select = document.getElementById('importPersonSelect');
+  const targetPerson = select.value;
+  const personLabel = targetPerson === 'all' ? 'Alla' : (personLabels[targetPerson]||targetPerson);
+  
+  // For demo: create some example tasks
+  const demoImportedTasks = [
+    { text: 'Exempeluppgift från PDF', type: 'todo', timeFrame: 'today', note: 'Importerad från PDF', link: '' },
+    { text: 'Kontrollera dokument', type: 'todo', timeFrame: 'week', note: 'Importerad från PDF', link: '' },
+    { text: 'Följ upp ärenden', type: 'shopping', timeFrame: 'thisyear', note: 'Importerad från PDF', link: '' }
+  ];
+  
+  let added = 0;
+  demoImportedTasks.forEach(t => {
+    tasks.push({
+      id: Date.now() + added,
+      text: t.text,
+      type: t.type,
+      timeFrame: t.timeFrame,
+      person: targetPerson,
+      reminder: null,
+      reminded: false,
+      completed: false,
+      createdAt: new Date().toISOString(),
+      note: t.note || '',
+      link: t.link || ''
+    });
+    added++;
+  });
+  
+  saveData();
+  renderCards();
+  renderDetail();
+  overlay.remove();
+  toast(`✅ ${added} uppgifter importerade till ${personLabel}!`);
 }
 </script>
 </body>
