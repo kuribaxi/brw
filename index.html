@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
+    /* ... (CSS: samma som tidigare, oförändrad förutom tillägg för .task-note och .task-link) */
     :root {
       --bg:#F0EDF8; --surface:#fff; --surface2:#F7F5FC; --border:#E4DEFC;
       --primary:#6C47E8; --primary-soft:#EDE8FC; --primary-glow:rgba(108,71,232,0.18);
@@ -125,6 +126,12 @@
     .reminder-input:focus{border-color:var(--primary)}
     .btn-add-task{width:100%;height:56px;border-radius:var(--rsm);border:none;margin-top:12px;background:linear-gradient(135deg,var(--primary) 0%,#9B59E8 100%);color:#fff;font-family:var(--font);font-size:17px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 20px var(--primary-glow);transition:opacity .2s,transform .1s}
     .btn-add-task:active{transform:scale(.98);opacity:.92}
+    .task-note-input, .task-link-input {
+      width:100%; height:44px; border-radius:var(--rsm); border:2px solid var(--border);
+      background:var(--surface2); padding:0 14px; font-family:var(--font); font-size:14px;
+      font-weight:600; color:var(--text); outline:none; margin-top:8px; transition:border .2s;
+    }
+    .task-note-input:focus, .task-link-input:focus { border-color:var(--primary); }
 
     .section-tabs{display:flex;gap:10px;padding:16px 18px 0}
     .sec-tab{flex:1;height:46px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface);font-family:var(--font);font-size:15px;font-weight:800;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
@@ -138,9 +145,9 @@
     .time-group{margin-bottom:4px}
     .time-group-label{display:flex;align-items:center;gap:8px;padding:8px 8px 4px;color:var(--text3);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
     .time-group-label hr{flex:1;border:none;border-top:1.5px solid var(--border)}
-    .task-item{display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:var(--rsm);transition:background .15s;border:1.5px solid transparent}
+    .task-item{display:flex;align-items:flex-start;gap:10px;padding:11px 10px;border-radius:var(--rsm);transition:background .15s;border:1.5px solid transparent}
     .task-item:active{background:var(--surface2)}
-    .check-btn{width:36px;height:36px;border-radius:11px;flex-shrink:0;border:2.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:transparent;transition:all .2s}
+    .check-btn{width:36px;height:36px;border-radius:11px;flex-shrink:0;border:2.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:transparent;transition:all .2s;margin-top:2px}
     .check-btn:active{border-color:var(--primary)}
     .check-btn.done-style{background:var(--emerald);border-color:var(--emerald);color:#fff}
     .task-content{flex:1;min-width:0}
@@ -158,12 +165,16 @@
     .tag.sometime{background:var(--surface2);color:var(--text2);border-color:var(--border)}
     .tag.person-tag{color:#fff;border-color:transparent}
     .tag.rem-tag{background:var(--amber-soft);color:#92400E;border-color:#FDE68A}
+    .task-note{font-size:13px;color:var(--text2);margin-top:4px;padding:4px 8px;background:var(--surface2);border-radius:6px;display:inline-block;word-break:break-word}
+    .task-link{font-size:13px;color:var(--primary);margin-top:4px;display:inline-block;word-break:break-all}
+    .task-link a{color:var(--primary);text-decoration:underline}
     body.night .tag.today{background:rgba(254,202,202,.15);color:#FCA5A5;border-color:rgba(254,202,202,.25)}
     body.night .tag.tomorrow{background:rgba(254,215,170,.15);color:#FDBA74;border-color:rgba(254,215,170,.25)}
     body.night .tag.week{background:rgba(253,230,138,.15);color:#FCD34D;border-color:rgba(253,230,138,.25)}
     body.night .tag.month{background:rgba(191,219,254,.15);color:#93C5FD;border-color:rgba(191,219,254,.25)}
     body.night .tag.rem-tag{background:rgba(253,230,138,.15);color:#FCD34D;border-color:rgba(253,230,138,.25)}
-    .del-btn{width:40px;height:40px;border-radius:11px;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s}
+    body.night .task-note{background:var(--border);color:var(--text2)}
+    .del-btn{width:40px;height:40px;border-radius:11px;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;margin-top:2px}
     .del-btn:active{background:var(--rose-soft);color:var(--rose)}
 
     .empty-state{padding:36px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -248,7 +259,7 @@
     .cal-day-detail .detail-desc{color:var(--text2);font-size:14px;margin-top:4px}
     .cal-day-detail .detail-flag{font-size:20px;margin-right:6px}
 
-    /* ===== MOBILANPASSNING: förhindra att element hamnar utanför skärmen ===== */
+    /* ===== MOBILANPASSNING ===== */
     .add-person-row input,.form-select,.form-input{min-width:0}
     .form-row{grid-template-columns:repeat(2,minmax(0,1fr))}
     .hdr-info,.dhdr-info{overflow:hidden}
@@ -304,7 +315,7 @@
     .login-btn:active{transform:scale(.98);opacity:.92}
     .login-reset{margin-top:16px;font-size:12px;font-weight:700;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--font)}
 
-    /* ===== PC-LÄGE (större knappar/ytor för dator) ===== */
+    /* ===== PC-LÄGE ===== */
     body.pc-mode .home-body,body.pc-mode .detail-body{max-width:980px}
     body.pc-mode .hdr-toprow,body.pc-mode .dhdr-toprow{gap:14px}
     body.pc-mode .hdr-logo,body.pc-mode .dhdr-avatar{width:56px;height:56px;font-size:24px;border-radius:16px}
@@ -449,6 +460,8 @@
           <option value="sometime">Någon gång</option>
         </select>
       </div>
+      <input type="text" class="task-note-input" id="taskNoteInput" placeholder="Anteckning (valfritt)">
+      <input type="text" class="task-link-input" id="taskLinkInput" placeholder="Länk (t.ex. https://...)" oninput="if(this.value.startsWith('http'))this.style.borderColor='var(--emerald)'">
       <input type="datetime-local" class="reminder-input" id="reminderTime">
       <button class="btn-add-task" onclick="addTask()"><i class="fas fa-plus"></i> Lägg till uppgift</button>
     </div>
@@ -537,6 +550,9 @@ const PERSON_COLORS = ['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#EC489
 const TIME_LABELS   = {today:'Idag',tomorrow:'Imorgon',week:'Denna vecka',month:'Denna månad',thisyear:'Pågående år',nextyear:'Nästa år',future:'Framtiden',sometime:'Någon gång'};
 const TIME_ORDER    = ['today','tomorrow','week','month','thisyear','nextyear','future','sometime'];
 
+// === DATAHANTERING MED LOCALSTORAGE (SPARAS I WEBBLÄSAREN) ===
+// FÖR ATT DELA MELLAN ENHETER: ANVÄND EXEMPELVIS FIREBASE ELLER SYNKSERVER
+// DETTA ÄR EN ENKEL LÖSNING FÖR LOKAL LAGRING
 function sl(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
 let tasks        = sl('familyTasks',[]);
 let trash        = sl('familyTrash',[]);
@@ -550,7 +566,7 @@ let currentTab   = 'todo';
 let colorMap     = {};
 let calMode      = parseInt(localStorage.getItem('calMode')||'0');
 let pdfData      = null;
-let calView      = 0; // 0=SE, 1=IR, 2=SA
+let calView      = 0;
 let calMonth     = new Date().getMonth();
 let calYear      = new Date().getFullYear();
 let selectedCalDay = null;
@@ -667,19 +683,16 @@ function getSwedishRedDays(year){
     {d:new Date(year,11,25),name:'Juldagen - Firar Jesu födelse med tomte, julklappar och familjemiddag'},
     {d:new Date(year,11,26),name:'Annandag jul - Andra juledagen, ofta med släktkalas'},
   ];
-  // Midsommar
   for(let day=20; day<=26; day++){
     const d = new Date(year, 5, day);
     if(d.getDay() === 6) days.push({d, name:'Midsommarafton - Sveriges mest älskade högtid med dans, sill och jordgubbar! 🎉'});
   }
-  // Alla helgons dag
   for(let day=31; day<=37; day++){
     const realDay = day>31 ? day-31 : day;
     const month = day>31 ? 10 : 9;
     const d = new Date(year, month, realDay);
     if(d.getDay() === 6) days.push({d, name:'Alla helgons dag - Tänd ett ljus för bortgångna nära och kära 🕯️'});
   }
-  // Sundays
   for(let m=0; m<12; m++){
     for(let d=1; d<=31; d++){
       const date = new Date(year, m, d);
@@ -743,7 +756,6 @@ function getSaudiRedDaysForMonth(year, month){
   return results;
 }
 
-// ===== CALENDAR VIEW =====
 function openCalendar(){
   calMonth = new Date().getMonth();
   calYear = new Date().getFullYear();
@@ -778,7 +790,6 @@ function renderCalendar(){
   const todayMonth = today.getMonth();
   const todayYear = today.getFullYear();
 
-  // Get red days for this month
   let redDays = [];
   if(calView === 0) redDays = getSwedishRedDaysForMonth(calYear, calMonth);
   else if(calView === 1) redDays = getIranianRedDaysForMonth(calYear, calMonth);
@@ -803,7 +814,6 @@ function renderCalendar(){
       <div class="cal-weekday">Sön</div>
   `;
 
-  // Adjust firstDay for Monday start (0=Sunday, 1=Monday...)
   let startOffset = firstDay === 0 ? 6 : firstDay - 1;
   
   for(let i=0; i<startOffset; i++){
@@ -835,9 +845,7 @@ function renderCalendar(){
       tagHtml = `<div class="cal-tag red-text">Söndag</div>`;
     }
     
-    const dataAttr = `data-day="${day}" data-month="${calMonth}" data-year="${calYear}" data-red="${escapeHtml(redNames.join('||'))}"`;
-    
-    html += `<div class="${classes}" ${dataAttr} onclick="showDayDetail(${day}, '${escapeHtml(redNames.join('||'))}')">
+    html += `<div class="${classes}" onclick="showDayDetail(${day}, '${escapeHtml(redNames.join('||'))}')">
       ${day}
       ${dotHtml}
       ${tagHtml}
@@ -852,14 +860,12 @@ function renderCalendar(){
 
   html += `</div>`;
 
-  // Legend
   const legendLabels = ['🇸🇪 Sverige', '🇮🇷 Iran', '🇸🇦 Saudiarabien'];
   html += `<div class="cal-legend">
     <span><span class="leg-dot ${calView===0?'se':calView===1?'ir':'sa'}"></span> Röd dag (${legendLabels[calView]})</span>
     <span><span class="leg-dot" style="background:var(--primary)"></span> Idag</span>
   </div>`;
 
-  // Day detail
   html += `<div class="cal-day-detail" id="calDayDetail">
     <div class="detail-date" id="detailDate"></div>
     <div id="detailRedDays"></div>
@@ -895,7 +901,6 @@ function showDayDetail(day, redNamesStr){
   dateEl.textContent = `${weekdayStr} ${day} ${monthNames[calMonth]} ${calYear}`;
   
   const redNames = redNamesStr ? redNamesStr.split('||') : [];
-  // Check if Sunday (for Swedish view)
   if(calView === 0 && date.getDay() === 0 && !redNames.length){
     redNames.push('Söndag - Helgdag i Sverige');
   }
@@ -913,17 +918,15 @@ function showDayDetail(day, redNamesStr){
   detailEl.classList.add('show');
   selectedCalDay = day;
   
-  // Highlight selected day
   document.querySelectorAll('.cal-day').forEach(el => {
     el.style.outline = 'none';
-    const d = parseInt(el.dataset.day);
+    const d = parseInt(el.innerText);
     if(d === day && !el.classList.contains('other-month')){
       el.style.outline = '3px solid var(--primary)';
     }
   });
 }
 
-// ===== CALENDAR RED DAY DATA =====
 const IRANIAN_JALALI_HOLIDAYS={
   '1-1':'نوروز (Nowruz) - Persiskt nyår, vårdagjämningen, naturens återfödelse',
   '1-2':'نوروز (Nowruz) - Andra dagen av Nowruz, fortsättning på nyårsfirandet',
@@ -1280,10 +1283,15 @@ function taskHTML(item,isDone){
   const remDate=item.reminder?new Date(item.reminder).toLocaleString('sv-SE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):null;
   const personLabel=item.person!=='all'?(personLabels[item.person]||item.person):null;
   const pcolor=colorMap[item.person]||'#999';
+  const hasNote = item.note && item.note.trim() !== '';
+  const hasLink = item.link && item.link.trim() !== '';
+  const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
   return `<div class="task-item">
     <div class="check-btn${isDone?' done-style':''}" data-id="${item.id}"><i class="fas fa-check"></i></div>
     <div class="task-content">
       <div class="task-text${isDone?' struck':''}">${esc(item.text)}</div>
+      ${hasNote ? `<div class="task-note"><i class="fas fa-pencil-alt"></i> ${esc(item.note)}</div>` : ''}
+      ${hasLink ? `<div class="task-link"><i class="fas fa-link"></i> <a href="${linkDisplay}" target="_blank">${esc(item.link)}</a></div>` : ''}
       <div class="task-meta">
         <span class="tag ${item.timeFrame}">${TIME_LABELS[item.timeFrame]}</span>
         ${currentPerson==='all'&&personLabel?`<span class="tag person-tag" style="background:${pcolor}">${esc(personLabel)}</span>`:''}
@@ -1299,10 +1307,29 @@ function addTask(){
   const inp=document.getElementById('taskInput');
   const text=inp.value.trim();
   if(!text){toast('Ange en uppgift','error');return;}
+  const note = document.getElementById('taskNoteInput').value.trim();
+  const link = document.getElementById('taskLinkInput').value.trim();
   const reminder=document.getElementById('reminderTime').value;
-  tasks.push({id:Date.now(),text,type:document.getElementById('taskType').value,timeFrame:document.getElementById('timeFrame').value,person:currentPerson,reminder:reminder?new Date(reminder).toISOString():null,reminded:false,completed:false,createdAt:new Date().toISOString()});
-  saveData(); inp.value=''; document.getElementById('reminderTime').value='';
-  toast('Uppgift tillagd! ✅'); renderDetail();
+  tasks.push({
+    id:Date.now(),
+    text,
+    type:document.getElementById('taskType').value,
+    timeFrame:document.getElementById('timeFrame').value,
+    person:currentPerson,
+    reminder:reminder?new Date(reminder).toISOString():null,
+    reminded:false,
+    completed:false,
+    createdAt:new Date().toISOString(),
+    note: note || '',
+    link: link || ''
+  });
+  saveData(); 
+  inp.value=''; 
+  document.getElementById('taskNoteInput').value='';
+  document.getElementById('taskLinkInput').value='';
+  document.getElementById('reminderTime').value='';
+  toast('Uppgift tillagd! ✅'); 
+  renderDetail();
 }
 
 function toggleComplete(id){
@@ -1327,15 +1354,15 @@ function moveToTrash(id){
 function generatePDFHTML(title, items, showPerson=false){
   const now = new Date().toLocaleDateString('sv-SE', {year:'numeric',month:'long',day:'numeric'});
   let html = `
-    <div class="pdf-header">
-      <h2>📋 ${esc(title)}</h2>
-      <p>Genererad: ${now}</p>
-      <p style="font-size:13px;color:var(--text3)">${items.length} uppgifter totalt</p>
+    <div class="pdf-header" style="font-family:'Nunito',sans-serif;padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px;">
+      <h2 style="font-size:24px;color:#1E1535;">📋 ${esc(title)}</h2>
+      <p style="color:#7168A0;font-size:14px;">Genererad: ${now}</p>
+      <p style="font-size:13px;color:#A89FCE;">${items.length} uppgifter totalt</p>
     </div>
   `;
   
   if(items.length === 0){
-    html += `<div class="empty-state"><div class="empty-icon"><i class="fas fa-clipboard-list"></i></div><div class="empty-text">Inga uppgifter att visa</div></div>`;
+    html += `<div style="text-align:center;padding:40px 20px;color:#A89FCE;">Inga uppgifter att visa</div>`;
   } else {
     const grouped = {};
     items.forEach(item => {
@@ -1346,19 +1373,25 @@ function generatePDFHTML(title, items, showPerson=false){
     
     TIME_ORDER.forEach(tf => {
       if(grouped[tf] && grouped[tf].length > 0){
-        html += `<div style="margin-bottom:12px">
-          <div style="font-weight:800;color:var(--text3);font-size:13px;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;border-bottom:1px solid var(--border)">${TIME_LABELS[tf]} (${grouped[tf].length})</div>`;
+        html += `<div style="margin-bottom:16px;font-family:'Nunito',sans-serif;">
+          <div style="font-weight:800;color:#7168A0;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;border-bottom:1px solid #E4DEFC;">${TIME_LABELS[tf]} (${grouped[tf].length})</div>`;
         grouped[tf].forEach(item => {
           const personLabel = item.person!=='all' ? (personLabels[item.person]||item.person) : null;
           const pcolor = colorMap[item.person] || '#999';
-          html += `<div class="pdf-task-item">
-            <div class="pdf-check ${item.completed?'':'empty'}">${item.completed?'✅':'⬜'}</div>
-            <div class="pdf-text ${item.completed?'done':''}">${esc(item.text)}</div>
-            <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center">
-              <span class="pdf-tag">${TIME_LABELS[item.timeFrame]||'Någon gång'}</span>
-              ${showPerson && personLabel ? `<span class="pdf-person" style="background:${pcolor}">${esc(personLabel)}</span>` : ''}
-              ${item.type==='shopping' ? '<span class="pdf-tag">🛒</span>' : ''}
-              ${item.reminder ? `<span class="pdf-tag">🔔 ${new Date(item.reminder).toLocaleDateString('sv-SE')}</span>` : ''}
+          const hasNote = item.note && item.note.trim() !== '';
+          const hasLink = item.link && item.link.trim() !== '';
+          html += `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8;">
+            <div style="font-size:18px;flex-shrink:0;">${item.completed?'✅':'⬜'}</div>
+            <div style="flex:1;">
+              <div style="${item.completed?'text-decoration:line-through;color:#A89FCE;':''}font-weight:700;color:#1E1535;">${esc(item.text)}</div>
+              ${hasNote ? `<div style="font-size:13px;color:#7168A0;margin-top:4px;"><i class="fas fa-pencil-alt"></i> ${esc(item.note)}</div>` : ''}
+              ${hasLink ? `<div style="font-size:13px;color:#6C47E8;margin-top:4px;"><i class="fas fa-link"></i> <a href="${esc(item.link)}" style="color:#6C47E8;">${esc(item.link)}</a></div>` : ''}
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">
+                <span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0;">${TIME_LABELS[item.timeFrame]||'Någon gång'}</span>
+                ${showPerson && personLabel ? `<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:${pcolor};color:#fff;">${esc(personLabel)}</span>` : ''}
+                ${item.type==='shopping' ? '<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#DCFDF2;color:#22C08A;">🛒</span>' : ''}
+                ${item.reminder ? `<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#FEF3C7;color:#92400E;">🔔 ${new Date(item.reminder).toLocaleDateString('sv-SE')}</span>` : ''}
+              </div>
             </div>
           </div>`;
         });
@@ -1367,7 +1400,7 @@ function generatePDFHTML(title, items, showPerson=false){
     });
   }
   
-  html += `<div class="pdf-footer">Familjens Planerare · Genererad ${now}</div>`;
+  html += `<div style="text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px;font-family:'Nunito',sans-serif;">Familjens Planerare · Genererad ${now}</div>`;
   return html;
 }
 
@@ -1458,8 +1491,15 @@ function checkReminders(){
   updateNotifBdg(); saveData();
 }
 
-function saveData(){localStorage.setItem('familyTasks',JSON.stringify(tasks));localStorage.setItem('familyTrash',JSON.stringify(trash));localStorage.setItem('familyScore',score);}
-function savePersons(){localStorage.setItem('familyPersons',JSON.stringify(persons));localStorage.setItem('familyPersonLabels',JSON.stringify(personLabels));}
+function saveData(){
+  localStorage.setItem('familyTasks',JSON.stringify(tasks));
+  localStorage.setItem('familyTrash',JSON.stringify(trash));
+  localStorage.setItem('familyScore',score);
+}
+function savePersons(){
+  localStorage.setItem('familyPersons',JSON.stringify(persons));
+  localStorage.setItem('familyPersonLabels',JSON.stringify(personLabels));
+}
 function saveAndConfirm(){
   saveData();
   savePersons();
