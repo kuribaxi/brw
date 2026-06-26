@@ -8,6 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsmind@0.9.1/style/jsmind.css" />
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsmind@0.9.1/es6/jsmind.js"></script>
   <style>
     :root {
       --bg:#F0EDF8; --surface:#fff; --surface2:#F7F5FC; --border:#E4DEFC;
@@ -347,6 +349,53 @@
       .hdr-title{font-size:14px}
       .hdr-sub{font-size:10px}
     }
+    
+    /* ===== MIND MAP STYLES ===== */
+    #jsmind_container jmnode{
+      font-family:var(--font)!important;
+      font-weight:700!important;
+      border-radius:12px!important;
+      padding:8px 14px!important;
+      box-shadow:0 2px 8px rgba(0,0,0,.1)!important;
+    }
+    #jsmind_container jmnode.root{
+      background:linear-gradient(135deg,var(--primary),#9B59E8)!important;
+      color:#fff!important;
+      font-size:18px!important;
+      font-weight:900!important;
+    }
+    #jsmind_container jmnode.date-node{
+      background:var(--primary-soft)!important;
+      color:var(--primary)!important;
+      border:2px solid var(--primary)!important;
+    }
+    #jsmind_container jmnode.task-node{
+      background:var(--surface)!important;
+      color:var(--text)!important;
+      border:1.5px solid var(--border)!important;
+      font-size:13px!important;
+    }
+    #jsmind_container jmnode.task-node.done{
+      background:var(--emerald-soft)!important;
+      color:var(--emerald)!important;
+      text-decoration:line-through!important;
+      opacity:.7!important;
+    }
+    #jsmind_container jmnode.task-node.favorite{
+      border-color:var(--amber)!important;
+      box-shadow:0 0 0 3px var(--amber-soft)!important;
+    }
+    #jsmind_container jmnode.person-node{
+      background:var(--rose-soft)!important;
+      color:var(--rose)!important;
+      border:2px solid var(--rose)!important;
+    }
+    #jsmind_container jmexpander{
+      border-radius:50%!important;
+      background:var(--surface2)!important;
+      border:1.5px solid var(--border)!important;
+    }
+
     body.locked > .page,body.locked > .bot-nav{display:none}
     .login-ov{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
     .login-ov.h{display:none}
@@ -431,6 +480,9 @@
         <button class="icon-btn" onclick="openTrash()" title="Papperskorg">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
           <span class="bdg amber h" id="trashBdg">0</span>
+        </button>
+        <button class="icon-btn" onclick="openMindMap()" title="Mind Map" id="mindMapBtn">
+          <i class="fas fa-project-diagram" style="font-size:18px"></i>
         </button>
       </div>
     </div>
@@ -729,6 +781,26 @@
       <button class="modal-btn mbtn-danger" onclick="saveTaskEdit()"><i class="fas fa-save"></i> Spara ändringar</button>
       <button class="modal-btn mbtn-neutral" onclick="closeTaskEdit()">Avbryt</button>
     </div>
+  </div>
+</div>
+
+<!-- ═══════ MIND MAP MODAL ═══════ -->
+<div class="modal-ov h" id="mindMapModal" onclick="if(event.target===this)closeMindMap()">
+  <div class="modal-sheet" style="max-height:95vh;width:100%;max-width:900px">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr">
+      <div class="modal-ttl"><i class="fas fa-project-diagram" style="color:var(--primary)"></i> Mind Map – Uppgifter efter datum</div>
+      <button class="modal-x" onclick="closeMindMap()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" style="padding:12px 16px">
+      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+        <button class="sync-btn-primary" onclick="generateMindMap()"><i class="fas fa-sync-alt"></i> Generera Mind Map</button>
+        <button class="sync-btn-secondary" onclick="exportMindMapPDF()"><i class="fas fa-file-pdf"></i> Spara som PDF</button>
+        <button class="sync-btn-secondary" onclick="saveMindMapToApp()"><i class="fas fa-save"></i> Spara i appen</button>
+      </div>
+      <div id="jsmind_container" style="width:100%;height:500px;border:2px solid var(--border);border-radius:var(--rsm);background:var(--surface);overflow:auto"></div>
+    </div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeMindMap()" style="flex:1">Stäng</button></div>
   </div>
 </div>
 
@@ -1532,6 +1604,207 @@ function saveTaskEdit(){
   renderFavorites();
   toast('✅ Uppgift uppdaterad!');
 }
+// ===== MIND MAP FUNCTIONS =====
+let jmInstance = null;
+
+function openMindMap(){
+  document.getElementById('mindMapModal').classList.remove('h');
+  setTimeout(()=>{
+    generateMindMap();
+  },300);
+}
+function closeMindMap(){
+  document.getElementById('mindMapModal').classList.add('h');
+  if(jmInstance){
+    jmInstance = null;
+  }
+}
+
+function generateMindMap(){
+  const container = document.getElementById('jsmind_container');
+  container.innerHTML = '';
+
+  if(tasks.length === 0){
+    container.innerHTML = '<div class="empty-state" style="padding:80px 20px"><div class="empty-icon"><i class="fas fa-project-diagram"></i></div><div class="empty-text">Inga uppgifter att visa. Lägg till uppgifter först!</div></div>';
+    return;
+  }
+
+  // Group tasks by date (using createdAt)
+  const byDate = {};
+  tasks.forEach(t => {
+    const date = t.createdAt ? new Date(t.createdAt).toLocaleDateString('sv-SE') : 'Okänt datum';
+    if(!byDate[date]) byDate[date] = [];
+    byDate[date].push(t);
+  });
+
+  // Sort dates
+  const sortedDates = Object.keys(byDate).sort((a,b) => {
+    const da = new Date(a.split('-').reverse().join('-'));
+    const db = new Date(b.split('-').reverse().join('-'));
+    return db - da; // newest first
+  });
+
+  // Build mind map data
+  const mind = {
+    meta: { name: 'Familjens Planerare', author: 'Mind Map' },
+    format: 'node_array',
+    data: [
+      { id: 'root', topic: '\u2b50 Uppgifter', isroot: true }
+    ]
+  };
+
+  let nodeId = 1;
+  sortedDates.forEach(date => {
+    const dateNodeId = 'date_' + nodeId;
+    mind.data.push({
+      id: dateNodeId,
+      topic: '📅 ' + date,
+      parentid: 'root',
+      'background-color': '#EDE8FC',
+      'foreground-color': '#6C47E8',
+      'font-weight': '800'
+    });
+    nodeId++;
+
+    // Group by person within date
+    const byPerson = {};
+    byDate[date].forEach(t => {
+      const pLabel = t.person === 'all' ? 'Alla' : (personLabels[t.person] || t.person);
+      if(!byPerson[pLabel]) byPerson[pLabel] = [];
+      byPerson[pLabel].push(t);
+    });
+
+    Object.keys(byPerson).forEach(person => {
+      const personNodeId = 'person_' + nodeId;
+      const pColor = colorMap[byPerson[person][0].person] || '#999';
+      mind.data.push({
+        id: personNodeId,
+        topic: '👤 ' + person,
+        parentid: dateNodeId,
+        'background-color': pColor + '22',
+        'foreground-color': pColor,
+        'font-weight': '700'
+      });
+      nodeId++;
+
+      byPerson[person].forEach(t => {
+        const taskNodeId = 'task_' + nodeId;
+        let topic = t.text;
+        if(t.completed) topic = '✅ ' + topic;
+        else if(t.favorite) topic = '⭐ ' + topic;
+        else topic = '⬜ ' + topic;
+
+        const taskStyle = t.completed ? 
+          { 'background-color': '#DCFDF2', 'foreground-color': '#22C08A' } :
+          t.favorite ?
+          { 'background-color': '#FEF3C7', 'foreground-color': '#B45309' } :
+          { 'background-color': '#F7F5FC', 'foreground-color': '#1E1535' };
+
+        mind.data.push({
+          id: taskNodeId,
+          topic: topic,
+          parentid: personNodeId,
+          'background-color': taskStyle['background-color'],
+          'foreground-color': taskStyle['foreground-color'],
+          'font-size': '12px'
+        });
+        nodeId++;
+      });
+    });
+  });
+
+  // Initialize jsMind
+  const options = {
+    container: 'jsmind_container',
+    theme: 'primary',
+    editable: false,
+    mode: 'full',
+    support_html: false,
+    view: {
+      line_width: 2,
+      line_color: '#E4DEFC',
+      draggable: true,
+      hide_scrollbars_when_draggable: false
+    },
+    layout: {
+      hspace: 30,
+      vspace: 16,
+      pspace: 13
+    }
+  };
+
+  try {
+    jmInstance = jsMind.show(options, mind);
+    // Apply custom classes after render
+    setTimeout(()=>{
+      if(!jmInstance) return;
+      const nodes = container.querySelectorAll('jmnode');
+      nodes.forEach(node => {
+        const topic = node.textContent || '';
+        if(topic.startsWith('📅')) node.classList.add('date-node');
+        else if(topic.startsWith('👤')) node.classList.add('person-node');
+        else if(topic.startsWith('⬜') || topic.startsWith('✅') || topic.startsWith('⭐')) {
+          node.classList.add('task-node');
+          if(topic.startsWith('✅')) node.classList.add('done');
+          if(topic.startsWith('⭐')) node.classList.add('favorite');
+        }
+      });
+    }, 100);
+  } catch(e) {
+    console.error('jsMind error:', e);
+    container.innerHTML = '<div class="empty-state" style="padding:80px 20px"><div class="empty-icon" style="color:var(--rose)"><i class="fas fa-exclamation-circle"></i></div><div class="empty-text">Kunde inte ladda Mind Map. Försök igen.</div></div>';
+  }
+}
+
+function exportMindMapPDF(){
+  if(!jmInstance){
+    toast('Generera Mind Map först!','error');
+    return;
+  }
+  const container = document.getElementById('jsmind_container');
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: 'Familjens-Planerare-Mind-Map.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+  };
+  toast('Genererar PDF...');
+  html2pdf().set(opt).from(container).save().then(() => {
+    toast('✅ Mind Map PDF klar!');
+  }).catch(err => {
+    console.error(err);
+    toast('❌ Kunde inte generera PDF','error');
+  });
+}
+
+function saveMindMapToApp(){
+  if(!jmInstance){
+    toast('Generera Mind Map först!','error');
+    return;
+  }
+  const container = document.getElementById('jsmind_container');
+  html2canvas(container, { scale: 2, useCORS: true }).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
+    const id = Date.now();
+    const pdfEntry = {
+      id: id,
+      title: 'Mind Map – ' + new Date().toLocaleDateString('sv-SE'),
+      items: [{text: 'Mind Map export', type: 'mindmap'}],
+      showPerson: false,
+      savedAt: new Date().toISOString(),
+      html: '<div style="text-align:center;padding:20px"><h2>Mind Map – Familjens Planerare</h2><p>'+new Date().toLocaleDateString('sv-SE')+'</p><img src="'+imgData+'" style="max-width:100%;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.1)"></div>'
+    };
+    savedPDFs.push(pdfEntry);
+    localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+    renderSavedPDFs();
+    toast('✅ Mind Map sparad i appen!');
+  }).catch(err => {
+    console.error(err);
+    toast('❌ Kunde inte spara Mind Map','error');
+  });
+}
+
 function exportAllPDF(){
   const title = 'Alla - Familjens planering';
   const items = tasks;
