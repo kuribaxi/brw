@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --bg:#F0EDF8; --surface:#fff; --surface2:#F7F5FC; --border:#E4DEFC;
@@ -246,32 +247,4 @@
 
     .cal-legend{display:flex;justify-content:center;gap:16px;padding:12px 0 4px;flex-wrap:wrap}
     .cal-legend span{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text2)}
-    .cal-legend .leg-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-    .leg-dot.se{background:#005B9F}
-    .leg-dot.ir{background:#239F40}
-    .leg-dot.sa{background:#006C35}
-
-    .cal-day-detail{background:var(--surface2);border-radius:var(--rsm);padding:12px 14px;margin-top:12px;border:1.5px solid var(--border);display:none}
-    .cal-day-detail.show{display:block}
-    .cal-day-detail .detail-date{font-size:15px;font-weight:900;color:var(--text)}
-    .cal-day-detail .detail-red{color:var(--rose);font-weight:800;margin-top:4px}
-    .cal-day-detail .detail-desc{color:var(--text2);font-size:14px;margin-top:4px}
-    .cal-day-detail .detail-flag{font-size:20px;margin-right:6px}
-
-    /* ===== SAVED PDF SECTION ===== */
-    .saved-pdf-section{padding:16px 18px 0}
-    .saved-pdf-section .pdf-card{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:12px}
-    .saved-pdf-section .pdf-card .pdf-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-    .saved-pdf-section .pdf-card .pdf-title{font-weight:800;font-size:15px;color:var(--text)}
-    .saved-pdf-section .pdf-card .pdf-meta{font-size:12px;color:var(--text3)}
-    .saved-pdf-section .pdf-card .pdf-actions{display:flex;gap:8px}
-    .saved-pdf-section .pdf-card .pdf-actions button{height:38px;padding:0 14px;border-radius:10px;border:none;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
-    .saved-pdf-section .pdf-card .pdf-actions .print-btn{background:var(--primary);color:#fff}
-    .saved-pdf-section .pdf-card .pdf-actions .print-btn:active{opacity:.8;transform:scale(.96)}
-    .saved-pdf-section .pdf-card .pdf-actions .delete-pdf-btn{background:var(--rose-soft);color:var(--rose)}
-    .saved-pdf-section .pdf-card .pdf-actions .delete-pdf-btn:active{opacity:.8;transform:scale(.96)}
-    .saved-pdf-section .pdf-empty{text-align:center;padding:30px 16px;color:var(--text3)}
-
-    /* ===== UPLOAD PDF SECTION ===== */
-    .upload-pdf-section{padding:0 18px 16px}
-    .upload-pdf-section .upload-area{background:var(--
+   
