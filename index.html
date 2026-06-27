@@ -8,8 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsmind@0.9.1/style/jsmind.css" />
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsmind@0.9.1/es6/jsmind.js"></script>
   <style>
     :root {
       --bg:#F0EDF8; --surface:#fff; --surface2:#F7F5FC; --border:#E4DEFC;
@@ -163,16 +161,6 @@
     body.night .task-note{background:var(--border);color:var(--text2)}
     .del-btn{width:40px;height:40px;border-radius:11px;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;margin-top:2px}
     .del-btn:active{background:var(--rose-soft);color:var(--rose)}
-    .edit-btn{width:40px;height:40px;border-radius:11px;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;margin-top:2px}
-    .edit-btn:hover{background:var(--primary-soft);color:var(--primary)}
-    .edit-btn:active{background:var(--primary-soft);color:var(--primary)}
-    .star-btn{width:40px;height:40px;border-radius:11px;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;margin-top:2px}
-    .star-btn:hover{background:var(--amber-soft);color:var(--amber)}
-    .star-btn:active{background:var(--amber-soft);color:var(--amber)}
-    .star-btn.on{color:var(--amber)}
-    .star-btn.on:hover{color:var(--amber)}
-
-
     .empty-state{padding:36px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
     .empty-icon{width:56px;height:56px;border-radius:18px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text3)}
     .empty-text{font-size:15px;font-weight:700;color:var(--text3)}
@@ -211,8 +199,7 @@
     .cp{position:fixed;pointer-events:none;z-index:999;animation:cf 2.2s linear forwards}
     @keyframes cf{0%{opacity:1;transform:translateY(-30px) rotate(0deg) scale(.8)}100%{opacity:0;transform:translateY(110vh) rotate(720deg) scale(1.2)}}
     .fade-in{animation:fi .2s ease}
-    @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(108,71,232,.4)}70%{box-shadow:0 0 0 10px rgba(108,71,232,0)}100%{box-shadow:0 0 0 0 rgba(108,71,232,0)}}
-
+    @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
     .done-section .task-item{opacity:.8}
     .cal-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 12px;gap:10px}
     .cal-header .cal-nav{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:16px;transition:all .2s}
@@ -349,53 +336,6 @@
       .hdr-title{font-size:14px}
       .hdr-sub{font-size:10px}
     }
-    
-    /* ===== MIND MAP STYLES ===== */
-    #jsmind_container jmnode{
-      font-family:var(--font)!important;
-      font-weight:700!important;
-      border-radius:12px!important;
-      padding:8px 14px!important;
-      box-shadow:0 2px 8px rgba(0,0,0,.1)!important;
-    }
-    #jsmind_container jmnode.root{
-      background:linear-gradient(135deg,var(--primary),#9B59E8)!important;
-      color:#fff!important;
-      font-size:18px!important;
-      font-weight:900!important;
-    }
-    #jsmind_container jmnode.date-node{
-      background:var(--primary-soft)!important;
-      color:var(--primary)!important;
-      border:2px solid var(--primary)!important;
-    }
-    #jsmind_container jmnode.task-node{
-      background:var(--surface)!important;
-      color:var(--text)!important;
-      border:1.5px solid var(--border)!important;
-      font-size:13px!important;
-    }
-    #jsmind_container jmnode.task-node.done{
-      background:var(--emerald-soft)!important;
-      color:var(--emerald)!important;
-      text-decoration:line-through!important;
-      opacity:.7!important;
-    }
-    #jsmind_container jmnode.task-node.favorite{
-      border-color:var(--amber)!important;
-      box-shadow:0 0 0 3px var(--amber-soft)!important;
-    }
-    #jsmind_container jmnode.person-node{
-      background:var(--rose-soft)!important;
-      color:var(--rose)!important;
-      border:2px solid var(--rose)!important;
-    }
-    #jsmind_container jmexpander{
-      border-radius:50%!important;
-      background:var(--surface2)!important;
-      border:1.5px solid var(--border)!important;
-    }
-
     body.locked > .page,body.locked > .bot-nav{display:none}
     .login-ov{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
     .login-ov.h{display:none}
@@ -481,9 +421,6 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
           <span class="bdg amber h" id="trashBdg">0</span>
         </button>
-        <button class="icon-btn" onclick="openMindMap()" title="Mind Map" id="mindMapBtn">
-          <i class="fas fa-project-diagram" style="font-size:18px"></i>
-        </button>
       </div>
     </div>
     <div class="date-row">
@@ -511,20 +448,6 @@
 
     <div class="cards-section">
       <div class="cards-grid" id="cardsGrid"></div>
-    </div>
-
-    <!-- FAVORITES SECTION -->
-    <div class="cards-section" id="favoritesSection">
-      <div class="sync-card" style="border-color:var(--amber);background:var(--amber-soft)">
-        <div class="sync-header">
-          <i class="fas fa-star" style="color:var(--amber)"></i>
-          <div>
-            <div class="sync-title">⭐ Aktuellt / Favoriter</div>
-            <div class="sync-sub">Snabbåtkomst till viktiga uppgifter</div>
-          </div>
-        </div>
-        <div id="favoritesList" style="margin-top:8px"></div>
-      </div>
     </div>
 
     <!-- SYNC SECTION -->
@@ -571,7 +494,10 @@
     </div>
   </div>
 
-  
+  <nav class="bot-nav" id="homeNav">
+    <button class="nav-btn active" onclick=""><i class="fas fa-home"></i>Hem</button>
+    <button class="nav-btn" onclick="openTrash()"><i class="fas fa-trash-can"></i>Papperskorg</button>
+  </nav>
 </div>
 
 <!-- ═══════ DETAIL PAGE ═══════ -->
@@ -633,7 +559,10 @@
     </div>
   </div>
 
-  
+  <nav class="bot-nav">
+    <button class="nav-btn active" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i>Toppen</button>
+    <button class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i>Hem</button>
+  </nav>
 </div>
 
 <!-- ═══════ MODALS ═══════ -->
@@ -739,71 +668,6 @@
   </div>
 </div>
 
-<!-- ═══════ EDIT TASK MODAL ═══════ -->
-<div class="modal-ov h" id="editTaskModal" onclick="if(event.target===this)closeTaskEdit()">
-  <div class="modal-sheet" style="max-height:95vh">
-    <div class="modal-handle"></div>
-    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen-to-square" style="color:var(--primary)"></i> Redigera uppgift</div><button class="modal-x" onclick="closeTaskEdit()"><i class="fas fa-times"></i></button></div>
-    <div class="modal-body" style="padding:12px 16px">
-      <input type="hidden" id="editTaskId">
-      <label class="form-lbl">Uppgift</label>
-      <input type="text" class="form-input" id="editTaskText" placeholder="Vad ska göras?">
-      <label class="form-lbl" style="margin-top:10px">Anteckning</label>
-      <input type="text" class="form-input" id="editTaskNote" placeholder="Anteckning (valfritt)">
-      <label class="form-lbl" style="margin-top:10px">Länk</label>
-      <input type="text" class="form-input" id="editTaskLink" placeholder="Länk (t.ex. https://...)">
-      <div class="form-row" style="margin-top:10px">
-        <div>
-          <label class="form-lbl">Typ</label>
-          <select class="form-select" id="editTaskType">
-            <option value="todo">📋 Uppgift</option>
-            <option value="shopping">🛒 Inköp</option>
-          </select>
-        </div>
-        <div>
-          <label class="form-lbl">Tidsram</label>
-          <select class="form-select" id="editTaskTimeFrame">
-            <option value="today">Idag</option>
-            <option value="tomorrow">Imorgon</option>
-            <option value="week">Denna vecka</option>
-            <option value="month">Denna månad</option>
-            <option value="thisyear">Pågående år</option>
-            <option value="nextyear">Nästa år</option>
-            <option value="future">Framtiden</option>
-            <option value="sometime">Någon gång</option>
-          </select>
-        </div>
-      </div>
-      <label class="form-lbl" style="margin-top:10px">Påminnelse</label>
-      <input type="datetime-local" class="reminder-input" id="editTaskReminder">
-    </div>
-    <div class="modal-ftr">
-      <button class="modal-btn mbtn-danger" onclick="saveTaskEdit()"><i class="fas fa-save"></i> Spara ändringar</button>
-      <button class="modal-btn mbtn-neutral" onclick="closeTaskEdit()">Avbryt</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ MIND MAP MODAL ═══════ -->
-<div class="modal-ov h" id="mindMapModal" onclick="if(event.target===this)closeMindMap()">
-  <div class="modal-sheet" style="max-height:95vh;width:100%;max-width:900px">
-    <div class="modal-handle"></div>
-    <div class="modal-hdr">
-      <div class="modal-ttl"><i class="fas fa-project-diagram" style="color:var(--primary)"></i> Mind Map – Uppgifter efter datum</div>
-      <button class="modal-x" onclick="closeMindMap()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="modal-body" style="padding:12px 16px">
-      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-        <button class="sync-btn-primary" onclick="generateMindMap()"><i class="fas fa-sync-alt"></i> Generera Mind Map</button>
-        <button class="sync-btn-secondary" onclick="exportMindMapPDF()"><i class="fas fa-file-pdf"></i> Spara som PDF</button>
-        <button class="sync-btn-secondary" onclick="saveMindMapToApp()"><i class="fas fa-save"></i> Spara i appen</button>
-      </div>
-      <div id="jsmind_container" style="width:100%;height:500px;border:2px solid var(--border);border-radius:var(--rsm);background:var(--surface);overflow:auto"></div>
-    </div>
-    <div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeMindMap()" style="flex:1">Stäng</button></div>
-  </div>
-</div>
-
 <!-- ═══════ TOAST ═══════ -->
 <div class="toast" id="toast"><i id="toastIcon" class="fas fa-check-circle" style="color:var(--emerald)"></i><span id="toastMsg">OK</span></div>
 
@@ -848,8 +712,6 @@ function buildColorMap(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('homeNavContent').style.display='flex';
-  document.getElementById('detailNavContent').style.display='none';
   if(night)applyNight();
   if(localStorage.getItem('pcMode')==='true')applyPcMode(true);
   checkLoginState();
@@ -861,7 +723,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   updateSyncUI();
   checkReminders(); setInterval(checkReminders,30000);
   if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
-  renderFavorites();
   // Init sync
   if(syncOnStart && supabaseUrl && supabaseKey && syncKey) {
     setTimeout(()=>pullFromSupabase(true), 1000);
@@ -1342,8 +1203,6 @@ function addPerson(){
 
 function openDetail(pid){
   currentPerson=pid; currentTab='todo';
-  document.getElementById('homeNavContent').style.display='none';
-  document.getElementById('detailNavContent').style.display='flex';
   buildColorMap();
   const color=colorMap[pid]||PERSON_COLORS[0];
   const label= pid==='all'?'Alla':(personLabels[pid]||pid);
@@ -1369,9 +1228,7 @@ function goHome(){
   const detail=document.getElementById('pageDetail');
   const home=document.getElementById('pageHome');
   detail.classList.remove('open');
-  document.getElementById('homeNavContent').style.display='flex';
-  document.getElementById('detailNavContent').style.display='none';
-  setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();renderSavedPDFs();;renderFavorites();},320);
+  setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();renderSavedPDFs();},320);
 }
 
 function switchTab(tab){
@@ -1426,7 +1283,7 @@ function taskHTML(item,isDone){
   const hasNote = item.note && item.note.trim() !== '';
   const hasLink = item.link && item.link.trim() !== '';
   const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
-  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><button class="star-btn '+(item.favorite?'on':'')+'" data-id="'+item.id+'" onclick="event.stopPropagation();toggleFavorite('+item.id+')"><i class="fas fa-star"></i></button><button class="edit-btn" data-id="'+item.id+'" onclick="event.stopPropagation();openTaskEdit('+item.id+')"><i class="fas fa-pen"></i></button><button class="del-btn" data-id="'+item.id+'"><i class="fas fa-trash-can"></i></button></div>';
+  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><button class="del-btn" data-id="'+item.id+'"><i class="fas fa-trash-can"></i></button></div>';
 }
 
 function addTask(){
@@ -1454,7 +1311,6 @@ function addTask(){
   document.getElementById('reminderTime').value='';
   toast('Uppgift tillagd! ✅');
   renderDetail();
-  renderFavorites();
 }
 
 function toggleComplete(id){
@@ -1465,62 +1321,9 @@ function toggleComplete(id){
     spawnConfetti(); toast('+10 poäng! 🎉');
     saveData();
     moveToTrash(id);
-    renderFavorites();
   } else {
     t.completed=false; saveData(); renderDetail();
   }
-}
-
-function toggleFavorite(id){
-  const t=tasks.find(x=>x.id===id);
-  if(!t)return;
-  t.favorite=!t.favorite;
-  saveData();
-  renderDetail();
-  renderFavorites();
-  toast(t.favorite?'⭐ Tillagd i favoriter!':'⭐ Borttagen från favoriter');
-}
-
-function renderFavorites(){
-  const container=document.getElementById('favoritesList');
-  const favs=tasks.filter(t=>t.favorite&&!t.completed);
-  if(!favs.length){
-    container.innerHTML='<div class="empty-state" style="padding:20px 0"><div class="empty-text" style="font-size:13px">Inga favoriter än. Tryck på ⭐ på en uppgift!</div></div>';
-    return;
-  }
-  container.innerHTML=favs.map(item=>{
-    const personLabel=item.person!=='all'?(personLabels[item.person]||item.person):null;
-    const pcolor=colorMap[item.person]||'#999';
-    const remDate=item.reminder?new Date(item.reminder).toLocaleString('sv-SE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):null;
-    return '<div class="task-item" style="cursor:pointer" onclick="openDetailFromFavorite(''+item.person+'', '+item.id+')">'+
-      '<div class="check-btn" data-id="'+item.id+'" onclick="event.stopPropagation();toggleComplete('+item.id+')"><i class="fas fa-check"></i></div>'+
-      '<div class="task-content" style="flex:1">'+
-        '<div class="task-text">'+esc(item.text)+'</div>'+
-        '<div class="task-meta">'+
-          '<span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+
-          (personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+
-          (item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+
-          (remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+
-        '</div>'+
-      '</div>'+
-      '<button class="star-btn on" data-id="'+item.id+'" onclick="event.stopPropagation();toggleFavorite('+item.id+')"><i class="fas fa-star"></i></button>'+
-    '</div>';
-  }).join('');
-}
-
-function openDetailFromFavorite(person, taskId){
-  openDetail(person);
-  setTimeout(()=>{
-    const el=document.querySelector('[data-id="'+taskId+'"]');
-    if(el){
-      el.scrollIntoView({behavior:'smooth',block:'center'});
-      el.closest('.task-item').style.animation='pulse 1s ease';
-      setTimeout(()=>{
-        const item=el.closest('.task-item');
-        if(item)item.style.animation='';
-      },1000);
-    }
-  },350);
 }
 
 function moveToTrash(id){
@@ -1557,252 +1360,6 @@ function generatePDFHTML(title, items, showPerson){
   }
   html += '<div class="pdf-footer">Familjens Planerare · Genererad '+now+'</div>';
   return html;
-}
-
-function openTaskEdit(id){
-  const t=tasks.find(x=>x.id===id);
-  if(!t)return;
-  document.getElementById('editTaskId').value=id;
-  document.getElementById('editTaskText').value=t.text||'';
-  document.getElementById('editTaskNote').value=t.note||'';
-  document.getElementById('editTaskLink').value=t.link||'';
-  document.getElementById('editTaskType').value=t.type||'todo';
-  document.getElementById('editTaskTimeFrame').value=t.timeFrame||'sometime';
-  if(t.reminder){
-    const d=new Date(t.reminder);
-    const yyyy=d.getFullYear();
-    const mm=String(d.getMonth()+1).padStart(2,'0');
-    const dd=String(d.getDate()).padStart(2,'0');
-    const hh=String(d.getHours()).padStart(2,'0');
-    const mi=String(d.getMinutes()).padStart(2,'0');
-    document.getElementById('editTaskReminder').value=yyyy+'-'+mm+'-'+dd+'T'+hh+':'+mi;
-  }else{
-    document.getElementById('editTaskReminder').value='';
-  }
-  document.getElementById('editTaskModal').classList.remove('h');
-}
-function closeTaskEdit(){
-  document.getElementById('editTaskModal').classList.add('h');
-}
-function saveTaskEdit(){
-  const id=parseInt(document.getElementById('editTaskId').value);
-  const t=tasks.find(x=>x.id===id);
-  if(!t)return;
-  const newText=document.getElementById('editTaskText').value.trim();
-  if(!newText){toast('Ange en uppgift','error');return;}
-  t.text=newText;
-  t.note=document.getElementById('editTaskNote').value.trim();
-  t.link=document.getElementById('editTaskLink').value.trim();
-  t.type=document.getElementById('editTaskType').value;
-  t.timeFrame=document.getElementById('editTaskTimeFrame').value;
-  const rem=document.getElementById('editTaskReminder').value;
-  t.reminder=rem?new Date(rem).toISOString():null;
-  t.reminded=false;
-  saveData();
-  renderDetail();
-  closeTaskEdit();
-  renderFavorites();
-  toast('✅ Uppgift uppdaterad!');
-}
-// ===== MIND MAP FUNCTIONS =====
-let jmInstance = null;
-
-function openMindMap(){
-  document.getElementById('mindMapModal').classList.remove('h');
-  setTimeout(()=>{
-    generateMindMap();
-  },300);
-}
-function closeMindMap(){
-  document.getElementById('mindMapModal').classList.add('h');
-  if(jmInstance){
-    jmInstance = null;
-  }
-}
-
-function generateMindMap(){
-  const container = document.getElementById('jsmind_container');
-  container.innerHTML = '';
-
-  if(tasks.length === 0){
-    container.innerHTML = '<div class="empty-state" style="padding:80px 20px"><div class="empty-icon"><i class="fas fa-project-diagram"></i></div><div class="empty-text">Inga uppgifter att visa. Lägg till uppgifter först!</div></div>';
-    return;
-  }
-
-  // Group tasks by date (using createdAt)
-  const byDate = {};
-  tasks.forEach(t => {
-    const date = t.createdAt ? new Date(t.createdAt).toLocaleDateString('sv-SE') : 'Okänt datum';
-    if(!byDate[date]) byDate[date] = [];
-    byDate[date].push(t);
-  });
-
-  // Sort dates
-  const sortedDates = Object.keys(byDate).sort((a,b) => {
-    const da = new Date(a.split('-').reverse().join('-'));
-    const db = new Date(b.split('-').reverse().join('-'));
-    return db - da; // newest first
-  });
-
-  // Build mind map data
-  const mind = {
-    meta: { name: 'Familjens Planerare', author: 'Mind Map' },
-    format: 'node_array',
-    data: [
-      { id: 'root', topic: '\u2b50 Uppgifter', isroot: true }
-    ]
-  };
-
-  let nodeId = 1;
-  sortedDates.forEach(date => {
-    const dateNodeId = 'date_' + nodeId;
-    mind.data.push({
-      id: dateNodeId,
-      topic: '📅 ' + date,
-      parentid: 'root',
-      'background-color': '#EDE8FC',
-      'foreground-color': '#6C47E8',
-      'font-weight': '800'
-    });
-    nodeId++;
-
-    // Group by person within date
-    const byPerson = {};
-    byDate[date].forEach(t => {
-      const pLabel = t.person === 'all' ? 'Alla' : (personLabels[t.person] || t.person);
-      if(!byPerson[pLabel]) byPerson[pLabel] = [];
-      byPerson[pLabel].push(t);
-    });
-
-    Object.keys(byPerson).forEach(person => {
-      const personNodeId = 'person_' + nodeId;
-      const pColor = colorMap[byPerson[person][0].person] || '#999';
-      mind.data.push({
-        id: personNodeId,
-        topic: '👤 ' + person,
-        parentid: dateNodeId,
-        'background-color': pColor + '22',
-        'foreground-color': pColor,
-        'font-weight': '700'
-      });
-      nodeId++;
-
-      byPerson[person].forEach(t => {
-        const taskNodeId = 'task_' + nodeId;
-        let topic = t.text;
-        if(t.completed) topic = '✅ ' + topic;
-        else if(t.favorite) topic = '⭐ ' + topic;
-        else topic = '⬜ ' + topic;
-
-        const taskStyle = t.completed ? 
-          { 'background-color': '#DCFDF2', 'foreground-color': '#22C08A' } :
-          t.favorite ?
-          { 'background-color': '#FEF3C7', 'foreground-color': '#B45309' } :
-          { 'background-color': '#F7F5FC', 'foreground-color': '#1E1535' };
-
-        mind.data.push({
-          id: taskNodeId,
-          topic: topic,
-          parentid: personNodeId,
-          'background-color': taskStyle['background-color'],
-          'foreground-color': taskStyle['foreground-color'],
-          'font-size': '12px'
-        });
-        nodeId++;
-      });
-    });
-  });
-
-  // Initialize jsMind
-  const options = {
-    container: 'jsmind_container',
-    theme: 'primary',
-    editable: false,
-    mode: 'full',
-    support_html: false,
-    view: {
-      line_width: 2,
-      line_color: '#E4DEFC',
-      draggable: true,
-      hide_scrollbars_when_draggable: false
-    },
-    layout: {
-      hspace: 30,
-      vspace: 16,
-      pspace: 13
-    }
-  };
-
-  try {
-    jmInstance = jsMind.show(options, mind);
-    // Apply custom classes after render
-    setTimeout(()=>{
-      if(!jmInstance) return;
-      const nodes = container.querySelectorAll('jmnode');
-      nodes.forEach(node => {
-        const topic = node.textContent || '';
-        if(topic.startsWith('📅')) node.classList.add('date-node');
-        else if(topic.startsWith('👤')) node.classList.add('person-node');
-        else if(topic.startsWith('⬜') || topic.startsWith('✅') || topic.startsWith('⭐')) {
-          node.classList.add('task-node');
-          if(topic.startsWith('✅')) node.classList.add('done');
-          if(topic.startsWith('⭐')) node.classList.add('favorite');
-        }
-      });
-    }, 100);
-  } catch(e) {
-    console.error('jsMind error:', e);
-    container.innerHTML = '<div class="empty-state" style="padding:80px 20px"><div class="empty-icon" style="color:var(--rose)"><i class="fas fa-exclamation-circle"></i></div><div class="empty-text">Kunde inte ladda Mind Map. Försök igen.</div></div>';
-  }
-}
-
-function exportMindMapPDF(){
-  if(!jmInstance){
-    toast('Generera Mind Map först!','error');
-    return;
-  }
-  const container = document.getElementById('jsmind_container');
-  const opt = {
-    margin: [10, 10, 10, 10],
-    filename: 'Familjens-Planerare-Mind-Map.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-  };
-  toast('Genererar PDF...');
-  html2pdf().set(opt).from(container).save().then(() => {
-    toast('✅ Mind Map PDF klar!');
-  }).catch(err => {
-    console.error(err);
-    toast('❌ Kunde inte generera PDF','error');
-  });
-}
-
-function saveMindMapToApp(){
-  if(!jmInstance){
-    toast('Generera Mind Map först!','error');
-    return;
-  }
-  const container = document.getElementById('jsmind_container');
-  html2canvas(container, { scale: 2, useCORS: true }).then(canvas => {
-    const imgData = canvas.toDataURL('image/png');
-    const id = Date.now();
-    const pdfEntry = {
-      id: id,
-      title: 'Mind Map – ' + new Date().toLocaleDateString('sv-SE'),
-      items: [{text: 'Mind Map export', type: 'mindmap'}],
-      showPerson: false,
-      savedAt: new Date().toISOString(),
-      html: '<div style="text-align:center;padding:20px"><h2>Mind Map – Familjens Planerare</h2><p>'+new Date().toLocaleDateString('sv-SE')+'</p><img src="'+imgData+'" style="max-width:100%;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.1)"></div>'
-    };
-    savedPDFs.push(pdfEntry);
-    localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
-    renderSavedPDFs();
-    toast('✅ Mind Map sparad i appen!');
-  }).catch(err => {
-    console.error(err);
-    toast('❌ Kunde inte spara Mind Map','error');
-  });
 }
 
 function exportAllPDF(){
@@ -1904,8 +1461,7 @@ function renderTrashModal(){
   b.innerHTML=trash.slice().reverse().map(item=>'<div class="trash-item"><div class="trash-dot" style="background:'+(item.type==='shopping'?'var(--emerald)':'var(--primary)')+'"></div><div class="trash-text">'+esc(item.text)+'</div><div class="trash-acts"><button class="trash-act restore" onclick="restoreFromTrash('+item.id+')"><i class="fas fa-rotate-left"></i></button><button class="trash-act del" onclick="delPerm('+item.id+')"><i class="fas fa-trash"></i></button></div></div>').join('');
 }
 function updateTrashBdg(){const b=document.getElementById('trashBdg');b.textContent=trash.length;b.classList.toggle('h',trash.length===0);}
-function restoreFromTrash(id){const idx=trash.findIndex(t=>t.id===id);if(idx>-1){const t=trash.splice(idx,1)[0];delete t.deletedAt;t.completed=false;tasks.push(t);saveData();renderTrashModal();renderDetail();renderCards();toast('Återställd!');
-    renderFavorites();}}
+function restoreFromTrash(id){const idx=trash.findIndex(t=>t.id===id);if(idx>-1){const t=trash.splice(idx,1)[0];delete t.deletedAt;t.completed=false;tasks.push(t);saveData();renderTrashModal();renderDetail();renderCards();toast('Återställd!');}}
 function delPerm(id){trash=trash.filter(t=>t.id!==id);saveData();renderTrashModal();toast('Raderad permanent');}
 function emptyTrash(){if(confirm('Töm hela papperskorgen?')){trash=[];saveData();renderTrashModal();toast('Papperskorg tömd');}}
 
@@ -2350,18 +1906,5 @@ function importLocalBackup(){
   input.click();
 }
 </script>
-
-<!-- ═══════ SHARED BOTTOM NAV ═══════ -->
-<nav class="bot-nav" id="sharedBotNav">
-  <div id="homeNavContent" style="display:flex;width:100%;justify-content:space-around">
-    <button class="nav-btn active" onclick=""><i class="fas fa-home"></i>Hem</button>
-    <button class="nav-btn" onclick="openTrash()"><i class="fas fa-trash-can"></i>Papperskorg</button>
-  </div>
-  <div id="detailNavContent" style="display:none;width:100%;justify-content:space-around">
-    <button class="nav-btn active" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i>Toppen</button>
-    <button class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i>Hem</button>
-  </div>
-</nav>
-
 </body>
 </html>
