@@ -461,155 +461,37 @@
       <button class="login-reset" onclick="openRecoveryPage()">Glömt lösenordet? Återställ</button>
     </div>
 
-    <!-- === RECOVERY PAGE (hidden by default) === -->
+    <!-- === RECOVERY PAGE === -->
     <div class="login-form" id="formRecoveryPage">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
         <button class="icon-btn" onclick="backToSimpleLogin()" style="width:36px;height:36px;border-radius:10px;font-size:14px;flex-shrink:0" title="Tillbaka"><i class="fas fa-arrow-left"></i></button>
         <div class="login-title" style="margin:0;font-size:17px">Återställ lösenord</div>
       </div>
-      <div class="login-sub">Välj ett återställningsalternativ</div>
+      <div class="login-sub">Ange din e-postadress för att återställa lösenordet</div>
 
-      <div class="recovery-options" id="recoveryOptions">
-        <button class="recovery-option" onclick="startEmailRecovery()">
-          <i class="fas fa-envelope"></i>
-          <div>
-            <div style="font-weight:800">Återställ via e-post</div>
-            <div style="font-size:12px;color:var(--text3);font-weight:600">Skicka återställningskod till din e-post</div>
-          </div>
-        </button>
-        <button class="recovery-option" onclick="startSecurityRecovery()">
-          <i class="fas fa-shield-alt"></i>
-          <div>
-            <div style="font-weight:800">Säkerhetsfråga</div>
-            <div style="font-size:12px;color:var(--text3);font-weight:600">Svara på din säkerhetsfråga</div>
-          </div>
-        </button>
-        <button class="recovery-option" onclick="startBackupCodeRecovery()">
-          <i class="fas fa-key"></i>
-          <div>
-            <div style="font-weight:800">Återställningskod</div>
-            <div style="font-size:12px;color:var(--text3);font-weight:600">Använd din sparade återställningskod</div>
-          </div>
-        </button>
-        <button class="recovery-option" onclick="startResetAll()">
-          <i class="fas fa-exclamation-triangle" style="color:var(--rose)"></i>
-          <div>
-            <div style="font-weight:800;color:var(--rose)">Rensa allt (nödlösning)</div>
-            <div style="font-size:12px;color:var(--text3);font-weight:600">Ta bort all data och börja om</div>
-          </div>
-        </button>
-      </div>
-
-      <!-- Email Recovery Step -->
-      <div class="recovery-step" id="recoveryEmailStep">
-        <div class="profile-section-title">Återställ via e-post</div>
-        <input type="email" class="login-input" id="recoverEmailInput" placeholder="din@epost.se" style="text-align:left;letter-spacing:0;font-size:15px;margin-bottom:10px" onkeydown="if(event.key==='Enter')sendRecoveryEmail()">
-        <div class="login-hint">Ange den e-postadress du registrerade med. Vi skickar en återställningskod.</div>
-        <div class="login-err h" id="recoverEmailErr">E-postadressen hittades inte</div>
-        <button class="login-btn" onclick="sendRecoveryEmail()">Skicka återställningskod</button>
-        <button class="login-reset" onclick="backToRecoveryOptions()">&larr; Tillbaka</button>
-      </div>
+      <input type="email" class="login-input" id="recoverEmailInput" placeholder="din@epost.se" style="text-align:left;letter-spacing:0;font-size:15px;margin:12px 0" onkeydown="if(event.key==='Enter')sendRecoveryEmail()">
+      <div class="login-hint">En återställningskod skickas till din e-post</div>
+      <div class="login-err h" id="recoverEmailErr">E-postadressen hittades inte</div>
+      <button class="login-btn" onclick="sendRecoveryEmail()">Skicka kod</button>
+      <button class="login-reset" onclick="backToSimpleLogin()">&larr; Tillbaka till inloggning</button>
 
       <!-- Email Code Verification Step -->
-      <div class="recovery-step" id="recoveryEmailCodeStep">
+      <div class="recovery-step" id="recoveryEmailCodeStep" style="margin-top:16px">
         <div class="profile-section-title">Verifiera kod</div>
-        <div class="login-hint" id="recoverCodeHint">En kod har skickats till din e-post</div>
+        <div class="login-hint" id="recoverCodeHint">En kod har skickats</div>
         <input type="text" class="login-input" id="recoverCodeInput" placeholder="######" style="text-align:center;letter-spacing:8px;font-size:22px;margin:12px 0" maxlength="6" onkeydown="if(event.key==='Enter')verifyRecoveryCode()">
-        <div class="login-err h" id="recoverCodeErr">Fel kod, försök igen</div>
+        <div class="login-err h" id="recoverCodeErr">Fel kod</div>
         <button class="login-btn" onclick="verifyRecoveryCode()">Verifiera</button>
-        <button class="login-reset" onclick="backToRecoveryOptions()">&larr; Tillbaka</button>
       </div>
 
       <!-- New Password After Recovery -->
-      <div class="recovery-step" id="recoveryNewPwStep">
+      <div class="recovery-step" id="recoveryNewPwStep" style="margin-top:16px">
         <div class="profile-section-title">Skapa nytt lösenord</div>
         <input type="password" class="login-input" id="newPwInput" placeholder="Nytt lösenord" style="text-align:left;letter-spacing:1px;margin-bottom:10px" onkeydown="if(event.key==='Enter')document.getElementById('newPwConfirm').focus()">
         <input type="password" class="login-input" id="newPwConfirm" placeholder="Bekräfta nytt lösenord" style="text-align:left;letter-spacing:1px" onkeydown="if(event.key==='Enter')saveNewPassword()">
         <div class="login-err h" id="newPwErr">Lösenorden matchar inte</div>
         <button class="login-btn" onclick="saveNewPassword()">Spara nytt lösenord</button>
       </div>
-
-      <!-- Security Question Recovery -->
-      <div class="recovery-step" id="recoverySecurityStep">
-        <div class="profile-section-title">Säkerhetsfråga</div>
-        <div id="recoverySecurityQuestionDisplay" style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;text-align:left;padding:10px;background:var(--surface2);border-radius:var(--rsm);border:1.5px solid var(--border)"></div>
-        <input type="text" class="login-input" id="recoverSecurityAnswer" placeholder="Ditt svar" style="text-align:left;letter-spacing:0;font-size:15px;margin-bottom:10px" onkeydown="if(event.key==='Enter')verifySecurityAnswer()">
-        <div class="login-err h" id="recoverSecurityErr">Fel svar</div>
-        <button class="login-btn" onclick="verifySecurityAnswer()">Verifiera</button>
-        <button class="login-reset" onclick="backToRecoveryOptions()">&larr; Tillbaka</button>
-      </div>
-
-      <!-- Backup Code Recovery -->
-      <div class="recovery-step" id="recoveryBackupCodeStep">
-        <div class="profile-section-title">Återställningskod</div>
-        <div class="login-hint">Ange din 12-siffriga återställningskod som du sparade när du skapade profilen</div>
-        <input type="text" class="login-input" id="recoverBackupCodeInput" placeholder="XXXX-XXXX-XXXX" style="text-align:center;letter-spacing:4px;font-size:18px;margin:12px 0" maxlength="14" oninput="formatBackupCodeInput(this)" onkeydown="if(event.key==='Enter')verifyBackupCode()">
-        <div class="login-err h" id="recoverBackupCodeErr">Fel återställningskod</div>
-        <button class="login-btn" onclick="verifyBackupCode()">Verifiera</button>
-        <button class="login-reset" onclick="backToRecoveryOptions()">&larr; Tillbaka</button>
-      </div>
-
-      <!-- Reset All Confirmation -->
-      <div class="recovery-step" id="recoveryResetAllStep">
-        <div class="profile-section-title" style="color:var(--rose)">Rensa all data</div>
-        <div class="login-hint" style="color:var(--rose);margin-bottom:16px">
-          <i class="fas fa-exclamation-triangle"></i> 
-          Detta kommer att ta bort ALL data inklusive uppgifter, personer och din profil. Detta kan inte ångras!
-        </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="confirmResetAll">
-          <label for="confirmResetAll">Jag förstår att all data kommer att raderas</label>
-        </div>
-        <button class="login-btn" onclick="confirmResetAll()" style="margin-top:14px;background:var(--rose)">Rensa allt och börja om</button>
-        <button class="login-reset" onclick="backToRecoveryOptions()">&larr; Tillbaka</button>
-      </div>
-    </div>
-
-    <!-- === PROFILE SETUP (shown when no password exists yet) === -->
-    <div class="login-form" id="formProfileSetup">
-      <div class="login-title">Skapa lösenord</div>
-      <div class="login-sub">Ange ett lösenord som skyddar appen</div>
-      <input type="password" class="login-input" id="setupPassword" placeholder="Skapa lösenord" style="margin-bottom:10px;text-align:left;letter-spacing:1px" onkeydown="if(event.key==='Enter')document.getElementById('setupConfirmPassword').focus()">
-      <input type="password" class="login-input" id="setupConfirmPassword" placeholder="Bekräfta lösenord" style="text-align:left;letter-spacing:1px" onkeydown="if(event.key==='Enter')submitSetup()">
-
-      <div class="login-divider" style="margin:14px 0"><hr><span>valfritt</span><hr></div>
-
-      <input type="email" class="login-input" id="setupEmail" placeholder="din@epost.se (valfritt, för återställning)" style="margin-bottom:10px;text-align:left;letter-spacing:0;font-size:14px" onkeydown="if(event.key==='Enter')document.getElementById('setupSecurityQuestion').focus()">
-
-      <div class="security-question-row" style="margin-top:0">
-        <select id="setupSecurityQuestion" style="margin-bottom:8px">
-          <option value="">-- Säkerhetsfråga (valfritt) --</option>
-          <option value="pet">Vad hette ditt första husdjur?</option>
-          <option value="city">I vilken stad föddes du?</option>
-          <option value="school">Vad hette din första skola?</option>
-          <option value="mother">Vad är din mammas flicknamn?</option>
-          <option value="color">Vad är din favoritfärg?</option>
-        </select>
-        <input type="text" id="setupSecurityAnswer" placeholder="Ditt svar" onkeydown="if(event.key==='Enter')submitSetup()">
-      </div>
-
-      <div class="checkbox-row">
-        <input type="checkbox" id="setupShowPassword" onchange="toggleSetupPasswordVisibility()">
-        <label for="setupShowPassword">Visa lösenord</label>
-      </div>
-
-      <div class="login-err h" id="setupErr">Fyll i lösenord korrekt</div>
-      <button class="login-btn" onclick="submitSetup()" style="margin-top:14px">Spara och fortsätt</button>
-    </div>
-
-    <!-- === BACKUP CODE DISPLAY (shown after first setup) === -->
-    <div class="login-form" id="formBackupCode">
-      <div class="login-logo" style="background:var(--emerald);box-shadow:0 4px 14px rgba(34,192,138,.3)"><i class="fas fa-check"></i></div>
-      <div class="login-title">Profil skapad!</div>
-      <div class="login-sub">Spara denna återställningskod på ett säkert ställe</div>
-
-      <div class="backup-code-display">
-        <div class="code" id="setupBackupCodeDisplay">---- ---- ----</div>
-        <div class="hint">Denna kod behövs om du glömmer ditt lösenord</div>
-      </div>
-
-      <button class="login-btn" onclick="copySetupBackupCode()" style="margin-top:8px;height:44px;font-size:14px;background:var(--surface2);color:var(--text)"><i class="fas fa-copy"></i> Kopiera kod</button>
-      <button class="login-btn" onclick="finishSetup()" style="margin-top:10px">Fortsätt till appen</button>
     </div>
   </div>
 </div>
@@ -1028,42 +910,21 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 /* ===== INLOGGNING ===== */
 const PW_KEY='familyAppPassword';
-const PROFILE_KEY='familyAppProfile';
-const BACKUP_CODE_KEY='familyAppBackupCode';
 const RECOVERY_CODE_KEY='familyAppRecoveryCode';
 const RECOVERY_EMAIL_KEY='familyAppRecoveryEmail';
-
-function getProfile(){
-  try{return JSON.parse(localStorage.getItem(PROFILE_KEY))}catch{return null}
-}
-function setProfile(p){localStorage.setItem(PROFILE_KEY,JSON.stringify(p));}
-function generateBackupCode(){
-  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code='';
-  for(let i=0;i<12;i++){
-    if(i>0 && i%4===0) code+='-';
-    code+=chars[Math.floor(Math.random()*chars.length)];
-  }
-  return code;
-}
-function generateRecoveryCode(){
-  return String(Math.floor(100000+Math.random()*900000));
-}
 
 function checkLoginState(){
   const authed=sessionStorage.getItem('familyAppAuthed')==='true';
   if(authed){unlockApp();return;}
 
   const savedPw=localStorage.getItem(PW_KEY);
-  const profile=getProfile();
 
-  // Show appropriate form
-  if(savedPw || profile){
+  if(savedPw){
     // Has password - show simple login
     showSimpleLogin();
   }else{
-    // No password yet - show setup
-    showProfileSetup();
+    // No password yet - create one
+    showCreatePassword();
   }
 }
 
@@ -1071,18 +932,17 @@ function showSimpleLogin(){
   document.querySelectorAll('.login-form').forEach(f=>f.classList.remove('active'));
   document.getElementById('formSimpleLogin').classList.add('active');
   document.getElementById('loginInput').value='';
+  document.getElementById('loginErr').classList.add('h');
   setTimeout(()=>document.getElementById('loginInput').focus(),50);
 }
 
-function showProfileSetup(){
-  document.querySelectorAll('.login-form').forEach(f=>f.classList.remove('active'));
-  document.getElementById('formProfileSetup').classList.add('active');
-  document.getElementById('setupPassword').value='';
-  document.getElementById('setupConfirmPassword').value='';
-  document.getElementById('setupEmail').value='';
-  document.getElementById('setupSecurityQuestion').value='';
-  document.getElementById('setupSecurityAnswer').value='';
-  setTimeout(()=>document.getElementById('setupPassword').focus(),50);
+function showCreatePassword(){
+  document.getElementById('loginTitle').textContent='Skapa lösenord';
+  document.getElementById('loginSub').textContent='Ange ett lösenord för att skydda appen';
+  document.getElementById('loginSubmitBtn').textContent='Spara';
+  document.getElementById('loginInput').value='';
+  document.getElementById('loginErr').classList.add('h');
+  setTimeout(()=>document.getElementById('loginInput').focus(),50);
 }
 
 function submitLogin(){
@@ -1090,103 +950,19 @@ function submitLogin(){
   if(!val.trim())return;
 
   const savedPw=localStorage.getItem(PW_KEY);
-  const profile=getProfile();
 
-  if(profile && profile.password){
-    if(val===profile.password){
-      unlockApp();
-      toast('Välkommen tillbaka! 👋');
-    }else{
-      document.getElementById('loginErr').classList.remove('h');
-      document.getElementById('loginInput').value='';
-      document.getElementById('loginInput').focus();
-    }
-  }else if(savedPw){
-    if(val===savedPw){
-      unlockApp();
-    }else{
-      document.getElementById('loginErr').classList.remove('h');
-      document.getElementById('loginInput').value='';
-      document.getElementById('loginInput').focus();
-    }
-  }else{
+  if(!savedPw){
+    // First time - create password
     localStorage.setItem(PW_KEY,val);
     unlockApp();
     toast('🔒 Lösenord skapat!');
+  }else if(val===savedPw){
+    unlockApp();
+  }else{
+    document.getElementById('loginErr').classList.remove('h');
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginInput').focus();
   }
-}
-
-function submitSetup(){
-  const pw=document.getElementById('setupPassword').value;
-  const confirmPw=document.getElementById('setupConfirmPassword').value;
-  const email=document.getElementById('setupEmail').value.trim();
-  const secQ=document.getElementById('setupSecurityQuestion').value;
-  const secA=document.getElementById('setupSecurityAnswer').value.trim();
-  const errEl=document.getElementById('setupErr');
-
-  if(!pw || !confirmPw){
-    errEl.textContent='Fyll i båda lösenordsfälten';
-    errEl.classList.remove('h');
-    return;
-  }
-  if(pw.length<4){
-    errEl.textContent='Lösenordet måste vara minst 4 tecken';
-    errEl.classList.remove('h');
-    return;
-  }
-  if(pw!==confirmPw){
-    errEl.textContent='Lösenorden matchar inte';
-    errEl.classList.remove('h');
-    return;
-  }
-
-  // Generate backup code
-  const backupCode=generateBackupCode();
-
-  const profile={
-    email:email||'',
-    password:pw,
-    securityQuestion:secQ,
-    securityAnswer:secA?secA.toLowerCase().trim():'',
-    createdAt:new Date().toISOString(),
-    backupCode:backupCode
-  };
-
-  setProfile(profile);
-  localStorage.setItem(PW_KEY,pw);
-  localStorage.setItem(BACKUP_CODE_KEY,backupCode);
-
-  // Show backup code
-  document.querySelectorAll('.login-form').forEach(f=>f.classList.remove('active'));
-  document.getElementById('formBackupCode').classList.add('active');
-  document.getElementById('setupBackupCodeDisplay').textContent=backupCode;
-}
-
-function toggleSetupPasswordVisibility(){
-  const show=document.getElementById('setupShowPassword').checked;
-  const type=show?'text':'password';
-  document.getElementById('setupPassword').type=type;
-  document.getElementById('setupConfirmPassword').type=type;
-}
-
-function copySetupBackupCode(){
-  const code=document.getElementById('setupBackupCodeDisplay').textContent;
-  navigator.clipboard.writeText(code).then(()=>{
-    toast('Återställningskod kopierad! 📋');
-  }).catch(()=>{
-    const ta=document.createElement('textarea');
-    ta.value=code;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    toast('Återställningskod kopierad! 📋');
-  });
-}
-
-function finishSetup(){
-  unlockApp();
-  toast('Välkommen! Dina uppgifter är skyddade. 🔐');
 }
 
 function unlockApp(){
@@ -1199,40 +975,23 @@ function unlockApp(){
 function openRecoveryPage(){
   document.querySelectorAll('.login-form').forEach(f=>f.classList.remove('active'));
   document.getElementById('formRecoveryPage').classList.add('active');
-  showRecoveryOptions();
+  document.getElementById('recoverEmailInput').value='';
+  document.getElementById('recoverEmailErr').classList.add('h');
+  document.getElementById('recoveryEmailCodeStep').classList.remove('active');
+  document.getElementById('recoveryNewPwStep').classList.remove('active');
+  setTimeout(()=>document.getElementById('recoverEmailInput').focus(),50);
 }
 
 function backToSimpleLogin(){
   document.querySelectorAll('.login-form').forEach(f=>f.classList.remove('active'));
   document.getElementById('formSimpleLogin').classList.add('active');
   document.getElementById('loginInput').value='';
-  document.querySelectorAll('.login-err').forEach(e=>e.classList.add('h'));
+  document.getElementById('loginErr').classList.add('h');
   setTimeout(()=>document.getElementById('loginInput').focus(),50);
-}
-
-function showRecoveryOptions(){
-  document.querySelectorAll('.recovery-step').forEach(s=>s.classList.remove('active'));
-  document.getElementById('recoveryOptions').style.display='flex';
-}
-function hideRecoveryOptions(){
-  document.getElementById('recoveryOptions').style.display='none';
-}
-function backToRecoveryOptions(){
-  document.querySelectorAll('.recovery-step').forEach(s=>s.classList.remove('active'));
-  document.getElementById('recoveryOptions').style.display='flex';
-  document.querySelectorAll('.login-err').forEach(e=>e.classList.add('h'));
-}
-
-function startEmailRecovery(){
-  hideRecoveryOptions();
-  document.getElementById('recoveryEmailStep').classList.add('active');
-  document.getElementById('recoverEmailInput').value='';
-  setTimeout(()=>document.getElementById('recoverEmailInput').focus(),50);
 }
 
 function sendRecoveryEmail(){
   const email=document.getElementById('recoverEmailInput').value.trim();
-  const profile=getProfile();
   const errEl=document.getElementById('recoverEmailErr');
 
   if(!email){
@@ -1240,25 +999,29 @@ function sendRecoveryEmail(){
     errEl.classList.remove('h');
     return;
   }
-
-  if(!profile || profile.email!==email){
-    errEl.textContent='E-postadressen hittades inte. Kontrollera stavningen.';
+  if(!email.includes('@') || !email.includes('.')){
+    errEl.textContent='Ange en giltig e-postadress';
     errEl.classList.remove('h');
     return;
   }
 
+  // Demo: generate a recovery code and show it
   const code=generateRecoveryCode();
   localStorage.setItem(RECOVERY_CODE_KEY,code);
   localStorage.setItem(RECOVERY_EMAIL_KEY,email);
 
-  document.getElementById('recoveryEmailStep').classList.remove('active');
-  document.getElementById('recoveryEmailCodeStep').classList.add('active');
   document.getElementById('recoverCodeHint').innerHTML=
     '<i class="fas fa-envelope" style="color:var(--primary)"></i> '+
-    'En kod har skickats till <strong>'+esc(email)+'</strong><br>'+
+    'Kod skickad till <strong>'+esc(email)+'</strong><br>'+
     '<span style="font-size:12px;color:var(--text3)">(Demo: koden är <strong style="color:var(--primary);font-size:16px">'+code+'</strong>)</span>';
   document.getElementById('recoverCodeInput').value='';
+  document.getElementById('recoverCodeErr').classList.add('h');
+  document.getElementById('recoveryEmailCodeStep').classList.add('active');
   setTimeout(()=>document.getElementById('recoverCodeInput').focus(),50);
+}
+
+function generateRecoveryCode(){
+  return String(Math.floor(100000+Math.random()*900000));
 }
 
 function verifyRecoveryCode(){
@@ -1271,6 +1034,7 @@ function verifyRecoveryCode(){
     document.getElementById('recoveryNewPwStep').classList.add('active');
     document.getElementById('newPwInput').value='';
     document.getElementById('newPwConfirm').value='';
+    document.getElementById('newPwErr').classList.add('h');
     setTimeout(()=>document.getElementById('newPwInput').focus(),50);
   }else{
     errEl.textContent='Fel kod. Försök igen.';
@@ -1294,123 +1058,15 @@ function saveNewPassword(){
     return;
   }
 
-  const profile=getProfile();
-  if(profile){
-    profile.password=pw;
-    setProfile(profile);
-  }
   localStorage.setItem(PW_KEY,pw);
-
   localStorage.removeItem(RECOVERY_CODE_KEY);
   localStorage.removeItem(RECOVERY_EMAIL_KEY);
 
-  toast('Nytt lösenord sparat! Logga in med ditt nya lösenord. 🔐');
+  toast('Nytt lösenord sparat! 🔐');
   backToSimpleLogin();
 }
 
-function startSecurityRecovery(){
-  const profile=getProfile();
-  if(!profile || !profile.securityQuestion){
-    toast('Ingen säkerhetsfråga är konfigurerad. Använd e-post eller återställningskod istället.','error');
-    return;
-  }
-
-  hideRecoveryOptions();
-  document.getElementById('recoverySecurityStep').classList.add('active');
-
-  const secQMap={
-    'pet':'Vad hette ditt första husdjur?',
-    'city':'I vilken stad föddes du?',
-    'school':'Vad hette din första skola?',
-    'mother':'Vad är din mammas flicknamn?',
-    'color':'Vad är din favoritfärg?'
-  };
-  document.getElementById('recoverySecurityQuestionDisplay').textContent=
-    secQMap[profile.securityQuestion]||profile.securityQuestion;
-  document.getElementById('recoverSecurityAnswer').value='';
-  setTimeout(()=>document.getElementById('recoverSecurityAnswer').focus(),50);
-}
-
-function verifySecurityAnswer(){
-  const answer=document.getElementById('recoverSecurityAnswer').value.trim().toLowerCase();
-  const profile=getProfile();
-  const errEl=document.getElementById('recoverSecurityErr');
-
-  if(!profile) return;
-
-  if(answer===profile.securityAnswer){
-    document.getElementById('recoverySecurityStep').classList.remove('active');
-    document.getElementById('recoveryNewPwStep').classList.add('active');
-    document.getElementById('newPwInput').value='';
-    document.getElementById('newPwConfirm').value='';
-    setTimeout(()=>document.getElementById('newPwInput').focus(),50);
-  }else{
-    errEl.textContent='Fel svar. Försök igen.';
-    errEl.classList.remove('h');
-  }
-}
-
-function startBackupCodeRecovery(){
-  hideRecoveryOptions();
-  document.getElementById('recoveryBackupCodeStep').classList.add('active');
-  document.getElementById('recoverBackupCodeInput').value='';
-  setTimeout(()=>document.getElementById('recoverBackupCodeInput').focus(),50);
-}
-
-function formatBackupCodeInput(input){
-  let val=input.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
-  let formatted='';
-  for(let i=0;i<val.length && i<12;i++){
-    if(i>0 && i%4===0) formatted+='-';
-    formatted+=val[i];
-  }
-  input.value=formatted;
-}
-
-function verifyBackupCode(){
-  const input=document.getElementById('recoverBackupCodeInput').value.replace(/-/g,'').toUpperCase();
-  const profile=getProfile();
-  const errEl=document.getElementById('recoverBackupCodeErr');
-
-  if(!profile){
-    errEl.textContent='Ingen profil hittades';
-    errEl.classList.remove('h');
-    return;
-  }
-
-  const storedCode=profile.backupCode.replace(/-/g,'').toUpperCase();
-  if(input===storedCode){
-    document.getElementById('recoveryBackupCodeStep').classList.remove('active');
-    document.getElementById('recoveryNewPwStep').classList.add('active');
-    document.getElementById('newPwInput').value='';
-    document.getElementById('newPwConfirm').value='';
-    setTimeout(()=>document.getElementById('newPwInput').focus(),50);
-  }else{
-    errEl.textContent='Fel återställningskod. Kontrollera och försök igen.';
-    errEl.classList.remove('h');
-  }
-}
-
-function startResetAll(){
-  hideRecoveryOptions();
-  document.getElementById('recoveryResetAllStep').classList.add('active');
-}
-
-function confirmResetAll(){
-  if(!document.getElementById('confirmResetAll').checked){
-    toast('Bekräfta att du förstår konsekvenserna','error');
-    return;
-  }
-  if(!confirm('Är du helt säker? ALL data kommer att raderas permanent.')) return;
-
-  localStorage.clear();
-  sessionStorage.clear();
-
-  toast('All data har raderats. Laddar om...');
-  setTimeout(()=>location.reload(),1500);
-}
-
-/* ===== LEGACY RESET (redirects to recovery page) ===== */
+/* ===== LEGACY RESET ===== */
 function resetPassword(){
   openRecoveryPage();
 }
