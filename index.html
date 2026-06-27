@@ -164,12 +164,6 @@
     .edit-btn{width:40px;height:40px;border-radius:11px;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;margin-top:2px}
     .edit-btn:hover{background:var(--primary-soft);color:var(--primary)}
     .edit-btn:active{background:var(--primary-soft);color:var(--primary)}
-    .star-btn{width:40px;height:40px;border-radius:11px;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;margin-top:2px}
-    .star-btn:hover{background:var(--amber-soft);color:var(--amber)}
-    .star-btn:active{background:var(--amber-soft);color:var(--amber)}
-    .star-btn.on{color:var(--amber)}
-    .star-btn.on:hover{color:var(--amber)}
-
 
     .empty-state{padding:36px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
     .empty-icon{width:56px;height:56px;border-radius:18px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text3)}
@@ -209,8 +203,7 @@
     .cp{position:fixed;pointer-events:none;z-index:999;animation:cf 2.2s linear forwards}
     @keyframes cf{0%{opacity:1;transform:translateY(-30px) rotate(0deg) scale(.8)}100%{opacity:0;transform:translateY(110vh) rotate(720deg) scale(1.2)}}
     .fade-in{animation:fi .2s ease}
-    @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(108,71,232,.4)}70%{box-shadow:0 0 0 10px rgba(108,71,232,0)}100%{box-shadow:0 0 0 0 rgba(108,71,232,0)}}
-
+    @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
     .done-section .task-item{opacity:.8}
     .cal-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 12px;gap:10px}
     .cal-header .cal-nav{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:16px;transition:all .2s}
@@ -459,20 +452,6 @@
 
     <div class="cards-section">
       <div class="cards-grid" id="cardsGrid"></div>
-    </div>
-
-    <!-- FAVORITES SECTION -->
-    <div class="cards-section" id="favoritesSection">
-      <div class="sync-card" style="border-color:var(--amber);background:var(--amber-soft)">
-        <div class="sync-header">
-          <i class="fas fa-star" style="color:var(--amber)"></i>
-          <div>
-            <div class="sync-title">⭐ Aktuellt / Favoriter</div>
-            <div class="sync-sub">Snabbåtkomst till viktiga uppgifter</div>
-          </div>
-        </div>
-        <div id="favoritesList" style="margin-top:8px"></div>
-      </div>
     </div>
 
     <!-- SYNC SECTION -->
@@ -789,7 +768,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   updateSyncUI();
   checkReminders(); setInterval(checkReminders,30000);
   if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
-  renderFavorites();
   // Init sync
   if(syncOnStart && supabaseUrl && supabaseKey && syncKey) {
     setTimeout(()=>pullFromSupabase(true), 1000);
@@ -1299,7 +1277,7 @@ function goHome(){
   detail.classList.remove('open');
   document.getElementById('homeNavContent').style.display='flex';
   document.getElementById('detailNavContent').style.display='none';
-  setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();renderSavedPDFs();;renderFavorites();},320);
+  setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();renderSavedPDFs();},320);
 }
 
 function switchTab(tab){
@@ -1354,7 +1332,7 @@ function taskHTML(item,isDone){
   const hasNote = item.note && item.note.trim() !== '';
   const hasLink = item.link && item.link.trim() !== '';
   const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
-  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><button class="star-btn '+(item.favorite?'on':'')+'" data-id="'+item.id+'" onclick="event.stopPropagation();toggleFavorite('+item.id+')"><i class="fas fa-star"></i></button><button class="edit-btn" data-id="'+item.id+'" onclick="event.stopPropagation();openTaskEdit('+item.id+')"><i class="fas fa-pen"></i></button><button class="del-btn" data-id="'+item.id+'"><i class="fas fa-trash-can"></i></button></div>';
+  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><button class="edit-btn" data-id="'+item.id+'" onclick="event.stopPropagation();openTaskEdit('+item.id+')"><i class="fas fa-pen"></i></button><button class="del-btn" data-id="'+item.id+'"><i class="fas fa-trash-can"></i></button></div>';
 }
 
 function addTask(){
@@ -1382,7 +1360,6 @@ function addTask(){
   document.getElementById('reminderTime').value='';
   toast('Uppgift tillagd! ✅');
   renderDetail();
-  renderFavorites();
 }
 
 function toggleComplete(id){
@@ -1393,62 +1370,9 @@ function toggleComplete(id){
     spawnConfetti(); toast('+10 poäng! 🎉');
     saveData();
     moveToTrash(id);
-    renderFavorites();
   } else {
     t.completed=false; saveData(); renderDetail();
   }
-}
-
-function toggleFavorite(id){
-  const t=tasks.find(x=>x.id===id);
-  if(!t)return;
-  t.favorite=!t.favorite;
-  saveData();
-  renderDetail();
-  renderFavorites();
-  toast(t.favorite?'⭐ Tillagd i favoriter!':'⭐ Borttagen från favoriter');
-}
-
-function renderFavorites(){
-  const container=document.getElementById('favoritesList');
-  const favs=tasks.filter(t=>t.favorite&&!t.completed);
-  if(!favs.length){
-    container.innerHTML='<div class="empty-state" style="padding:20px 0"><div class="empty-text" style="font-size:13px">Inga favoriter än. Tryck på ⭐ på en uppgift!</div></div>';
-    return;
-  }
-  container.innerHTML=favs.map(item=>{
-    const personLabel=item.person!=='all'?(personLabels[item.person]||item.person):null;
-    const pcolor=colorMap[item.person]||'#999';
-    const remDate=item.reminder?new Date(item.reminder).toLocaleString('sv-SE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):null;
-    return '<div class="task-item" style="cursor:pointer" onclick="openDetailFromFavorite(''+item.person+'', '+item.id+')">'+
-      '<div class="check-btn" data-id="'+item.id+'" onclick="event.stopPropagation();toggleComplete('+item.id+')"><i class="fas fa-check"></i></div>'+
-      '<div class="task-content" style="flex:1">'+
-        '<div class="task-text">'+esc(item.text)+'</div>'+
-        '<div class="task-meta">'+
-          '<span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+
-          (personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+
-          (item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+
-          (remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+
-        '</div>'+
-      '</div>'+
-      '<button class="star-btn on" data-id="'+item.id+'" onclick="event.stopPropagation();toggleFavorite('+item.id+')"><i class="fas fa-star"></i></button>'+
-    '</div>';
-  }).join('');
-}
-
-function openDetailFromFavorite(person, taskId){
-  openDetail(person);
-  setTimeout(()=>{
-    const el=document.querySelector('[data-id="'+taskId+'"]');
-    if(el){
-      el.scrollIntoView({behavior:'smooth',block:'center'});
-      el.closest('.task-item').style.animation='pulse 1s ease';
-      setTimeout(()=>{
-        const item=el.closest('.task-item');
-        if(item)item.style.animation='';
-      },1000);
-    }
-  },350);
 }
 
 function moveToTrash(id){
@@ -1529,7 +1453,6 @@ function saveTaskEdit(){
   saveData();
   renderDetail();
   closeTaskEdit();
-  renderFavorites();
   toast('✅ Uppgift uppdaterad!');
 }
 function exportAllPDF(){
@@ -1631,8 +1554,7 @@ function renderTrashModal(){
   b.innerHTML=trash.slice().reverse().map(item=>'<div class="trash-item"><div class="trash-dot" style="background:'+(item.type==='shopping'?'var(--emerald)':'var(--primary)')+'"></div><div class="trash-text">'+esc(item.text)+'</div><div class="trash-acts"><button class="trash-act restore" onclick="restoreFromTrash('+item.id+')"><i class="fas fa-rotate-left"></i></button><button class="trash-act del" onclick="delPerm('+item.id+')"><i class="fas fa-trash"></i></button></div></div>').join('');
 }
 function updateTrashBdg(){const b=document.getElementById('trashBdg');b.textContent=trash.length;b.classList.toggle('h',trash.length===0);}
-function restoreFromTrash(id){const idx=trash.findIndex(t=>t.id===id);if(idx>-1){const t=trash.splice(idx,1)[0];delete t.deletedAt;t.completed=false;tasks.push(t);saveData();renderTrashModal();renderDetail();renderCards();toast('Återställd!');
-    renderFavorites();}}
+function restoreFromTrash(id){const idx=trash.findIndex(t=>t.id===id);if(idx>-1){const t=trash.splice(idx,1)[0];delete t.deletedAt;t.completed=false;tasks.push(t);saveData();renderTrashModal();renderDetail();renderCards();toast('Återställd!');}}
 function delPerm(id){trash=trash.filter(t=>t.id!==id);saveData();renderTrashModal();toast('Raderad permanent');}
 function emptyTrash(){if(confirm('Töm hela papperskorgen?')){trash=[];saveData();renderTrashModal();toast('Papperskorg tömd');}}
 
