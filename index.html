@@ -382,6 +382,7 @@
     body.pc-mode .modal-btn{height:58px;font-size:17px}
   </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body class="locked">
 
@@ -1271,7 +1272,7 @@ function renderList(cid,items,isDone){
   c.querySelectorAll('.check-btn').forEach(btn=>{
     btn.addEventListener('click',()=>toggleComplete(parseInt(btn.dataset.id)));
   });
-  c.querySelectorAll('.del-btn').forEach(btn=>{
+  c.querySelectorAll('.del-btn[data-id]').forEach(btn=>{
     btn.addEventListener('click',()=>moveToTrash(parseInt(btn.dataset.id)));
   });
 }
@@ -1283,7 +1284,7 @@ function taskHTML(item,isDone){
   const hasNote = item.note && item.note.trim() !== '';
   const hasLink = item.link && item.link.trim() !== '';
   const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
-  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><button class="del-btn" data-id="'+item.id+'"><i class="fas fa-trash-can"></i></button></div>';
+  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
 }
 
 function addTask(){
@@ -1329,6 +1330,57 @@ function toggleComplete(id){
 function moveToTrash(id){
   const idx=tasks.findIndex(t=>t.id===id);
   if(idx>-1){const t=tasks.splice(idx,1)[0];t.deletedAt=new Date().toISOString();trash.push(t);saveData();updateTrashBdg();renderDetail();}
+}
+
+// ===== EDIT TASK FUNCTION =====
+function openEditTask(id){
+  const t = tasks.find(x => x.id === id);
+  if(!t) return;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:300;display:flex;align-items:flex-end;justify-content:center';
+  overlay.id = 'editTaskOverlay';
+  overlay.onclick = function(e){ if(e.target === this) closeEditTask(); };
+
+  const color = colorMap[t.person] || PERSON_COLORS[0];
+
+  overlay.innerHTML = '<div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen" style="color:'+color+'"></i> Redigera uppgift</div><button class="modal-x" onclick="closeEditTask()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding:12px 16px"><label class="form-lbl">Uppgift</label><input type="text" class="form-input" id="editTaskText" value="'+esc(t.text)+'" placeholder="Vad ska göras?"><label class="form-lbl" style="margin-top:10px">Typ</label><select class="form-select" id="editTaskType"><option value="todo" '+(t.type==='todo'?'selected':'')+'>📋 Uppgift</option><option value="shopping" '+(t.type==='shopping'?'selected':'')+'>🛒 Inköp</option></select><label class="form-lbl" style="margin-top:10px">Tidsram</label><select class="form-select" id="editTaskTimeFrame" style="margin-top:6px"><option value="today" '+(t.timeFrame==='today'?'selected':'')+'>Idag</option><option value="tomorrow" '+(t.timeFrame==='tomorrow'?'selected':'')+'>Imorgon</option><option value="week" '+(t.timeFrame==='week'?'selected':'')+'>Denna vecka</option><option value="month" '+(t.timeFrame==='month'?'selected':'')+'>Denna månad</option><option value="thisyear" '+(t.timeFrame==='thisyear'?'selected':'')+'>Pågående år</option><option value="nextyear" '+(t.timeFrame==='nextyear'?'selected':'')+'>Nästa år</option><option value="future" '+(t.timeFrame==='future'?'selected':'')+'>Framtiden</option><option value="sometime" '+(t.timeFrame==='sometime'?'selected':'')+'>Någon gång</option></select><label class="form-lbl" style="margin-top:10px">Anteckning</label><input type="text" class="task-note-input" id="editTaskNote" value="'+esc(t.note||'')+'" placeholder="Anteckning (valfritt)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Länk</label><input type="text" class="task-link-input" id="editTaskLink" value="'+esc(t.link||'')+'" placeholder="Länk (t.ex. https://...)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Påminnelse</label><input type="datetime-local" class="reminder-input" id="editTaskReminder" value="'+(t.reminder?t.reminder.slice(0,16):'')+'" style="margin-top:6px"></div><div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeEditTask()">Avbryt</button><button class="modal-btn" style="background:var(--emerald);color:#fff" onclick="saveEditTask('+id+')"><i class="fas fa-save"></i> Spara ändringar</button></div></div>';
+
+  document.body.appendChild(overlay);
+  document.getElementById('editTaskText').focus();
+}
+
+function closeEditTask(){
+  const overlay = document.getElementById('editTaskOverlay');
+  if(overlay) overlay.remove();
+}
+
+function saveEditTask(id){
+  const t = tasks.find(x => x.id === id);
+  if(!t) return;
+
+  const text = document.getElementById('editTaskText').value.trim();
+  if(!text){ toast('Ange en uppgift','error'); return; }
+
+  t.text = text;
+  t.type = document.getElementById('editTaskType').value;
+  t.timeFrame = document.getElementById('editTaskTimeFrame').value;
+  t.note = document.getElementById('editTaskNote').value.trim();
+  t.link = document.getElementById('editTaskLink').value.trim();
+
+  const reminderVal = document.getElementById('editTaskReminder').value;
+  if(reminderVal){
+    t.reminder = new Date(reminderVal).toISOString();
+    t.reminded = false;
+  } else {
+    t.reminder = null;
+    t.reminded = false;
+  }
+
+  saveData();
+  renderDetail();
+  closeEditTask();
+  toast('✅ Uppgift uppdaterad!');
 }
 
 // ===== PDF EXPORT FUNCTIONS =====
