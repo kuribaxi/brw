@@ -540,6 +540,7 @@
       <input type="text" class="task-note-input" id="taskNoteInput" placeholder="Anteckning (valfritt)">
       <input type="text" class="task-link-input" id="taskLinkInput" placeholder="Länk (t.ex. https://...)" oninput="if(this.value.startsWith('http'))this.style.borderColor='var(--emerald)'">
       <input type="datetime-local" class="reminder-input" id="reminderTime">
+      <input type="email" class="reminder-input" id="reminderEmail" placeholder="E-post för påminnelse (valfritt)" style="margin-top:8px">
       <button class="btn-add-task" onclick="addTask()"><i class="fas fa-plus"></i> Lägg till uppgift</button>
     </div>
 
@@ -663,6 +664,11 @@
           <button class="sync-btn-secondary" onclick="pullFromSupabase()" style="flex:1"><i class="fas fa-cloud-download-alt"></i> Hämta från molnet</button>
         </div>
         <button class="sync-btn-danger" onclick="clearSupabaseConfig()" style="width:100%;margin-top:8px"><i class="fas fa-trash"></i> Rensa molnsynk-inställningar</button>
+        <div style="margin-top:16px;padding-top:16px;border-top:1.5px solid var(--border)">
+          <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px"><i class="fas fa-envelope" style="color:var(--primary)"></i> E-postpåminnelser</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Testa att skicka ett mail via din Supabase Edge Function</div>
+          <button class="sync-btn-primary" onclick="sendTestEmail()" style="width:100%"><i class="fas fa-paper-plane"></i> Skicka testmail</button>
+        </div>
       </div>
       <div class="sync-log" id="syncSettingsLog" style="margin-top:12px"></div>
     </div>
@@ -1293,7 +1299,7 @@ function taskHTML(item,isDone){
   const hasNote = item.note && item.note.trim() !== '';
   const hasLink = item.link && item.link.trim() !== '';
   const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
-  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
+  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+(item.email?'<span class="tag rem-tag" style="background:#DBEAFE;color:#1D4ED8;border-color:#BFDBFE"><i class="fas fa-envelope"></i> '+esc(item.email)+'</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
 }
 
 function addTask(){
@@ -1303,6 +1309,7 @@ function addTask(){
   const note = document.getElementById('taskNoteInput').value.trim();
   const link = document.getElementById('taskLinkInput').value.trim();
   const reminder=document.getElementById('reminderTime').value;
+  const email = document.getElementById('reminderEmail').value.trim();
   tasks.push({
     id:Date.now(),text,
     type:document.getElementById('taskType').value,
@@ -1312,13 +1319,15 @@ function addTask(){
     reminded:false,
     completed:false,
     createdAt:new Date().toISOString(),
-    note: note || '',link: link || ''
+    note: note || '',link: link || '',
+    email: email || ''
   });
   saveData();
   inp.value='';
   document.getElementById('taskNoteInput').value='';
   document.getElementById('taskLinkInput').value='';
   document.getElementById('reminderTime').value='';
+  document.getElementById('reminderEmail').value='';
   toast('Uppgift tillagd! ✅');
   renderDetail();
 }
@@ -1353,7 +1362,7 @@ function openEditTask(id){
 
   const color = colorMap[t.person] || PERSON_COLORS[0];
 
-  overlay.innerHTML = '<div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen" style="color:'+color+'"></i> Redigera uppgift</div><button class="modal-x" onclick="closeEditTask()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding:12px 16px"><label class="form-lbl">Uppgift</label><input type="text" class="form-input" id="editTaskText" value="'+esc(t.text)+'" placeholder="Vad ska göras?"><label class="form-lbl" style="margin-top:10px">Typ</label><select class="form-select" id="editTaskType"><option value="todo" '+(t.type==='todo'?'selected':'')+'>📋 Uppgift</option><option value="shopping" '+(t.type==='shopping'?'selected':'')+'>🛒 Inköp</option></select><label class="form-lbl" style="margin-top:10px">Tidsram</label><select class="form-select" id="editTaskTimeFrame" style="margin-top:6px"><option value="today" '+(t.timeFrame==='today'?'selected':'')+'>Idag</option><option value="tomorrow" '+(t.timeFrame==='tomorrow'?'selected':'')+'>Imorgon</option><option value="week" '+(t.timeFrame==='week'?'selected':'')+'>Denna vecka</option><option value="month" '+(t.timeFrame==='month'?'selected':'')+'>Denna månad</option><option value="thisyear" '+(t.timeFrame==='thisyear'?'selected':'')+'>Pågående år</option><option value="nextyear" '+(t.timeFrame==='nextyear'?'selected':'')+'>Nästa år</option><option value="future" '+(t.timeFrame==='future'?'selected':'')+'>Framtiden</option><option value="sometime" '+(t.timeFrame==='sometime'?'selected':'')+'>Någon gång</option></select><label class="form-lbl" style="margin-top:10px">Anteckning</label><input type="text" class="task-note-input" id="editTaskNote" value="'+esc(t.note||'')+'" placeholder="Anteckning (valfritt)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Länk</label><input type="text" class="task-link-input" id="editTaskLink" value="'+esc(t.link||'')+'" placeholder="Länk (t.ex. https://...)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Påminnelse</label><input type="datetime-local" class="reminder-input" id="editTaskReminder" value="'+(t.reminder?t.reminder.slice(0,16):'')+'" style="margin-top:6px"></div><div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeEditTask()">Avbryt</button><button class="modal-btn" style="background:var(--emerald);color:#fff" onclick="saveEditTask('+id+')"><i class="fas fa-save"></i> Spara ändringar</button></div></div>';
+  overlay.innerHTML = '<div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen" style="color:'+color+'"></i> Redigera uppgift</div><button class="modal-x" onclick="closeEditTask()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding:12px 16px"><label class="form-lbl">Uppgift</label><input type="text" class="form-input" id="editTaskText" value="'+esc(t.text)+'" placeholder="Vad ska göras?"><label class="form-lbl" style="margin-top:10px">Typ</label><select class="form-select" id="editTaskType"><option value="todo" '+(t.type==='todo'?'selected':'')+'>📋 Uppgift</option><option value="shopping" '+(t.type==='shopping'?'selected':'')+'>🛒 Inköp</option></select><label class="form-lbl" style="margin-top:10px">Tidsram</label><select class="form-select" id="editTaskTimeFrame" style="margin-top:6px"><option value="today" '+(t.timeFrame==='today'?'selected':'')+'>Idag</option><option value="tomorrow" '+(t.timeFrame==='tomorrow'?'selected':'')+'>Imorgon</option><option value="week" '+(t.timeFrame==='week'?'selected':'')+'>Denna vecka</option><option value="month" '+(t.timeFrame==='month'?'selected':'')+'>Denna månad</option><option value="thisyear" '+(t.timeFrame==='thisyear'?'selected':'')+'>Pågående år</option><option value="nextyear" '+(t.timeFrame==='nextyear'?'selected':'')+'>Nästa år</option><option value="future" '+(t.timeFrame==='future'?'selected':'')+'>Framtiden</option><option value="sometime" '+(t.timeFrame==='sometime'?'selected':'')+'>Någon gång</option></select><label class="form-lbl" style="margin-top:10px">Anteckning</label><input type="text" class="task-note-input" id="editTaskNote" value="'+esc(t.note||'')+'" placeholder="Anteckning (valfritt)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Länk</label><input type="text" class="task-link-input" id="editTaskLink" value="'+esc(t.link||'')+'" placeholder="Länk (t.ex. https://...)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Påminnelse</label><input type="datetime-local" class="reminder-input" id="editTaskReminder" value="'+(t.reminder?t.reminder.slice(0,16):'')+'" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">E-post för påminnelse</label><input type="email" class="reminder-input" id="editTaskEmail" value="'+esc(t.email||'')+'" placeholder="E-post för påminnelse" style="margin-top:6px"></div><div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeEditTask()">Avbryt</button><button class="modal-btn" style="background:var(--emerald);color:#fff" onclick="saveEditTask('+id+')"><i class="fas fa-save"></i> Spara ändringar</button></div></div>';
 
   document.body.appendChild(overlay);
   document.getElementById('editTaskText').focus();
@@ -1376,6 +1385,7 @@ function saveEditTask(id){
   t.timeFrame = document.getElementById('editTaskTimeFrame').value;
   t.note = document.getElementById('editTaskNote').value.trim();
   t.link = document.getElementById('editTaskLink').value.trim();
+  t.email = document.getElementById('editTaskEmail').value.trim();
 
   const reminderVal = document.getElementById('editTaskReminder').value;
   if(reminderVal){
@@ -1539,12 +1549,101 @@ function checkReminders(){
   const now=new Date();
   tasks.forEach(t=>{
     if(t.reminder&&!t.reminded&&!t.completed&&new Date(t.reminder)<=now){
-      t.reminded=true;notifications.push({id:Date.now()+Math.random(),text:t.text,time:now.toISOString(),person:t.person});
+      t.reminded=true;
+      notifications.push({id:Date.now()+Math.random(),text:t.text,time:now.toISOString(),person:t.person});
       if('Notification' in window&&Notification.permission==='granted')new Notification('Påminnelse!',{body:t.text});
       toast('🔔 '+t.text,'reminder');
+      // Send email reminder if email is set
+      if(t.email && t.email.includes('@')){
+        sendEmailReminder(t);
+      }
     }
   });
   updateNotifBdg(); saveData();
+}
+
+// ===== EMAIL REMINDER VIA SUPABASE EDGE FUNCTION =====
+async function sendEmailReminder(task){
+  if(!supabaseUrl || !supabaseKey){
+    console.log('Supabase inte konfigurerat — kan inte skicka e-post');
+    return;
+  }
+  const personName = task.person !== 'all' ? (personLabels[task.person] || task.person) : 'Familjens Planerare';
+  const color = colorMap[task.person] || PERSON_COLORS[0];
+  const timeLabel = TIME_LABELS[task.timeFrame] || 'Någon gång';
+
+  try{
+    const response = await fetch(supabaseUrl.replace('/rest/v1','') + '/functions/v1/send-reminder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+        'Authorization': 'Bearer ' + supabaseKey
+      },
+      body: JSON.stringify({
+        to: task.email,
+        subject: '🔔 Påminnelse: ' + task.text,
+        taskText: task.text,
+        taskNote: task.note || '',
+        taskType: task.type === 'shopping' ? '🛒 Inköp' : '📋 Uppgift',
+        timeFrame: timeLabel,
+        person: personName,
+        color: color,
+        reminderTime: new Date(task.reminder).toLocaleString('sv-SE')
+      })
+    });
+    if(response.ok){
+      toast('📧 E-postpåminnelse skickad!');
+      addSyncLog('E-postpåminnelse skickad till ' + task.email, 'success');
+    } else {
+      console.error('E-post fel:', await response.text());
+    }
+  }catch(e){
+    console.error('Kunde inte skicka e-post:', e);
+  }
+}
+
+// ===== MANUAL TEST EMAIL =====
+async function sendTestEmail(){
+  const email = prompt('Ange e-postadress för test:');
+  if(!email || !email.includes('@')){ toast('Ogiltig e-post','error'); return; }
+
+  if(!supabaseUrl || !supabaseKey){
+    toast('Konfigurera Supabase URL och Key först i Synkinställningar','error');
+    openSyncSettings();
+    return;
+  }
+
+  toast('Skickar testmail...');
+  try{
+    const response = await fetch(supabaseUrl.replace('/rest/v1','') + '/functions/v1/send-reminder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+        'Authorization': 'Bearer ' + supabaseKey
+      },
+      body: JSON.stringify({
+        to: email,
+        subject: '✅ Test från Familjens Planerare',
+        taskText: 'Detta är ett testmail från din planerare!',
+        taskNote: 'Om du ser detta fungerar e-postpåminnelser.',
+        taskType: '📋 Test',
+        timeFrame: 'Nu',
+        person: 'Familjens Planerare',
+        color: '#6C47E8',
+        reminderTime: new Date().toLocaleString('sv-SE')
+      })
+    });
+    if(response.ok){
+      toast('✅ Testmail skickat till ' + email);
+    } else {
+      const err = await response.text();
+      toast('❌ Kunde inte skicka: ' + err,'error');
+    }
+  }catch(e){
+    toast('❌ Fel: ' + e.message,'error');
+  }
 }
 
 function saveData(){
