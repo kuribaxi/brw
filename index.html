@@ -1,386 +1,1910 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Familjens Planerare</title>
-    <link rel="icon" href="/favicon-light.svg" type="image/svg+xml" media="(prefers-color-scheme: light)" />
-    <link rel="icon" href="/favicon-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)" />
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://019f31ea-2e22-712d-9257-17c47454b3e7.arena.site/" />
-    <meta property="og:title" content="Familjens Planerare" />
-    <meta
-      property="og:description"
-      content="Check out what I built in Arena's Code Arena - Content is user-generated and unverified"
-    />
-    <meta property="og:image" content="https://screenshot-taker-prod.weichiang.workers.dev/message/019f31ea-2e22-712d-9257-17c47454b3e7/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://019f31ea-2e22-712d-9257-17c47454b3e7.arena.site/" />
-    <meta property="twitter:title" content="Familjens Planerare" />
-    <meta
-      property="twitter:description"
-      content="Check out what I built in Arena's Code Arena - Content is user-generated and unverified"
-    />
-    <meta property="twitter:image" content="https://screenshot-taker-prod.weichiang.workers.dev/message/019f31ea-2e22-712d-9257-17c47454b3e7/og-image.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
-    <script>
-      const REPORT_SURVEY_ID = "019a46ef-f7dd-0000-58be-14fbb8b91d15";
-      const MESSAGE_ID = "019f31ea-2e22-712d-9257-17c47454b3e7";
-      const EVALUATION_SESSION_ID = "019f2e49-16f7-7f5a-b6e6-e6d6b316d909";
-      const getStorageKey = (prefix) => `${prefix}_${MESSAGE_ID}`;
-      const hasStorageKey = (prefix) => !!localStorage.getItem(getStorageKey(prefix));
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Familjens Planerare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --bg:#F0EDF8; --surface:#fff; --surface2:#F7F5FC; --border:#E4DEFC;
+      --primary:#6C47E8; --primary-soft:#EDE8FC; --primary-glow:rgba(108,71,232,0.18);
+      --emerald:#22C08A; --emerald-soft:#DCFDF2;
+      --rose:#F05E7A; --rose-soft:#FDEDF0;
+      --amber:#F59E0B; --amber-soft:#FEF3C7;
+      --text:#1E1535; --text2:#7168A0; --text3:#A89FCE;
+      --r:20px; --rsm:14px;
+      --shadow:0 4px 24px rgba(108,71,232,0.10);
+      --shadow-sm:0 2px 10px rgba(108,71,232,0.07);
+      --font:'Nunito',sans-serif;
+    }
+    body.night {
+      --bg:#12102A; --surface:#1E1B3A; --surface2:#2A2550; --border:#332F5C;
+      --primary-soft:#2D2560; --emerald-soft:#0C2E22; --rose-soft:#2E121A; --amber-soft:#2C2100;
+      --text:#EDE8FC; --text2:#9B93CC; --text3:#5E5890;
+      --shadow:0 4px 24px rgba(0,0,0,0.3);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;overflow-x:hidden}
+    .page{position:fixed;inset:0;overflow-y:auto;transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s;background:var(--bg)}
+    .page.hidden{display:none}
+    #pageDetail{transform:translateX(100%)}
+    #pageDetail.open{transform:translateX(0)}
+    .hdr{background:var(--surface);border-bottom:1.5px solid var(--border);padding:14px 18px 14px;position:sticky;top:0;z-index:40;display:flex;flex-direction:column;gap:10px}
+    .hdr-toprow{display:flex;align-items:center;gap:12px}
+    .hdr-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--primary),#9B59E8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;box-shadow:0 4px 14px var(--primary-glow)}
+    .hdr-info{flex:1;min-width:0}
+    .hdr-title{font-size:18px;font-weight:900;color:var(--text);line-height:1.1}
+    .hdr-sub{font-size:12px;color:var(--text3);font-weight:600;margin-top:1px}
+    .hdr-actions{display:flex;gap:6px}
+    .icon-btn{width:46px;height:46px;border-radius:15px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:17px;position:relative;transition:background .2s,color .2s,transform .15s}
+    .icon-btn:active{background:var(--primary-soft);color:var(--primary);transform:scale(.92)}
+    .icon-btn svg{width:22px;height:22px;display:block}
+    .bdg{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:50%;background:var(--rose);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface);padding:0 3px}
+    .bdg.h{display:none}
+    .date-row{display:flex;align-items:center;gap:8px;margin-top:2px}
+    .date-block{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rsm);padding:10px 14px;flex:1;cursor:pointer;user-select:none;transition:border-color .2s}
+    .date-block:active{border-color:var(--primary)}
+    .date-toprow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .date-cal-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--primary);display:flex;align-items:center;gap:5px}
+    .date-clock{font-size:26px;font-weight:900;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.5px;line-height:1}
+    .date-main-row{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:4px}
+    .date-text{font-size:15px;font-weight:700;color:var(--text2)}
+    .date-text.farsi-rtl{direction:rtl}
+    .date-redday{font-size:12px;font-weight:800;color:var(--rose);background:var(--rose-soft);padding:3px 9px;border-radius:50px;white-space:nowrap;flex-shrink:0;max-width:60%;overflow:hidden;text-overflow:ellipsis;cursor:help}
+    .date-redday:hover{max-width:100%;white-space:normal;word-break:break-word}
+    .cal-btn{width:46px;height:46px;border-radius:15px;border:1.5px solid var(--border);background:var(--primary);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .2s;flex-shrink:0}
+    .cal-btn:active{transform:scale(.92);opacity:.8}
+    .dhdr{background:var(--surface);border-bottom:1.5px solid var(--border);padding:14px 18px;position:sticky;top:0;z-index:40;display:flex;flex-direction:column;gap:10px}
+    .dhdr-toprow{display:flex;align-items:center;gap:10px}
+    .back-btn{height:44px;padding:0 16px;border-radius:14px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--text2);font-size:15px;font-weight:800;flex-shrink:0;transition:background .2s;font-family:var(--font)}
+    .back-btn:active{background:var(--primary-soft);color:var(--primary)}
+    .save-btn{height:44px;padding:0 14px;border-radius:14px;border:none;background:var(--emerald);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;flex-shrink:0;transition:opacity .2s,transform .1s;font-family:var(--font);box-shadow:0 4px 14px rgba(34,192,138,.25);white-space:nowrap}
+    .save-btn:active{transform:scale(.96);opacity:.9}
+    .pdf-btn{height:44px;padding:0 14px;border-radius:14px;border:none;background:var(--rose);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;flex-shrink:0;transition:opacity .2s,transform .1s;font-family:var(--font);box-shadow:0 4px 14px rgba(240,94,122,.25);white-space:nowrap}
+    .pdf-btn:active{transform:scale(.96);opacity:.9}
+    .dhdr-avatar{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;font-weight:900}
+    .dhdr-info{flex:1;min-width:0}
+    .dhdr-name{font-size:18px;font-weight:900;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px}
+    .dhdr-name:hover{color:var(--primary)}
+    .dhdr-sub{font-size:12px;color:var(--text3);font-weight:600;margin-top:1px}
+    .home-body{max-width:600px;margin:0 auto;padding:0 0 100px}
+    .add-person-section{padding:16px 18px 0}
+    .add-person-row{display:flex;gap:8px}
+    .add-person-row input{flex:1;height:52px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface);padding:0 16px;font-family:var(--font);font-size:16px;font-weight:700;color:var(--text);outline:none;transition:border .2s}
+    .add-person-row input:focus{border-color:var(--primary)}
+    .add-person-row input::placeholder{color:var(--text3);font-weight:600}
+    .btn-add-person{height:52px;padding:0 20px;border-radius:var(--rsm);border:none;background:var(--primary);color:#fff;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap;transition:opacity .2s,transform .1s;box-shadow:0 4px 14px var(--primary-glow)}
+    .btn-add-person:active{transform:scale(.97)}
+    .cards-section{padding:16px 18px 0}
+    .cards-grid{display:flex;flex-direction:column;gap:14px}
+    .person-card{background:var(--surface);border-radius:var(--r);border:2px solid var(--border);padding:18px 16px 16px;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;position:relative;overflow:hidden;box-shadow:var(--shadow-sm)}
+    .person-card:active{transform:scale(.98);box-shadow:var(--shadow)}
+    .person-card .card-accent{position:absolute;top:0;left:0;right:0;height:5px;border-radius:var(--r) var(--r) 0 0}
+    .person-card .card-avatar{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;margin-bottom:10px;box-shadow:0 4px 14px rgba(0,0,0,0.15)}
+    .person-card .card-name{font-size:16px;font-weight:900;color:var(--text);margin-bottom:2px;word-break:break-word;line-height:1.2}
+    .person-card .card-stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+    .stat-pill{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:800;padding:5px 10px;border-radius:50px;border:1.5px solid}
+    .stat-pill.active{background:var(--primary-soft);color:var(--primary);border-color:var(--primary-soft)}
+    .stat-pill.done{background:var(--emerald-soft);color:var(--emerald);border-color:var(--emerald-soft)}
+    .person-card .card-chevron{position:absolute;bottom:14px;right:14px;color:var(--text3);font-size:16px}
+    .card-name-wrap{display:flex;align-items:center;gap:6px;flex:1}
+    .card-edit-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:4px 6px;border-radius:6px;line-height:1;flex-shrink:0;transition:background .2s,color .2s}
+    .card-edit-btn:hover{background:var(--primary-soft);color:var(--primary)}
+    .card-edit-btn:active{background:var(--primary-soft);color:var(--primary)}
+    .card-delete-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:4px 6px;border-radius:8px;line-height:1;flex-shrink:0;transition:color .2s,background .2s}
+    .card-delete-btn:hover{background:var(--rose-soft);color:var(--rose)}
+    .card-delete-btn:active{color:var(--rose);background:var(--rose-soft)}
+    .name-edit-input{font-family:var(--font);font-size:15px;font-weight:800;color:var(--text);border:none;border-bottom:2px solid var(--primary);background:transparent;outline:none;width:100%;padding:2px 0}
+    .person-card.all-card{display:flex;align-items:center;gap:16px;padding:16px 18px}
+    .all-card .card-avatar{margin-bottom:0;flex-shrink:0}
+    .all-card .all-info{flex:1}
+    .all-card .card-name{margin-bottom:4px}
+    .all-card .card-stats{margin-top:6px}
+    .detail-body{max-width:600px;margin:0 auto;padding:0 0 120px}
+    .add-form{margin:16px 18px 0;background:var(--surface);border-radius:var(--r);padding:16px;box-shadow:var(--shadow-sm);border:1.5px solid var(--border)}
+    .form-lbl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block}
+    .form-input{width:100%;height:52px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 16px;font-family:var(--font);font-size:16px;font-weight:700;color:var(--text);outline:none;transition:border .2s,box-shadow .2s}
+    .form-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-glow)}
+    .form-input::placeholder{color:var(--text3);font-weight:600}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .form-select{width:100%;height:52px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:15px;font-weight:700;color:var(--text);outline:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237168A0' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;transition:border .2s}
+    .form-select:focus{border-color:var(--primary)}
+    .reminder-input{width:100%;height:52px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--text);outline:none;margin-top:10px;transition:border .2s;color-scheme:light dark}
+    .reminder-input:focus{border-color:var(--primary)}
+    .btn-add-task{width:100%;height:56px;border-radius:var(--rsm);border:none;margin-top:12px;background:linear-gradient(135deg,var(--primary) 0%,#9B59E8 100%);color:#fff;font-family:var(--font);font-size:17px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 20px var(--primary-glow);transition:opacity .2s,transform .1s}
+    .btn-add-task:active{transform:scale(.98);opacity:.92}
+    .task-note-input, .task-link-input {width:100%;height:44px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--text);outline:none;margin-top:8px;transition:border .2s}
+    .task-note-input:focus, .task-link-input:focus {border-color:var(--primary)}
+    .section-tabs{display:flex;gap:10px;padding:16px 18px 0}
+    .sec-tab{flex:1;height:46px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface);font-family:var(--font);font-size:15px;font-weight:800;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+    .sec-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 4px 14px var(--primary-glow)}
+    .sec-tab .stab-badge{font-size:12px;font-weight:900;padding:2px 8px;border-radius:50px;background:rgba(255,255,255,0.25);min-width:22px;text-align:center}
+    .sec-tab:not(.active) .stab-badge{background:var(--border);color:var(--text2)}
+    .list-section{padding:12px 18px 0}
+    .list-card{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);overflow:hidden;box-shadow:var(--shadow-sm)}
+    .list-body{padding:8px}
+    .time-group{margin-bottom:4px}
+    .time-group-label{display:flex;align-items:center;gap:8px;padding:8px 8px 4px;color:var(--text3);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .time-group-label hr{flex:1;border:none;border-top:1.5px solid var(--border)}
+    .task-item{display:flex;align-items:flex-start;gap:10px;padding:11px 10px;border-radius:var(--rsm);transition:background .15s;border:1.5px solid transparent}
+    .task-item:active{background:var(--surface2)}
+    .check-btn{width:36px;height:36px;border-radius:11px;flex-shrink:0;border:2.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:transparent;transition:all .2s;margin-top:2px}
+    .check-btn:active{border-color:var(--primary)}
+    .check-btn.done-style{background:var(--emerald);border-color:var(--emerald);color:#fff}
+    .task-content{flex:1;min-width:0}
+    .task-text{font-size:15px;font-weight:700;color:var(--text);line-height:1.3;word-break:break-word}
+    .task-text.struck{text-decoration:line-through;color:var(--text3)}
+    .task-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+    .tag{font-size:12px;font-weight:700;padding:3px 10px;border-radius:50px;border:1.5px solid}
+    .tag.today{background:#FEE2E2;color:#B91C1C;border-color:#FECACA}
+    .tag.tomorrow{background:#FFEDD5;color:#C2410C;border-color:#FED7AA}
+    .tag.week{background:#FEF3C7;color:#B45309;border-color:#FDE68A}
+    .tag.month{background:#DBEAFE;color:#1D4ED8;border-color:#BFDBFE}
+    .tag.thisyear{background:#E0E7FF;color:#4338CA;border-color:#C7D2FE}
+    .tag.nextyear{background:#EDE9FE;color:#6D28D9;border-color:#DDD6FE}
+    .tag.future{background:#F3E8FF;color:#7C3AED;border-color:#E9D5FF}
+    .tag.sometime{background:var(--surface2);color:var(--text2);border-color:var(--border)}
+    .tag.person-tag{color:#fff;border-color:transparent}
+    .tag.rem-tag{background:var(--amber-soft);color:#92400E;border-color:#FDE68A}
+    .task-note{font-size:13px;color:var(--text2);margin-top:4px;padding:4px 8px;background:var(--surface2);border-radius:6px;display:inline-block;word-break:break-word}
+    .task-link{font-size:13px;color:var(--primary);margin-top:4px;display:inline-block;word-break:break-all}
+    .task-link a{color:var(--primary);text-decoration:underline}
+    body.night .tag.today{background:rgba(254,202,202,.15);color:#FCA5A5;border-color:rgba(254,202,202,.25)}
+    body.night .tag.tomorrow{background:rgba(254,215,170,.15);color:#FDBA74;border-color:rgba(254,215,170,.25)}
+    body.night .tag.week{background:rgba(253,230,138,.15);color:#FCD34D;border-color:rgba(253,230,138,.25)}
+    body.night .tag.month{background:rgba(191,219,254,.15);color:#93C5FD;border-color:rgba(191,219,254,.25)}
+    body.night .tag.rem-tag{background:rgba(253,230,138,.15);color:#FCD34D;border-color:rgba(253,230,138,.25)}
+    body.night .task-note{background:var(--border);color:var(--text2)}
+    .del-btn{width:40px;height:40px;border-radius:11px;flex-shrink:0;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;margin-top:2px}
+    .del-btn:active{background:var(--rose-soft);color:var(--rose)}
+    .empty-state{padding:36px 16px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+    .empty-icon{width:56px;height:56px;border-radius:18px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text3)}
+    .empty-text{font-size:15px;font-weight:700;color:var(--text3)}
+    .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+    .modal-ov.h{display:none}
+    .modal-sheet{background:var(--surface);border-radius:var(--r) var(--r) 0 0;width:100%;max-width:600px;max-height:85vh;display:flex;flex-direction:column;animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)}
+    @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+    .modal-handle{width:40px;height:4px;background:var(--border);border-radius:4px;margin:12px auto 0}
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 13px;border-bottom:1.5px solid var(--border)}
+    .modal-ttl{font-size:17px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:9px}
+    .modal-x{width:36px;height:36px;border-radius:10px;border:none;background:var(--surface2);color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .modal-body{flex:1;overflow-y:auto;padding:12px 16px}
+    .modal-ftr{padding:12px 16px max(12px,env(safe-area-inset-bottom));border-top:1.5px solid var(--border);display:flex;gap:10px}
+    .modal-btn{flex:1;height:52px;border-radius:var(--rsm);border:none;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s}
+    .mbtn-danger{background:var(--rose-soft);color:var(--rose)}
+    .mbtn-neutral{background:var(--surface2);color:var(--text2)}
+    .modal-body::-webkit-scrollbar{width:4px}
+    .modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+    .trash-item{display:flex;align-items:center;gap:10px;padding:12px;background:var(--surface2);border-radius:var(--rsm);margin-bottom:8px;border:1.5px solid var(--border)}
+    .trash-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .trash-text{flex:1;font-size:14px;font-weight:700;color:var(--text3);text-decoration:line-through}
+    .trash-acts{display:flex;gap:4px}
+    .trash-act{width:40px;height:40px;border:none;border-radius:10px;background:var(--surface);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text3);transition:all .15s}
+    .trash-act.restore:active{background:var(--emerald-soft);color:var(--emerald)}
+    .trash-act.del:active{background:var(--rose-soft);color:var(--rose)}
+    .notif-item{display:flex;gap:12px;padding:12px;background:var(--primary-soft);border-radius:var(--rsm);margin-bottom:8px;border:1.5px solid var(--border)}
+    .notif-ico{width:38px;height:38px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
+    .bot-nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--surface);border-top:1.5px solid var(--border);padding:8px 16px max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-around}
+    .nav-btn{flex:1;height:52px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text3);font-size:11px;font-weight:700;border-radius:14px;transition:color .2s,background .2s;font-family:var(--font)}
+    .nav-btn i{font-size:20px}
+    .nav-btn.active{color:var(--primary);background:var(--primary-soft)}
+    .nav-btn:not(.active):active{background:var(--surface2)}
+    .toast{position:fixed;bottom:82px;left:18px;right:18px;background:var(--text);color:#fff;border-radius:var(--rsm);padding:14px 18px;display:flex;align-items:center;gap:12px;font-size:15px;font-weight:700;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.2);transform:translateY(20px);opacity:0;transition:transform .3s cubic-bezier(.34,1.2,.64,1),opacity .3s;pointer-events:none}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast i{font-size:18px}
+    .cp{position:fixed;pointer-events:none;z-index:999;animation:cf 2.2s linear forwards}
+    @keyframes cf{0%{opacity:1;transform:translateY(-30px) rotate(0deg) scale(.8)}100%{opacity:0;transform:translateY(110vh) rotate(720deg) scale(1.2)}}
+    .fade-in{animation:fi .2s ease}
+    @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .done-section .task-item{opacity:.8}
+    .cal-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 12px;gap:10px}
+    .cal-header .cal-nav{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:16px;transition:all .2s}
+    .cal-header .cal-nav:active{background:var(--primary-soft);color:var(--primary)}
+    .cal-header .cal-month{font-size:18px;font-weight:900;color:var(--text);flex:1;text-align:center}
+    .cal-header .cal-year{font-size:14px;color:var(--text2);font-weight:700}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin:4px 0}
+    .cal-grid .cal-weekday{text-align:center;font-size:11px;font-weight:800;color:var(--text3);padding:6px 0;text-transform:uppercase;letter-spacing:.04em}
+    .cal-grid .cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;font-size:14px;font-weight:700;color:var(--text);background:var(--surface2);cursor:pointer;transition:all .15s;position:relative;border:1.5px solid transparent;padding:2px}
+    .cal-grid .cal-day:active{transform:scale(.92)}
+    .cal-grid .cal-day.other-month{color:var(--text3);opacity:.4}
+    .cal-grid .cal-day.today{background:var(--primary);color:#fff;font-weight:900}
+    .cal-grid .cal-day.red{background:var(--rose-soft);color:var(--rose);border-color:var(--rose)}
+    .cal-grid .cal-day.red.today{background:var(--rose);color:#fff}
+    .cal-grid .cal-day .cal-dot{width:6px;height:6px;border-radius:50%;margin-top:2px;flex-shrink:0}
+    .cal-grid .cal-day .cal-dot.se{background:#005B9F}
+    .cal-grid .cal-day .cal-dot.ir{background:#239F40}
+    .cal-grid .cal-day .cal-dot.sa{background:#006C35}
+    .cal-grid .cal-day .cal-tag{font-size:7px;font-weight:800;color:var(--text3);text-align:center;line-height:1;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .cal-grid .cal-day .cal-tag.red-text{color:var(--rose)}
+    .cal-legend{display:flex;justify-content:center;gap:16px;padding:12px 0 4px;flex-wrap:wrap}
+    .cal-legend span{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text2)}
+    .cal-legend .leg-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+    .leg-dot.se{background:#005B9F}
+    .leg-dot.ir{background:#239F40}
+    .leg-dot.sa{background:#006C35}
+    .cal-day-detail{background:var(--surface2);border-radius:var(--rsm);padding:12px 14px;margin-top:12px;border:1.5px solid var(--border);display:none}
+    .cal-day-detail.show{display:block}
+    .cal-day-detail .detail-date{font-size:15px;font-weight:900;color:var(--text)}
+    .cal-day-detail .detail-red{color:var(--rose);font-weight:800;margin-top:4px}
+    .cal-day-detail .detail-desc{color:var(--text2);font-size:14px;margin-top:4px}
+    .cal-day-detail .detail-flag{font-size:20px;margin-right:6px}
+    .saved-pdf-section{padding:16px 18px 0}
+    .saved-pdf-section .pdf-card{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:12px}
+    .saved-pdf-section .pdf-card .pdf-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+    .saved-pdf-section .pdf-card .pdf-title{font-weight:800;font-size:15px;color:var(--text)}
+    .saved-pdf-section .pdf-card .pdf-meta{font-size:12px;color:var(--text3)}
+    .saved-pdf-section .pdf-card .pdf-actions{display:flex;gap:8px}
+    .saved-pdf-section .pdf-card .pdf-actions button{height:38px;padding:0 14px;border-radius:10px;border:none;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+    .saved-pdf-section .pdf-card .pdf-actions .print-btn{background:var(--primary);color:#fff}
+    .saved-pdf-section .pdf-card .pdf-actions .print-btn:active{opacity:.8;transform:scale(.96)}
+    .saved-pdf-section .pdf-card .pdf-actions .delete-pdf-btn{background:var(--rose-soft);color:var(--rose)}
+    .saved-pdf-section .pdf-card .pdf-actions .delete-pdf-btn:active{opacity:.8;transform:scale(.96)}
+    .saved-pdf-section .pdf-empty{text-align:center;padding:30px 16px;color:var(--text3)}
+    .upload-pdf-section{padding:0 18px 16px}
+    .upload-pdf-section .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .2s}
+    .upload-pdf-section .upload-area:hover{border-color:var(--primary);background:var(--primary-soft)}
+    .upload-pdf-section .upload-area .upload-icon{font-size:32px;color:var(--text3);margin-bottom:8px}
+    .upload-pdf-section .upload-area .upload-text{font-weight:700;color:var(--text2)}
+    .upload-pdf-section .upload-area .upload-sub{font-size:13px;color:var(--text3)}
+    .upload-pdf-section .upload-area input[type="file"]{display:none}
+    .pdf-preview-body{font-family:'Nunito',sans-serif;padding:20px;background:#fff;color:#1E1535}
+    .pdf-preview-body .pdf-header{padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px}
+    .pdf-preview-body .pdf-header h2{font-size:24px;color:#1E1535;margin:0}
+    .pdf-preview-body .pdf-header p{color:#7168A0;font-size:14px;margin:4px 0}
+    .pdf-preview-body .pdf-task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8}
+    .pdf-preview-body .pdf-check{font-size:18px;flex-shrink:0}
+    .pdf-preview-body .pdf-text{font-weight:700;color:#1E1535;flex:1}
+    .pdf-preview-body .pdf-text.done{text-decoration:line-through;color:#A89FCE}
+    .pdf-preview-body .pdf-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0}
+    .pdf-preview-body .pdf-person{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}
+    .pdf-preview-body .pdf-footer{text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px}
+    .sync-section{padding:16px 18px 0}
+    .sync-card{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:12px}
+    .sync-card .sync-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .sync-card .sync-header i{font-size:20px;color:var(--primary)}
+    .sync-card .sync-title{font-size:15px;font-weight:900;color:var(--text)}
+    .sync-card .sync-sub{font-size:13px;color:var(--text2);margin-top:2px}
+    .sync-card .sync-status{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;margin-top:8px}
+    .sync-card .sync-status-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
+    .sync-card .sync-status-dot.online{background:var(--emerald)}
+    .sync-card .sync-status-dot.offline{background:var(--amber)}
+    .sync-card .sync-status-dot.error{background:var(--rose)}
+    .sync-card .sync-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .sync-card .sync-actions button{height:40px;padding:0 16px;border-radius:10px;border:none;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+    .sync-card .sync-actions .sync-btn-primary{background:var(--primary);color:#fff}
+    .sync-card .sync-actions .sync-btn-primary:active{opacity:.8;transform:scale(.96)}
+    .sync-card .sync-actions .sync-btn-secondary{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+    .sync-card .sync-actions .sync-btn-secondary:active{background:var(--primary-soft);color:var(--primary)}
+    .sync-card .sync-actions .sync-btn-danger{background:var(--rose-soft);color:var(--rose)}
+    .sync-card .sync-actions .sync-btn-danger:active{opacity:.8;transform:scale(.96)}
+    .sync-input{width:100%;height:44px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--text);outline:none;margin-top:8px;transition:border .2s}
+    .sync-input:focus{border-color:var(--primary)}
+    .sync-input::placeholder{color:var(--text3)}
+    .sync-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+    .sync-toggle-row:last-child{border-bottom:none}
+    .sync-toggle-label{font-size:14px;font-weight:700;color:var(--text)}
+    .sync-toggle-desc{font-size:12px;color:var(--text3);margin-top:2px}
+    .toggle-switch{width:48px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .toggle-switch.on{background:var(--primary)}
+    .toggle-switch::after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+    .toggle-switch.on::after{transform:translateX(22px)}
+    .sync-log{background:var(--surface2);border-radius:var(--rsm);padding:10px 12px;margin-top:10px;max-height:120px;overflow-y:auto;font-size:12px;font-family:monospace;color:var(--text2);line-height:1.5}
+    .sync-log .log-entry{padding:2px 0;border-bottom:1px solid var(--border)}
+    .sync-log .log-entry:last-child{border-bottom:none}
+    .sync-log .log-time{color:var(--text3);font-size:11px}
+    .sync-log .log-success{color:var(--emerald)}
+    .sync-log .log-error{color:var(--rose)}
+    .sync-log .log-info{color:var(--primary)}
+    .add-person-row input,.form-select,.form-input{min-width:0}
+    .form-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .hdr-info,.dhdr-info{overflow:hidden}
+    @media (max-width:480px){
+      .hdr{padding:12px 12px 12px}
+      .dhdr{padding:12px 12px}
+      .hdr-toprow,.dhdr-toprow{gap:8px}
+      .hdr-actions{gap:5px}
+      .hdr-logo,.dhdr-avatar{width:38px;height:38px;font-size:17px;border-radius:12px}
+      .icon-btn{width:40px;height:40px;border-radius:13px}
+      .icon-btn svg{width:19px;height:19px}
+      .cal-btn{width:40px;height:40px}
+      .hdr-title{font-size:16px}
+      .date-clock{font-size:21px}
+      .date-cal-label{font-size:10px}
+      .save-btn,.pdf-btn,.back-btn{padding:0;width:40px;height:40px;gap:0;flex-shrink:0}
+      .btn-label{display:none}
+      .add-person-row{flex-wrap:wrap}
+      .add-person-row input{flex:1 1 100%}
+      .btn-add-person{flex:1 1 100%}
+    }
+    @media (max-width:360px){
+      .form-row{grid-template-columns:1fr;gap:8px}
+    }
+    @media (max-width:340px){
+      .hdr{padding:10px 8px}
+      .dhdr{padding:10px 8px}
+      .hdr-toprow,.dhdr-toprow{gap:6px}
+      .hdr-actions{gap:3px}
+      .hdr-logo,.dhdr-avatar{width:34px;height:34px;font-size:15px;border-radius:10px}
+      .icon-btn{width:36px;height:36px;border-radius:11px}
+      .icon-btn svg{width:17px;height:17px}
+      .save-btn,.pdf-btn,.back-btn{width:36px;height:36px}
+      .cal-btn{width:36px;height:36px}
+      .hdr-title{font-size:14px}
+      .hdr-sub{font-size:10px}
+    }
+    body.locked > .page,body.locked > .bot-nav{display:none}
+    .login-ov{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
+    .login-ov.h{display:none}
+    .login-card{width:100%;max-width:360px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:32px 24px;box-shadow:var(--shadow);text-align:center}
+    .login-logo{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,var(--primary),#9B59E8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;margin:0 auto 18px;box-shadow:0 4px 14px var(--primary-glow)}
+    .login-title{font-size:19px;font-weight:900;color:var(--text)}
+    .login-sub{font-size:13px;color:var(--text3);font-weight:600;margin-top:4px;margin-bottom:20px}
+    .login-input{width:100%;height:54px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 16px;font-family:var(--font);font-size:17px;font-weight:700;color:var(--text);outline:none;text-align:center;letter-spacing:2px;transition:border .2s}
+    .login-input:focus{border-color:var(--primary)}
+    .login-err{font-size:13px;font-weight:700;color:var(--rose);margin-top:10px}
+    .login-err.h{display:none}
+    .login-btn{width:100%;height:54px;border-radius:var(--rsm);border:none;margin-top:14px;background:linear-gradient(135deg,var(--primary) 0%,#9B59E8 100%);color:#fff;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px var(--primary-glow);transition:opacity .2s,transform .1s}
+    .login-btn:active{transform:scale(.98);opacity:.92}
+    .login-reset{margin-top:16px;font-size:12px;font-weight:700;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--font)}
+    body.pc-mode .home-body,body.pc-mode .detail-body{max-width:980px}
+    body.pc-mode .hdr-toprow,body.pc-mode .dhdr-toprow{gap:14px}
+    body.pc-mode .hdr-logo,body.pc-mode .dhdr-avatar{width:56px;height:56px;font-size:24px;border-radius:16px}
+    body.pc-mode .hdr-title{font-size:21px}
+    body.pc-mode .hdr-sub,body.pc-mode .dhdr-sub{font-size:13px}
+    body.pc-mode .dhdr-name{font-size:21px}
+    body.pc-mode .icon-btn{width:56px;height:56px;border-radius:16px;font-size:19px}
+    body.pc-mode .icon-btn svg{width:25px;height:25px}
+    body.pc-mode .cal-btn{width:56px;height:56px;font-size:23px;border-radius:16px}
+    body.pc-mode .save-btn,body.pc-mode .pdf-btn,body.pc-mode .back-btn{height:56px;width:auto;padding:0 22px;font-size:16px;gap:8px;border-radius:16px}
+    body.pc-mode .btn-label{display:inline}
+    body.pc-mode .date-block{padding:14px 20px}
+    body.pc-mode .date-clock{font-size:30px}
+    body.pc-mode .date-text{font-size:17px}
+    body.pc-mode .add-person-row input,body.pc-mode .form-input,body.pc-mode .form-select,body.pc-mode .reminder-input{height:60px;font-size:17px}
+    body.pc-mode .btn-add-person,body.pc-mode .btn-add-task{height:62px;font-size:18px}
+    body.pc-mode .sec-tab{height:54px;font-size:16px}
+    body.pc-mode .person-card{padding:24px 22px 22px}
+    body.pc-mode .person-card .card-avatar{width:64px;height:64px;font-size:28px;border-radius:18px}
+    body.pc-mode .person-card .card-name{font-size:19px}
+    body.pc-mode .stat-pill{font-size:14px;padding:7px 14px}
+    body.pc-mode .check-btn{width:44px;height:44px;border-radius:13px}
+    body.pc-mode .del-btn{width:46px;height:46px;font-size:18px}
+    body.pc-mode .task-text{font-size:17px}
+    body.pc-mode .task-item{padding:16px 14px}
+    body.pc-mode .tag{font-size:13px;padding:4px 12px}
+    body.pc-mode .nav-btn{height:64px;font-size:13px}
+    body.pc-mode .nav-btn i{font-size:23px}
+    body.pc-mode .modal-sheet{max-width:760px;border-radius:var(--r)}
+    body.pc-mode .modal-btn{height:58px;font-size:17px}
+  </style>
+<base target="_blank">
+</head>
+<body class="locked">
 
-      // snippet below comes from posthog's documentation for running in html pages
-      // prettier-ignore
-      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-
-      const POSTHOG_API_KEY = "phc_LG7IJbVJqBsk584rbcKca0D5lV2vHguiijDrVji7yDM";
-      if (POSTHOG_API_KEY) {
-        posthog.init(POSTHOG_API_KEY, {
-          api_host: "/ph",
-          ui_host: "https://us.posthog.com",
-          person_profiles: "identified_only",
-          autocapture: false,
-          disable_session_recording: true,
-          before_send: (event) => {
-            if (event.event === "survey sent") {
-              // On the first survey answer sent, also send the report event
-              if (!hasStorageKey("code_reported")) {
-                localStorage.setItem(getStorageKey("code_reported"), "true");
-                posthog.capture?.("code_preview_banner_report");
-              }
-              // When the survey is completed, hide the report button
-              if (event.properties?.$survey_completed === true) {
-                localStorage.setItem(getStorageKey("survey_completed"), "true");
-                document.querySelector(".report-content-btn").style.display = "none";
-              }
-            }
-            return event;
-          },
-        });
-        posthog.register({ message_id: MESSAGE_ID, evaluation_session_id: EVALUATION_SESSION_ID });
-      }
-    </script>
-    <style>
-      * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-a {
-  text-decoration: none;
-}
-
-html,
-body {
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  font-family:
-    "Inter",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
-  display: flex;
-  flex-direction: column;
-  background: #f5f5f5;
-}
-
-/* Banner styles */
-.floating-banner {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  animation: slideIn 0.3s ease-out;
-  display: flex;
-  align-items: center;
-  will-change: transform, opacity;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateY(100px) translateZ(0);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) translateZ(0);
-    opacity: 1;
-  }
-}
-
-.floating-banner.dismissed {
-  animation: slideOut 0.3s ease-out forwards;
-}
-
-@keyframes slideOut {
-  to {
-    transform: translateY(100px) translateZ(0);
-    opacity: 0;
-  }
-}
-
-.banner-padding {
-  padding: 10px 16px;
-}
-
-.banner-link-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.banner-logo {
-  display: flex;
-  align-items: center;
-  color: #2d2d2d;
-  flex-shrink: 0;
-}
-
-.banner-logo svg {
-  height: 28px;
-  width: auto;
-}
-
-.banner-text-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.banner-text {
-  margin: 0;
-  white-space: nowrap;
-}
-
-.banner-upper-text {
-  color: #151617;
-  font-size: 14px;
-}
-
-.banner-lower-text {
-  color: #878c9f;
-  font-size: 10px;
-}
-
-.banner-action-container {
-  border-left: 1px solid rgba(45, 47, 53, 0.08);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  align-self: stretch;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  color: #999;
-  cursor: pointer;
-  transition: color 0.2s;
-  flex-shrink: 0;
-}
-
-.action-btn:hover {
-  color: #2d2d2d;
-}
-
-/* Iframe container styles */
-.iframe-container {
-  flex: 1;
-  position: relative;
-  background: white;
-  overflow: hidden;
-  min-height: 0;
-}
-
-iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-}
-
-    </style>
-  </head>
-  <body data-ryu-obtrusive-scrollbars="false">
-    <svg style="display: none">
-      <symbol
-        id="icon-flag"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path
-          d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"
-        />
-      </symbol>
-      <symbol
-        id="icon-close"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M18 6 6 18" />
-        <path d="m6 6 12 12" />
-      </symbol>
-    </svg>
-
-    <div class="floating-banner" id="floating-banner">
-      <a
-        href="https://arena.ai/code"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="banner-link-wrapper banner-padding"
-        onclick="onCodePreviewBannerCTAClicked(event)"
-      >
-        <div class="banner-logo"><svg
-  width="167"
-  height="124"
-  viewBox="0 0 167 124"
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <path
-    d="M57.5364 53.3142C52.1508 53.3142 47.7887 57.6763 47.7887 63.0618V123.88H53.9963V63.0618C53.9963 61.0989 55.5902 59.505 57.5531 59.505C59.5161 59.505 61.11 61.0989 61.11 63.0618V123.88H67.3176V63.0618C67.3176 57.6763 62.9555 53.3142 57.5699 53.3142H57.5364Z"
-    fill="currentColor"
-  />
-  <path
-    d="M109.121 53.3142C103.735 53.3142 99.3734 57.6763 99.3734 63.0618V123.88H105.581V63.0618C105.581 61.0989 107.175 59.505 109.138 59.505C111.101 59.505 112.695 61.0989 112.695 63.0618V123.88H118.902V63.0618C118.902 57.6763 114.54 53.3142 109.155 53.3142H109.121Z"
-    fill="currentColor"
-  />
-  <path
-    d="M83.3286 53.3142C77.9431 53.3142 73.5809 57.6763 73.5809 63.0618V123.88H79.7886V63.0618C79.7886 61.0989 81.3824 59.505 83.3454 59.505C85.3083 59.505 86.9022 61.0989 86.9022 63.0618V123.88H93.1098V63.0618C93.1098 57.6763 88.7477 53.3142 83.3622 53.3142H83.3286Z"
-    fill="currentColor"
-  />
-  <path
-    d="M143.782 28.035L148.077 20.5691H158.06L166.667 0H0L8.60681 20.5691H18.5894L22.8676 28.035C14.5292 30.8872 7.66727 38.135 7.66727 49.0571C7.66727 59.9792 15.5526 69.2235 27.3639 69.2235C29.9477 69.2235 32.3468 68.6867 34.4776 67.7471V123.901H40.6684V62.7978C42.6146 60.1637 43.7555 56.8754 43.8393 53.1508C43.8393 53.1005 43.8561 53.0333 43.8561 52.9662C43.8561 52.9159 43.8393 52.8823 43.8393 52.832C43.8393 52.7985 43.8561 52.7649 43.8561 52.7314C43.8561 52.681 43.8393 52.6307 43.8393 52.5636C43.7722 50.047 43.1011 47.6981 41.9267 45.7016H124.74C123.566 47.6981 122.894 50.047 122.827 52.5636C122.827 52.6307 122.811 52.681 122.811 52.7314V52.9662C122.811 52.9662 122.827 53.1005 122.827 53.1508C122.911 56.8754 124.052 60.1637 125.998 62.7978V123.901H132.189V67.7471C134.32 68.6867 136.702 69.2235 139.303 69.2235C151.097 69.2235 158.999 59.5765 158.999 49.0571C158.999 38.5377 152.121 30.8872 143.782 28.035ZM12.734 14.3615L9.31146 6.20764H157.355L153.933 14.3615H12.734ZM140.93 20.5691L137.491 26.5586H29.1759L25.7365 20.5691H140.93ZM139.303 63.0159C133.246 63.0159 129.085 58.9222 129.018 52.8991C129.052 48.6377 131.803 45.7855 135.796 45.7352H135.914C138.414 45.7352 140.46 47.7988 140.46 49.9631V50.0637C140.41 51.3221 139.403 52.2951 138.145 52.2951C136.434 52.2951 135.041 53.6877 135.041 55.399C135.041 57.1103 136.434 58.5028 138.145 58.5028C142.843 58.5028 146.685 54.6943 146.685 49.9631C146.685 49.8121 146.651 49.6611 146.634 49.5269C146.383 43.9736 141.836 39.5443 135.83 39.5443H83.3166L82.9139 39.5275H82.4945L30.8369 39.5443C24.8305 39.5443 20.2839 43.9736 20.0322 49.5269C20.0154 49.6611 19.9819 49.8121 19.9819 49.9631C19.9819 54.6943 23.8239 58.5028 28.5216 58.5028C30.2329 58.5028 31.6254 57.1103 31.6254 55.399C31.6254 53.6877 30.2329 52.2951 28.5216 52.2951C27.2633 52.2951 26.2566 51.3221 26.1895 50.0637C26.1895 50.0302 26.2063 49.9966 26.2063 49.9631C26.2063 47.7988 28.2364 45.7352 30.753 45.7352H30.8536C34.8634 45.7855 37.6149 48.6377 37.6485 52.8991C37.5814 58.9222 33.4038 63.0159 27.3639 63.0159C19.4114 63.0159 13.8749 56.5902 13.8749 49.0571C13.8749 38.89 21.8442 32.7495 31.6925 32.7495H134.974C144.822 32.7495 152.792 38.89 152.792 49.0571C152.792 56.5902 147.255 63.0159 139.303 63.0159Z"
-    fill="currentColor"
-  />
-</svg>
+<!-- ═══════ INLOGGNING ═══════ -->
+<div class="login-ov" id="loginOv">
+  <div class="login-card">
+    <div class="login-logo"><i class="fas fa-lock"></i></div>
+    <div class="login-title" id="loginTitle">Ange lösenord</div>
+    <div class="login-sub" id="loginSub">Skriv lösenordet för att fortsätta</div>
+    <input type="password" class="login-input" id="loginInput" placeholder="••••••" autocomplete="off" onkeydown="if(event.key==='Enter')submitLogin()">
+    <div class="login-err h" id="loginErr">Fel lösenord, försök igen</div>
+    <button class="login-btn" onclick="submitLogin()" id="loginSubmitBtn">Logga in</button>
+    <button class="login-reset" id="loginResetBtn" onclick="resetPassword()">Glömt lösenordet? Återställ</button>
+  </div>
 </div>
-        <div class="banner-text-container">
-          <p class="banner-text banner-upper-text">Built with Arena</p>
-          <p class="banner-text banner-lower-text">Content is user-generated and unverified</p>
-        </div>
-      </a>
-      <div class="banner-action-container banner-padding">
-        <button
-          class="action-btn report-content-btn"
-          style="display: none"
-          onclick="reportContent(event)"
-          aria-label="Report content"
-        >
-          <svg class="report-icon" width="20" height="20"><use href="#icon-flag" /></svg>
+
+<!-- ═══════ HOME PAGE ═══════ -->
+<div class="page" id="pageHome">
+  <header class="hdr">
+    <div class="hdr-toprow">
+      <div class="hdr-logo"><i class="fas fa-clipboard-list"></i></div>
+      <div class="hdr-info">
+        <div class="hdr-title">Familjens Planerare</div>
+        <div class="hdr-sub"></div>
+      </div>
+      <div class="hdr-actions">
+        <button class="save-btn" onclick="saveAndConfirm()" title="Spara"><i class="fas fa-floppy-disk"></i><span class="btn-label"> Spara</span></button>
+        <button class="icon-btn" onclick="togglePcMode()" title="PC-anpassad vy" id="pcModeBtn"><i class="fas fa-desktop"></i></button>
+        <button class="icon-btn" onclick="toggleNight()" title="Nattläge" id="nightBtn">
+          <svg id="nightSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <button class="action-btn" onclick="dismissBanner(event)" aria-label="Close banner">
-          <svg width="20" height="20"><use href="#icon-close" /></svg>
+        <button class="icon-btn" onclick="openNotif()" title="Påminnelser">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="bdg h" id="notifBdg">0</span>
+        </button>
+        <button class="icon-btn" onclick="openTrash()" title="Papperskorg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          <span class="bdg amber h" id="trashBdg">0</span>
         </button>
       </div>
     </div>
+    <div class="date-row">
+      <div class="date-block" onclick="cycleCalendar()" title="Tryck för att byta kalender">
+        <div class="date-toprow">
+          <span class="date-cal-label" id="calLabel">📅 Gregoriansk</span>
+          <span class="date-clock" id="clockDisplay">00:00</span>
+        </div>
+        <div class="date-main-row">
+          <span class="date-text" id="dateText"></span>
+          <span class="date-redday h" id="reddayTag">🔴 Röd dag</span>
+        </div>
+      </div>
+      <button class="cal-btn" onclick="openCalendar()" title="Öppna kalender"><i class="fas fa-calendar-alt"></i></button>
+    </div>
+  </header>
 
-    <div class="iframe-container">
-      <iframe
-        id="preview-iframe"
-        src="https://019f31ea-2e22-712d-9257-17c47454b3e7.arena.site/?embed=true"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-popups allow-popups-to-escape-sandbox allow-downloads allow-top-navigation-by-user-activation"
-        allow="
-          accelerometer;
-          autoplay;
-          camera;
-          encrypted-media;
-          fullscreen;
-          geolocation;
-          gyroscope;
-          microphone;
-          midi;
-          clipboard-read;
-          clipboard-write;
-          usb;
-          vr;
-          xr-spatial-tracking;
-          screen-wake-lock;
-          magnetometer;
-          ambient-light-sensor;
-          battery;
-          gamepad;
-          picture-in-picture;
-          display-capture;
-          bluetooth;
-        "
-        referrerpolicy="origin-when-cross-origin"
-      ></iframe>
+  <div class="home-body">
+    <div class="add-person-section">
+      <div class="add-person-row">
+        <input type="text" id="newPersonInput" placeholder="Lägg till person…" maxlength="20" onkeydown="if(event.key==='Enter')addPerson()">
+        <button class="btn-add-person" onclick="addPerson()"><i class="fas fa-user-plus"></i> Lägg till</button>
+      </div>
     </div>
 
-    <script>
-      const iframe = document.getElementById("preview-iframe");
-      iframe.addEventListener("load", () => iframe.focus());
+    <div class="cards-section">
+      <div class="cards-grid" id="cardsGrid"></div>
+    </div>
 
-      document.addEventListener("DOMContentLoaded", () => {
-        if (!hasStorageKey("code_reported") || !hasStorageKey("survey_completed")) {
-          document.querySelector(".report-content-btn").style.display = "block";
-        }
+    <!-- SYNC SECTION -->
+    <div class="sync-section" id="syncSection">
+      <div class="sync-card">
+        <div class="sync-header">
+          <i class="fas fa-sync-alt"></i>
+          <div>
+            <div class="sync-title">Synkronisering</div>
+            <div class="sync-sub">Lokal backup + molnsynk via Supabase</div>
+          </div>
+        </div>
+        <div class="sync-status">
+          <span class="sync-status-dot offline" id="syncStatusDot"></span>
+          <span id="syncStatusText">Offline – endast lokal lagring</span>
+        </div>
+        <div class="sync-actions">
+          <button class="sync-btn-primary" onclick="exportLocalBackup()"><i class="fas fa-download"></i> Exportera backup</button>
+          <button class="sync-btn-secondary" onclick="importLocalBackup()"><i class="fas fa-upload"></i> Importera backup</button>
+          <button class="sync-btn-secondary" onclick="openSyncSettings()"><i class="fas fa-cog"></i> Inställningar</button>
+        </div>
+        <div class="sync-log h" id="syncLog"></div>
+      </div>
+    </div>
+
+    <!-- SAVED PDFs SECTION -->
+    <div class="saved-pdf-section" id="savedPdfSection">
+      <div class="pdf-card" style="border-color:var(--primary);background:var(--primary-soft);margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--text)">
+          <i class="fas fa-file-pdf" style="color:var(--rose)"></i> Sparade PDF-filer
+        </div>
+      </div>
+      <div id="savedPdfList"></div>
+    </div>
+
+    <!-- UPLOAD PDF SECTION -->
+    <div class="upload-pdf-section">
+      <div class="upload-area" onclick="document.getElementById('pdfUpload').click()">
+        <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+        <div class="upload-text">Ladda upp PDF med uppgifter</div>
+        <div class="upload-sub">Välj en PDF-fil för att importera uppgifter till vald person</div>
+        <input type="file" id="pdfUpload" accept=".pdf" onchange="handlePDFUpload(event)">
+      </div>
+    </div>
+  </div>
+
+  <nav class="bot-nav" id="homeNav">
+    <button class="nav-btn active" onclick=""><i class="fas fa-home"></i>Hem</button>
+    <button class="nav-btn" onclick="openTrash()"><i class="fas fa-trash-can"></i>Papperskorg</button>
+  </nav>
+</div>
+
+<!-- ═══════ DETAIL PAGE ═══════ -->
+<div class="page hidden" id="pageDetail">
+  <header class="dhdr">
+    <div class="dhdr-toprow">
+      <button class="back-btn" onclick="goHome()" title="Tillbaka"><i class="fas fa-chevron-left"></i><span class="btn-label"> Tillbaka</span></button>
+      <div class="dhdr-avatar" id="detailAvatar"><i class="fas fa-users"></i></div>
+      <div class="dhdr-info">
+        <div class="dhdr-name" id="detailName">Alla</div>
+        <div class="dhdr-sub" id="detailSub"></div>
+      </div>
+      <button class="save-btn" onclick="saveAndConfirm()" title="Spara"><i class="fas fa-floppy-disk"></i><span class="btn-label"> Spara</span></button>
+      <button class="pdf-btn" onclick="exportPersonPDF()" title="PDF"><i class="fas fa-file-pdf"></i><span class="btn-label"> PDF</span></button>
+    </div>
+  </header>
+
+  <div class="detail-body">
+    <div class="add-form">
+      <label class="form-lbl"><i class="fas fa-plus-circle" style="color:var(--primary)"></i> Ny uppgift</label>
+      <input type="text" class="form-input" id="taskInput" placeholder="Vad ska göras?" onkeydown="if(event.key==='Enter')addTask()">
+      <div class="form-row">
+        <select class="form-select" id="taskType">
+          <option value="todo">📋 Uppgift</option>
+          <option value="shopping">🛒 Inköp</option>
+        </select>
+        <select class="form-select" id="timeFrame">
+          <option value="today">Idag</option>
+          <option value="tomorrow">Imorgon</option>
+          <option value="week">Denna vecka</option>
+          <option value="month">Denna månad</option>
+          <option value="thisyear">Pågående år</option>
+          <option value="nextyear">Nästa år</option>
+          <option value="future">Framtiden</option>
+          <option value="sometime">Någon gång</option>
+        </select>
+      </div>
+      <input type="text" class="task-note-input" id="taskNoteInput" placeholder="Anteckning (valfritt)">
+      <input type="text" class="task-link-input" id="taskLinkInput" placeholder="Länk (t.ex. https://...)" oninput="if(this.value.startsWith('http'))this.style.borderColor='var(--emerald)'">
+      <input type="datetime-local" class="reminder-input" id="reminderTime">
+      <button class="btn-add-task" onclick="addTask()"><i class="fas fa-plus"></i> Lägg till uppgift</button>
+    </div>
+
+    <div class="section-tabs">
+      <button class="sec-tab active" id="tabTodo" onclick="switchTab('todo')">
+        <i class="fas fa-list-check"></i> Att göra <span class="stab-badge" id="todoBadge">0</span>
+      </button>
+      <button class="sec-tab" id="tabDone" onclick="switchTab('done')">
+        <i class="fas fa-check-double"></i> Klara <span class="stab-badge" id="doneBadge">0</span>
+      </button>
+    </div>
+
+    <div class="list-section" id="todoSection">
+      <div class="list-card"><div class="list-body" id="todoContainer"></div></div>
+    </div>
+
+    <div class="list-section done-section h" id="doneSection">
+      <div class="list-card"><div class="list-body" id="doneContainer"></div></div>
+    </div>
+  </div>
+
+  <nav class="bot-nav">
+    <button class="nav-btn active" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i>Toppen</button>
+    <button class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i>Hem</button>
+  </nav>
+</div>
+
+<!-- ═══════ MODALS ═══════ -->
+<div class="modal-ov h" id="trashModal" onclick="if(event.target===this)closeTrash()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-trash-can" style="color:var(--amber)"></i> Papperskorg</div><button class="modal-x" onclick="closeTrash()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="trashBody"></div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-danger" onclick="emptyTrash()"><i class="fas fa-trash"></i> Töm allt</button><button class="modal-btn mbtn-neutral" onclick="closeTrash()">Stäng</button></div>
+  </div>
+</div>
+
+<div class="modal-ov h" id="notifModal" onclick="if(event.target===this)closeNotif()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-bell" style="color:var(--primary)"></i> Påminnelser</div><button class="modal-x" onclick="closeNotif()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="notifBody"></div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeNotif()" style="flex:1">Stäng</button></div>
+  </div>
+</div>
+
+<div class="modal-ov h" id="calModal" onclick="if(event.target===this)closeCalendar()">
+  <div class="modal-sheet" style="max-height:95vh">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr">
+      <div class="modal-ttl"><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> Kalender</div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="icon-btn" style="width:36px;height:36px;border-radius:10px;font-size:13px" onclick="switchCalView()" title="Byt kalender"><span id="calViewLabel">🇸🇪</span></button>
+        <button class="modal-x" onclick="closeCalendar()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="calBody" style="padding:8px 16px">
+      <div id="calContainer"></div>
+    </div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeCalendar()" style="flex:1">Stäng</button></div>
+  </div>
+</div>
+
+<div class="modal-ov h" id="pdfModal" onclick="if(event.target===this)closePDF()">
+  <div class="modal-sheet" style="max-height:95vh">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-file-pdf" style="color:var(--rose)"></i> PDF Förhandsvisning</div><button class="modal-x" onclick="closePDF()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="pdfBody" style="padding:0">
+      <div id="pdfContent" class="pdf-preview-body"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn mbtn-danger" onclick="downloadPDF()"><i class="fas fa-download"></i> Ladda ner PDF</button>
+      <button class="modal-btn mbtn-neutral" onclick="savePDFToApp()"><i class="fas fa-save"></i> Spara i appen</button>
+      <button class="modal-btn mbtn-neutral" onclick="closePDF()">Stäng</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SYNC SETTINGS MODAL ═══════ -->
+<div class="modal-ov h" id="syncModal" onclick="if(event.target===this)closeSyncSettings()">
+  <div class="modal-sheet" style="max-height:95vh">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-cog" style="color:var(--primary)"></i> Synkinställningar</div><button class="modal-x" onclick="closeSyncSettings()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="syncSettingsBody" style="padding:12px 16px">
+      <div class="sync-card" style="margin-bottom:0">
+        <div class="sync-toggle-row">
+          <div>
+            <div class="sync-toggle-label">Automatisk synkronisering</div>
+            <div class="sync-toggle-desc">Synka automatiskt med Supabase var 30:e sekund</div>
+          </div>
+          <div class="toggle-switch" id="autoSyncToggle" onclick="toggleAutoSync()"></div>
+        </div>
+        <div class="sync-toggle-row">
+          <div>
+            <div class="sync-toggle-label">Synka vid start</div>
+            <div class="sync-toggle-desc">Hämta data från molnet när appen startar</div>
+          </div>
+          <div class="toggle-switch on" id="syncOnStartToggle" onclick="toggleSyncOnStart()"></div>
+        </div>
+        <div class="sync-toggle-row">
+          <div>
+            <div class="sync-toggle-label">Lokal backup vid synk</div>
+            <div class="sync-toggle-desc">Spara en lokal kopia innan varje molnsynk</div>
+          </div>
+          <div class="toggle-switch on" id="backupOnSyncToggle" onclick="toggleBackupOnSync()"></div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <label class="form-lbl">Supabase URL</label>
+        <input type="text" class="sync-input" id="supabaseUrl" placeholder="https://ditt-projekt.supabase.co">
+        <label class="form-lbl" style="margin-top:10px">Supabase Anon Key</label>
+        <input type="password" class="sync-input" id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIs...">
+        <label class="form-lbl" style="margin-top:10px">Synk-nyckel (unik för din familj)</label>
+        <input type="text" class="sync-input" id="syncKey" placeholder="familjen-andersson-2024">
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="sync-btn-primary" onclick="saveSupabaseConfig()" style="flex:1"><i class="fas fa-save"></i> Spara inställningar</button>
+          <button class="sync-btn-secondary" onclick="testSupabaseConnection()" style="flex:1"><i class="fas fa-plug"></i> Testa anslutning</button>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="sync-btn-primary" onclick="pushToSupabase()" style="flex:1"><i class="fas fa-cloud-upload-alt"></i> Skicka till molnet</button>
+          <button class="sync-btn-secondary" onclick="pullFromSupabase()" style="flex:1"><i class="fas fa-cloud-download-alt"></i> Hämta från molnet</button>
+        </div>
+        <button class="sync-btn-danger" onclick="clearSupabaseConfig()" style="width:100%;margin-top:8px"><i class="fas fa-trash"></i> Rensa molnsynk-inställningar</button>
+      </div>
+      <div class="sync-log" id="syncSettingsLog" style="margin-top:12px"></div>
+    </div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeSyncSettings()" style="flex:1">Stäng</button></div>
+  </div>
+</div>
+
+<!-- ═══════ TOAST ═══════ -->
+<div class="toast" id="toast"><i id="toastIcon" class="fas fa-check-circle" style="color:var(--emerald)"></i><span id="toastMsg">OK</span></div>
+
+<script>
+const PERSON_COLORS = ['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#EC4899','#8B5CF6','#14B8A6'];
+const TIME_LABELS   = {today:'Idag',tomorrow:'Imorgon',week:'Denna vecka',month:'Denna månad',thisyear:'Pågående år',nextyear:'Nästa år',future:'Framtiden',sometime:'Någon gång'};
+const TIME_ORDER    = ['today','tomorrow','week','month','thisyear','nextyear','future','sometime'];
+
+function sl(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
+let tasks        = sl('familyTasks',[]);
+let trash        = sl('familyTrash',[]);
+let score        = parseInt(localStorage.getItem('familyScore')||'0');
+let persons      = sl('familyPersons',['person1','person2','person3']);
+let personLabels = sl('familyPersonLabels',{person1:'Person 1',person2:'Person 2',person3:'Person 3'});
+let notifications= [];
+let night        = localStorage.getItem('nightMode')==='true';
+let currentPerson= 'all';
+let currentTab   = 'todo';
+let colorMap     = {};
+let calMode      = parseInt(localStorage.getItem('calMode')||'0');
+let pdfData      = null;
+let calView      = 0;
+let calMonth     = new Date().getMonth();
+let calYear      = new Date().getFullYear();
+let selectedCalDay = null;
+let savedPDFs = sl('savedPDFs', []);
+let tempPDFData = null;
+
+// ===== SYNC STATE =====
+let supabaseUrl = localStorage.getItem('supabaseUrl') || '';
+let supabaseKey = localStorage.getItem('supabaseKey') || '';
+let syncKey = localStorage.getItem('syncKey') || '';
+let autoSync = localStorage.getItem('autoSync') === 'true';
+let syncOnStart = localStorage.getItem('syncOnStart') !== 'false';
+let backupOnSync = localStorage.getItem('backupOnSync') !== 'false';
+let syncIntervalId = null;
+let syncLogEntries = [];
+
+function buildColorMap(){
+  colorMap['all'] = PERSON_COLORS[0];
+  persons.forEach((p,i)=>{ colorMap[p] = PERSON_COLORS[(i+1)%PERSON_COLORS.length]; });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  if(night)applyNight();
+  if(localStorage.getItem('pcMode')==='true')applyPcMode(true);
+  checkLoginState();
+  rolloverOverdueTasks();
+  updateClock(); setInterval(updateClock,1000);
+  buildColorMap();
+  renderCards();
+  renderSavedPDFs();
+  updateSyncUI();
+  checkReminders(); setInterval(checkReminders,30000);
+  if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+  // Init sync
+  if(syncOnStart && supabaseUrl && supabaseKey && syncKey) {
+    setTimeout(()=>pullFromSupabase(true), 1000);
+  }
+  if(autoSync && supabaseUrl && supabaseKey && syncKey) {
+    startAutoSync();
+  }
+});
+
+/* ===== INLOGGNING ===== */
+const PW_KEY='familyAppPassword';
+function checkLoginState(){
+  const savedPw=localStorage.getItem(PW_KEY);
+  const authed=sessionStorage.getItem('familyAppAuthed')==='true';
+  if(authed){unlockApp();return;}
+  if(savedPw){
+    document.getElementById('loginTitle').textContent='Ange lösenord';
+    document.getElementById('loginSub').textContent='Skriv lösenordet för att fortsätta';
+    document.getElementById('loginResetBtn').classList.remove('h');
+  }else{
+    document.getElementById('loginTitle').textContent='Skapa lösenord';
+    document.getElementById('loginSub').textContent='Ange ett lösenord som skyddar appen';
+    document.getElementById('loginResetBtn').classList.add('h');
+  }
+  document.getElementById('loginInput').value='';
+  setTimeout(()=>document.getElementById('loginInput').focus(),50);
+}
+function submitLogin(){
+  const val=document.getElementById('loginInput').value;
+  if(!val.trim())return;
+  const savedPw=localStorage.getItem(PW_KEY);
+  if(!savedPw){
+    localStorage.setItem(PW_KEY,val);
+    unlockApp();
+    toast('🔒 Lösenord skapat!');
+  }else if(val===savedPw){
+    unlockApp();
+  }else{
+    document.getElementById('loginErr').classList.remove('h');
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginInput').focus();
+  }
+}
+function unlockApp(){
+  sessionStorage.setItem('familyAppAuthed','true');
+  document.getElementById('loginOv').classList.add('h');
+  document.body.classList.remove('locked');
+}
+function resetPassword(){
+  if(confirm('Återställa lösenordet? Du kan då ange ett helt nytt lösenord.')){
+    localStorage.removeItem(PW_KEY);
+    checkLoginState();
+  }
+}
+
+/* ===== PC-LÄGE ===== */
+function applyPcMode(on){
+  document.body.classList.toggle('pc-mode',on);
+  const btn=document.getElementById('pcModeBtn');
+  if(btn)btn.style.color=on?'var(--primary)':'';
+}
+function togglePcMode(){
+  const on=!document.body.classList.contains('pc-mode');
+  applyPcMode(on);
+  localStorage.setItem('pcMode',on?'true':'false');
+  toast(on?'🖥️ PC-anpassad vy på':'📱 Mobilvy på');
+}
+
+function applyNight(){
+  document.body.classList.toggle('night',night);
+  const svg=document.getElementById('nightSvg');
+  if(night){
+    svg.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+    document.getElementById('nightBtn').style.color='var(--amber)';
+  } else {
+    svg.innerHTML='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    document.getElementById('nightBtn').style.color='';
+  }
+}
+function toggleNight(){night=!night;localStorage.setItem('nightMode',night);applyNight();}
+
+// ===== CALENDAR FUNCTIONS =====
+function easterSunday(y){
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+  return new Date(y,month-1,day);
+}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function sameDate(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+
+function getSwedishRedDays(year){
+  const easter=easterSunday(year);
+  const days = [
+    {d:new Date(year,0,1),name:'Nyårsdagen'},
+    {d:new Date(year,0,6),name:'Trettondedag jul'},
+    {d:addDays(easter,-2),name:'Långfredagen'},
+    {d:easter,name:'Påskdagen'},
+    {d:addDays(easter,1),name:'Annandag påsk'},
+    {d:new Date(year,4,1),name:'Första maj'},
+    {d:addDays(easter,39),name:'Kristi himmelsfärdsdag'},
+    {d:new Date(year,5,6),name:'Sveriges nationaldag'},
+    {d:addDays(easter,49),name:'Pingstdagen'},
+    {d:new Date(year,11,25),name:'Juldagen'},
+    {d:new Date(year,11,26),name:'Annandag jul'},
+  ];
+  for(let day=20; day<=26; day++){
+    const d = new Date(year, 5, day);
+    if(d.getDay() === 6) days.push({d, name:'Midsommarafton'});
+  }
+  for(let day=31; day<=37; day++){
+    const realDay = day>31 ? day-31 : day;
+    const month = day>31 ? 10 : 9;
+    const d = new Date(year, month, realDay);
+    if(d.getDay() === 6) days.push({d, name:'Alla helgons dag'});
+  }
+  for(let m=0; m<12; m++){
+    for(let d=1; d<=31; d++){
+      const date = new Date(year, m, d);
+      if(date.getMonth()===m && date.getDay()===0){
+        days.push({d:date, name:'Söndag'});
+      }
+    }
+  }
+  return days;
+}
+
+function getSwedishRedDaysForMonth(year, month){
+  const all = getSwedishRedDays(year);
+  return all.filter(r => r.d.getFullYear()===year && r.d.getMonth()===month);
+}
+
+function getIranianRedDaysForMonth(year, month){
+  const results = [];
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  for(let day=1; day<=daysInMonth; day++){
+    const d = new Date(year, month, day);
+    const [jy,jm,jd] = gregorianToJalali(year, month+1, day);
+    const [hy,hm,hd] = gregorianToHijri(year, month+1, day);
+    let name = null;
+    if(d.getDay()===5) name = 'جمعه (Fredag)';
+    const jKey = jm+'-'+jd;
+    if(IRANIAN_JALALI_HOLIDAYS[jKey]) name = IRANIAN_JALALI_HOLIDAYS[jKey];
+    const hKey = hm+'-'+hd;
+    if(IRANIAN_HIJRI_HOLIDAYS[hKey]) name = IRANIAN_HIJRI_HOLIDAYS[hKey];
+    if(name) results.push({d, name});
+  }
+  return results;
+}
+
+function getSaudiRedDaysForMonth(year, month){
+  const results = [];
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  for(let day=1; day<=daysInMonth; day++){
+    const d = new Date(year, month, day);
+    const [hy,hm,hd] = gregorianToHijri(year, month+1, day);
+    let name = null;
+    if(d.getDay()===5) name = 'Jummah (Fredag)';
+    const hKey = hm+'-'+hd;
+    const saudiHijri = {'1-1':'Hijri New Year','1-10':'Ashura','3-12':'Mawlid','9-1':'Ramadan börjar','10-1':'Eid al-Fitr','12-10':'Eid al-Adha'};
+    if(saudiHijri[hKey]) name = saudiHijri[hKey];
+    const gKey = (d.getMonth()+1)+'-'+d.getDate();
+    const saudiGreg = {'1-1':'Nyårsdagen','9-23':'Saudi Nationaldag'};
+    if(saudiGreg[gKey]) name = saudiGreg[gKey];
+    if(name) results.push({d, name});
+  }
+  return results;
+}
+
+function openCalendar(){
+  calMonth = new Date().getMonth();
+  calYear = new Date().getFullYear();
+  calView = 0;
+  selectedCalDay = null;
+  renderCalendar();
+  document.getElementById('calModal').classList.remove('h');
+}
+function closeCalendar(){
+  document.getElementById('calModal').classList.add('h');
+  document.getElementById('calContainer').innerHTML = '';
+}
+function switchCalView(){
+  calView = (calView + 1) % 3;
+  selectedCalDay = null;
+  renderCalendar();
+}
+function renderCalendar(){
+  const container = document.getElementById('calContainer');
+  const viewLabels = ['🇸🇪 Sverige', '🇮🇷 Iran', '🇸🇦 Saudiarabien'];
+  document.getElementById('calViewLabel').textContent = viewLabels[calView];
+  const monthNames = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrevMonth = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+  const todayDate = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
+  let redDays = [];
+  if(calView === 0) redDays = getSwedishRedDaysForMonth(calYear, calMonth);
+  else if(calView === 1) redDays = getIranianRedDaysForMonth(calYear, calMonth);
+  else redDays = getSaudiRedDaysForMonth(calYear, calMonth);
+  const redDayMap = {};
+  redDays.forEach(r => {
+    const key = r.d.getDate();
+    if(!redDayMap[key]) redDayMap[key] = [];
+    redDayMap[key].push(r.name);
+  });
+  let html = '<div class="cal-header"><button class="cal-nav" onclick="changeCalMonth(-1)"><i class="fas fa-chevron-left"></i></button><div><div class="cal-month">'+monthNames[calMonth]+'</div><div class="cal-year">'+calYear+'</div></div><button class="cal-nav" onclick="changeCalMonth(1)"><i class="fas fa-chevron-right"></i></button></div><div class="cal-grid"><div class="cal-weekday">Mån</div><div class="cal-weekday">Tis</div><div class="cal-weekday">Ons</div><div class="cal-weekday">Tor</div><div class="cal-weekday">Fre</div><div class="cal-weekday">Lör</div><div class="cal-weekday">Sön</div>';
+  let startOffset = firstDay === 0 ? 6 : firstDay - 1;
+  for(let i=0; i<startOffset; i++){
+    const prevDay = daysInPrevMonth - startOffset + i + 1;
+    html += '<div class="cal-day other-month">'+prevDay+'</div>';
+  }
+  for(let day=1; day<=daysInMonth; day++){
+    const isToday = (day === todayDate && calMonth === todayMonth && calYear === todayYear);
+    const isRed = redDayMap[day] && redDayMap[day].length > 0;
+    const redNames = redDayMap[day] || [];
+    const dayOfWeek = new Date(calYear, calMonth, day).getDay();
+    const isSunday = dayOfWeek === 0;
+    let classes = 'cal-day';
+    if(isToday) classes += ' today';
+    if(isRed || isSunday) classes += ' red';
+    let dotHtml = '';
+    if(isRed) dotHtml = '<div class="cal-dot '+(calView===0?'se':calView===1?'ir':'sa')+'"></div>';
+    let tagHtml = '';
+    if(isRed && redNames.length > 0){
+      const shortName = redNames[0].split(' - ')[0];
+      tagHtml = '<div class="cal-tag red-text">'+shortName.substring(0,12)+(shortName.length>12?'…':'')+'</div>';
+    } else if(isSunday && calView===0){
+      tagHtml = '<div class="cal-tag red-text">Söndag</div>';
+    }
+    html += '<div class="'+classes+'" onclick="showDayDetail('+day+', \''+escapeHtml(redNames.join('||'))+'\')">'+day+dotHtml+tagHtml+'</div>';
+  }
+  const totalCells = startOffset + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for(let i=1; i<=remaining; i++){
+    html += '<div class="cal-day other-month">'+i+'</div>';
+  }
+  html += '</div>';
+  const legendLabels = ['🇸🇪 Sverige', '🇮🇷 Iran', '🇸🇦 Saudiarabien'];
+  html += '<div class="cal-legend"><span><span class="leg-dot '+(calView===0?'se':calView===1?'ir':'sa')+'"></span> Röd dag ('+legendLabels[calView]+')</span><span><span class="leg-dot" style="background:var(--primary)"></span> Idag</span></div>';
+  html += '<div class="cal-day-detail" id="calDayDetail"><div class="detail-date" id="detailDate"></div><div id="detailRedDays"></div></div>';
+  container.innerHTML = html;
+}
+function changeCalMonth(delta){
+  calMonth += delta;
+  if(calMonth > 11){ calMonth = 0; calYear++; }
+  if(calMonth < 0){ calMonth = 11; calYear--; }
+  selectedCalDay = null;
+  renderCalendar();
+}
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function showDayDetail(day, redNamesStr){
+  const detailEl = document.getElementById('calDayDetail');
+  const dateEl = document.getElementById('detailDate');
+  const redEl = document.getElementById('detailRedDays');
+  const date = new Date(calYear, calMonth, day);
+  const monthNames = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  const weekdayNames = ['Måndag','Tisdag','Onsdag','Torsdag','Fredag','Lördag','Söndag'];
+  const weekday = date.getDay();
+  const weekdayStr = weekday===0 ? 'Söndag' : weekdayNames[weekday-1];
+  dateEl.textContent = weekdayStr+' '+day+' '+monthNames[calMonth]+' '+calYear;
+  const redNames = redNamesStr ? redNamesStr.split('||') : [];
+  if(calView === 0 && date.getDay() === 0 && !redNames.length) redNames.push('Söndag');
+  if(redNames.length > 0){
+    const flags = ['🇸🇪','🇮🇷','🇸🇦'];
+    const flag = flags[calView] || '🔴';
+    redEl.innerHTML = redNames.map(name => '<div class="detail-red"><span class="detail-flag">'+flag+'</span> '+name+'</div>').join('');
+  } else {
+    redEl.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:4px 0">Ingen röd dag</div>';
+  }
+  detailEl.classList.add('show');
+  selectedCalDay = day;
+  document.querySelectorAll('.cal-day').forEach(el => {
+    el.style.outline = 'none';
+    const d = parseInt(el.innerText);
+    if(d === day && !el.classList.contains('other-month')) el.style.outline = '3px solid var(--primary)';
+  });
+}
+
+const IRANIAN_JALALI_HOLIDAYS={
+  '1-1':'نوروز (Nowruz)','1-2':'نوروز (Nowruz)','1-3':'نوروز (Nowruz)','1-4':'نوروز (Nowruz)',
+  '1-12':'روز جمهوری اسلامی','1-13':'سیزده بدر','3-14':'رحلت امام خمینی','3-15':'قیام ۱۵ خرداد',
+  '11-22':'پیروزی انقلاب اسلامی','12-29':'ملی شدن نفت'
+};
+const IRANIAN_HIJRI_HOLIDAYS={
+  '1-9':'تاسوعای حسینی','1-10':'عاشورا','1-21':'حدیث چهلم (اربعین)','2-28':'رحلت پیامبر',
+  '3-8':'شهادت امام رضا','3-17':'میلاد پیامبر','6-3':'شهادت حضرت فاطمه','7-13':'میلاد امام علی',
+  '7-27':'مبعث پیامبر','8-15':'میلاد امام زمان','9-21':'شهادت امام علی','10-1':'عید فطر',
+  '10-2':'عید فطر','10-25':'شهادت امام جعفر صادق','12-10':'عید قربان','12-18':'عید غدیر'
+};
+
+function gregorianToJalali(gy,gm,gd){
+  const g_days=[0,31,59,90,120,151,181,212,243,273,304,334];
+  let gy2=(gm>2)?(gy+1):gy;
+  let days=355666+(365*gy)+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)+gd+g_days[gm-1];
+  let jy=-1595+(33*Math.floor(days/12053));
+  days%=12053;
+  jy+=4*Math.floor(days/1461);
+  days%=1461;
+  if(days>365){jy+=Math.floor((days-1)/365);days=(days-1)%365;}
+  let jm,jd;
+  if(days<186){jm=1+Math.floor(days/31);jd=1+(days%31);}
+  else{jm=7+Math.floor((days-186)/30);jd=1+((days-186)%30);}
+  return [jy,jm,jd];
+}
+function gregorianToHijri(gy,gm,gd){
+  const jdn=Math.floor((1461*(gy+4800+Math.floor((gm-14)/12)))/4)+Math.floor((367*(gm-2-12*Math.floor((gm-14)/12)))/12)-Math.floor((3*Math.floor((gy+4900+Math.floor((gm-14)/12))/100))/4)+gd-32075;
+  const l=jdn-1948440+10632;
+  const n=Math.floor((l-1)/10631);
+  const l2=l-10631*n+354;
+  const j=(Math.floor((10985-l2)/5316))*(Math.floor((50*l2)/17719))+(Math.floor(l2/5670))*(Math.floor((43*l2)/15238));
+  const l3=l2-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;
+  const hm=Math.floor((24*l3)/709);
+  const hd=l3-Math.floor((709*hm)/24);
+  const hy=30*n+j-30;
+  return [hy,hm,hd];
+}
+
+function checkRedDay(now){
+  const year = now.getFullYear();
+  const allRedDays = getSwedishRedDays(year);
+  for(const rd of allRedDays){
+    if(sameDate(rd.d, now)) return rd.name;
+  }
+  return null;
+}
+
+function updateClock(){
+  const now=new Date();
+  const hh=String(now.getHours()).padStart(2,'0'),mm=String(now.getMinutes()).padStart(2,'0'),ss=String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clockDisplay').textContent=hh+':'+mm+':'+ss;
+  const gy=now.getFullYear(),gm=now.getMonth()+1,gd=now.getDate();
+  const dEl=document.getElementById('dateText');
+  const lbl=document.getElementById('calLabel');
+  dEl.classList.remove('farsi-rtl');
+  let jy,jm,jd; try{[jy,jm,jd]=gregorianToJalali(gy,gm,gd);}catch(e){jy=gy;jm=1;jd=1;}
+  let hy,hm,hd; try{[hy,hm,hd]=gregorianToHijri(gy,gm,gd);}catch(e){hy=gy;hm=1;hd=1;}
+  if(calMode===0){
+    lbl.textContent='📅 Gregoriansk';
+    dEl.textContent=now.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  } else if(calMode===1){
+    lbl.textContent='🇮🇷 Jalali (Iransk)';
+    dEl.classList.add('farsi-rtl');
+    dEl.textContent=JALALI_DAYS[now.getDay()]+' '+toFa(jd)+' '+JALALI_MONTHS[jm-1]+' '+toFa(jy);
+  } else {
+    lbl.textContent='☪️ Hijri Qamari';
+    dEl.textContent=hd+' '+HIJRI_MONTHS[hm-1]+' '+hy+' AH';
+  }
+  const rd=document.getElementById('reddayTag');
+  let redName;
+  if(calMode===0){
+    redName=checkRedDay(now);
+    if(redName) redName = '🇸🇪 ' + redName;
+  } else if(calMode===1){
+    const iranRed=checkIranianRedDay(now,jy,jm,jd,hy,hm,hd);
+    redName=iranRed?'🇮🇷 '+iranRed:null;
+  } else {
+    const saudiRed = checkSaudiRedDay(now, hy, hm, hd);
+    redName = saudiRed ? '🇸🇦 ' + saudiRed : null;
+  }
+  if(redName){rd.textContent=redName;rd.classList.remove('h');}
+  else{rd.classList.add('h');}
+}
+
+function cycleCalendar(){
+  calMode=(calMode+1)%3;
+  localStorage.setItem('calMode',calMode);
+  updateClock();
+  const names=['Gregoriansk kalender','Jalali / Iransk kalender','Hijri Qamari-kalender'];
+  toast('📅 '+names[calMode]);
+}
+
+function checkSaudiRedDay(now, hy, hm, hd){
+  if(now.getDay()===5) return 'Jummah (Fredag)';
+  const hKey = hm+'-'+hd;
+  const saudiHijri = {'1-1':'Hijri New Year','1-10':'Ashura','3-12':'Mawlid','9-1':'Ramadan börjar','10-1':'Eid al-Fitr','12-10':'Eid al-Adha'};
+  if(saudiHijri[hKey]) return saudiHijri[hKey];
+  const gKey = (now.getMonth()+1)+'-'+now.getDate();
+  const saudiGreg = {'1-1':'Nyårsdagen','9-23':'Saudi Nationaldag'};
+  if(saudiGreg[gKey]) return saudiGreg[gKey];
+  return null;
+}
+
+function checkIranianRedDay(now,jy,jm,jd,hy,hm,hd){
+  if(now.getDay()===5) return 'جمعه (Fredag)';
+  const jKey=jm+'-'+jd;
+  if(IRANIAN_JALALI_HOLIDAYS[jKey]) return IRANIAN_JALALI_HOLIDAYS[jKey];
+  const hKey=hm+'-'+hd;
+  if(IRANIAN_HIJRI_HOLIDAYS[hKey]) return IRANIAN_HIJRI_HOLIDAYS[hKey];
+  return null;
+}
+
+const JALALI_MONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const JALALI_DAYS=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+const HIJRI_MONTHS=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Shaban','Ramadan','Shawwal','Dhu al-Qidah','Dhu al-Hijjah'];
+const FA_NUM=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+function toFa(n){return String(n).split('').map(c=>/\d/.test(c)?FA_NUM[+c]:c).join('');}
+
+function rolloverOverdueTasks(){
+  const todayStr=new Date().toDateString();
+  const lastCheck=localStorage.getItem('lastRolloverDate');
+  if(lastCheck===todayStr)return;
+  let moved=0;
+  tasks.forEach(t=>{
+    if(!t.completed && t.timeFrame==='today'){t.timeFrame='tomorrow';moved++;}
+    else if(!t.completed && t.timeFrame==='tomorrow' && lastCheck){t.timeFrame='today';}
+  });
+  localStorage.setItem('lastRolloverDate',todayStr);
+  if(moved>0)saveData();
+}
+
+function renderCards(){
+  buildColorMap();
+  const grid=document.getElementById('cardsGrid');
+  function counts(pid){
+    const mine = pid==='all' ? tasks : tasks.filter(t=>t.person===pid);
+    return { active: mine.filter(t=>!t.completed).length, done: mine.filter(t=>t.completed).length };
+  }
+  let html='';
+  const allC=counts('all');
+  html+='<div class="person-card all-card" onclick="openDetail(\'all\')" style="border-color:'+PERSON_COLORS[0]+'33"><div class="card-accent" style="background:'+PERSON_COLORS[0]+'"></div><div class="card-avatar" style="background:'+PERSON_COLORS[0]+'"><i class="fas fa-users"></i></div><div class="all-info"><div class="card-name">Alla</div><div class="card-stats"><div class="stat-pill active"><i class="fas fa-list-check"></i> '+allC.active+' att göra</div><div class="stat-pill done"><i class="fas fa-check"></i> '+allC.done+' klara</div></div></div><i class="fas fa-chevron-right card-chevron"></i></div>';
+  persons.forEach((pid,i)=>{
+    const color=PERSON_COLORS[(i+1)%PERSON_COLORS.length];
+    const label=personLabels[pid]||pid;
+    const c=counts(pid);
+    const initial=label.charAt(0).toUpperCase();
+    html+='<div class="person-card" onclick="openDetail(\''+pid+'\')" style="border-color:'+color+'33"><div class="card-accent" style="background:'+color+'"></div><div class="card-avatar" style="background:'+color+'">'+initial+'</div><div class="card-name-wrap"><div class="card-name" id="lbl-'+pid+'">'+esc(label)+'</div><button class="card-edit-btn" onclick="event.stopPropagation();startEdit(\''+pid+'\')" title="Byt namn"><i class="fas fa-pen"></i></button><button class="card-delete-btn" onclick="event.stopPropagation();deletePerson(\''+pid+'\')" title="Ta bort person"><i class="fas fa-trash-can"></i></button></div><div class="card-stats"><div class="stat-pill active"><i class="fas fa-list-check"></i> '+c.active+'</div><div class="stat-pill done"><i class="fas fa-check"></i> '+c.done+'</div></div><i class="fas fa-chevron-right card-chevron"></i></div>';
+  });
+  html+='<div class="person-card" style="border-style:dashed;cursor:default;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:130px" onclick="document.getElementById(\'newPersonInput\').focus()"><div style="width:44px;height:44px;border-radius:14px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)"><i class="fas fa-plus"></i></div><div style="font-size:13px;font-weight:800;color:var(--text3)">Ny person</div></div>';
+  grid.innerHTML=html;
+}
+
+function deletePerson(pid){
+  if(persons.length <= 1){toast('Du måste ha minst en person kvar!','error');return;}
+  if(confirm('Ta bort "'+(personLabels[pid]||pid)+'" och alla deras uppgifter?')){
+    tasks = tasks.filter(t => t.person !== pid);
+    trash = trash.filter(t => t.person !== pid);
+    persons = persons.filter(p => p !== pid);
+    delete personLabels[pid];
+    savePersons();
+    saveData();
+    buildColorMap();
+    renderCards();
+    toast('Person borttagen');
+  }
+}
+
+function startEdit(pid){
+  const lbl=document.getElementById('lbl-'+pid);
+  if(!lbl)return;
+  const cur=personLabels[pid]||pid;
+  const inp=document.createElement('input');
+  inp.className='name-edit-input'; inp.value=cur; inp.maxLength=20;
+  inp.onclick=e=>e.stopPropagation();
+  inp.onkeydown=e=>{if(e.key==='Enter')finishEdit(pid,inp);if(e.key==='Escape'){renderCards();}};
+  inp.onblur=()=>finishEdit(pid,inp);
+  lbl.replaceWith(inp); inp.focus(); inp.select();
+}
+function finishEdit(pid,inp){
+  const v=inp.value.trim();
+  if(v){personLabels[pid]=v;savePersons();}
+  renderCards();
+}
+
+function addPerson(){
+  const inp=document.getElementById('newPersonInput');
+  const name=inp.value.trim();
+  if(!name){toast('Ange ett namn','error');return;}
+  let nid='person'+(persons.length+1); let c=1;
+  while(persons.includes(nid)){c++;nid='person'+c;}
+  persons.push(nid); personLabels[nid]=name;
+  savePersons(); buildColorMap(); renderCards();
+  inp.value=''; toast('"'+name+'" tillagd! 🎉');
+}
+
+function openDetail(pid){
+  currentPerson=pid; currentTab='todo';
+  buildColorMap();
+  const color=colorMap[pid]||PERSON_COLORS[0];
+  const label= pid==='all'?'Alla':(personLabels[pid]||pid);
+  const icon = pid==='all'?'<i class="fas fa-users"></i>':label.charAt(0).toUpperCase();
+  const av=document.getElementById('detailAvatar');
+  av.innerHTML=icon; av.style.background=color;
+  document.getElementById('detailName').textContent=label;
+  const mine=pid==='all'?tasks:tasks.filter(t=>t.person===pid);
+  const act=mine.filter(t=>!t.completed).length;
+  const done=mine.filter(t=>t.completed).length;
+  document.getElementById('detailSub').textContent=act+' att göra · '+done+' klara';
+  const home=document.getElementById('pageHome');
+  const detail=document.getElementById('pageDetail');
+  home.classList.add('hidden');
+  detail.classList.remove('hidden');
+  setTimeout(()=>detail.classList.add('open'),10);
+  detail.scrollTop=0;
+  switchTab('todo');
+  renderDetail();
+}
+
+function goHome(){
+  const detail=document.getElementById('pageDetail');
+  const home=document.getElementById('pageHome');
+  detail.classList.remove('open');
+  setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();renderSavedPDFs();},320);
+}
+
+function switchTab(tab){
+  currentTab=tab;
+  document.getElementById('tabTodo').classList.toggle('active',tab==='todo');
+  document.getElementById('tabDone').classList.toggle('active',tab==='done');
+  document.getElementById('todoSection').classList.toggle('h',tab!=='todo');
+  document.getElementById('doneSection').classList.toggle('h',tab!=='done');
+  if(tab==='done')renderDone(); else renderTodo();
+}
+
+function renderDetail(){
+  const mine=currentPerson==='all'?tasks:tasks.filter(t=>t.person===currentPerson);
+  const act=mine.filter(t=>!t.completed);
+  const done=mine.filter(t=>t.completed);
+  document.getElementById('todoBadge').textContent=act.length;
+  document.getElementById('doneBadge').textContent=done.length;
+  document.getElementById('detailSub').textContent=act.length+' att göra · '+done.length+' klara';
+  if(currentTab==='todo')renderTodo(); else renderDone();
+}
+
+function renderTodo(){
+  const mine=currentPerson==='all'?tasks:tasks.filter(t=>t.person===currentPerson);
+  renderList('todoContainer', mine.filter(t=>!t.completed), false);
+}
+function renderDone(){
+  const mine=currentPerson==='all'?tasks:tasks.filter(t=>t.person===currentPerson);
+  renderList('doneContainer', mine.filter(t=>t.completed), true);
+}
+
+function renderList(cid,items,isDone){
+  const c=document.getElementById(cid);
+  if(!items.length){
+    c.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fas fa-'+(isDone?'check-double':'clipboard-list')+'"></i></div><div class="empty-text">'+(isDone?'Inga klara uppgifter än':'Tomt här! Lägg till en uppgift.')+'</div></div>';
+    return;
+  }
+  const grouped={};
+  items.forEach(item=>{if(!grouped[item.timeFrame])grouped[item.timeFrame]=[];grouped[item.timeFrame].push(item);});
+  c.innerHTML=TIME_ORDER.filter(k=>grouped[k]).map(tf=>'<div class="time-group fade-in"><div class="time-group-label">'+TIME_LABELS[tf]+'<hr><span>'+grouped[tf].length+'</span></div>'+grouped[tf].map(item=>taskHTML(item,isDone)).join('')+'</div>').join('');
+  c.querySelectorAll('.check-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>toggleComplete(parseInt(btn.dataset.id)));
+  });
+  c.querySelectorAll('.del-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>moveToTrash(parseInt(btn.dataset.id)));
+  });
+}
+
+function taskHTML(item,isDone){
+  const remDate=item.reminder?new Date(item.reminder).toLocaleString('sv-SE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):null;
+  const personLabel=item.person!=='all'?(personLabels[item.person]||item.person):null;
+  const pcolor=colorMap[item.person]||'#999';
+  const hasNote = item.note && item.note.trim() !== '';
+  const hasLink = item.link && item.link.trim() !== '';
+  const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
+  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><button class="del-btn" data-id="'+item.id+'"><i class="fas fa-trash-can"></i></button></div>';
+}
+
+function addTask(){
+  const inp=document.getElementById('taskInput');
+  const text=inp.value.trim();
+  if(!text){toast('Ange en uppgift','error');return;}
+  const note = document.getElementById('taskNoteInput').value.trim();
+  const link = document.getElementById('taskLinkInput').value.trim();
+  const reminder=document.getElementById('reminderTime').value;
+  tasks.push({
+    id:Date.now(),text,
+    type:document.getElementById('taskType').value,
+    timeFrame:document.getElementById('timeFrame').value,
+    person:currentPerson,
+    reminder:reminder?new Date(reminder).toISOString():null,
+    reminded:false,
+    completed:false,
+    createdAt:new Date().toISOString(),
+    note: note || '',link: link || ''
+  });
+  saveData();
+  inp.value='';
+  document.getElementById('taskNoteInput').value='';
+  document.getElementById('taskLinkInput').value='';
+  document.getElementById('reminderTime').value='';
+  toast('Uppgift tillagd! ✅');
+  renderDetail();
+}
+
+function toggleComplete(id){
+  const t=tasks.find(x=>x.id===id);
+  if(!t)return;
+  if(!t.completed){
+    t.completed=true; score+=10; localStorage.setItem('familyScore',score);
+    spawnConfetti(); toast('+10 poäng! 🎉');
+    saveData();
+    moveToTrash(id);
+  } else {
+    t.completed=false; saveData(); renderDetail();
+  }
+}
+
+function moveToTrash(id){
+  const idx=tasks.findIndex(t=>t.id===id);
+  if(idx>-1){const t=tasks.splice(idx,1)[0];t.deletedAt=new Date().toISOString();trash.push(t);saveData();updateTrashBdg();renderDetail();}
+}
+
+// ===== PDF EXPORT FUNCTIONS =====
+function generatePDFHTML(title, items, showPerson){
+  const now = new Date().toLocaleDateString('sv-SE', {year:'numeric',month:'long',day:'numeric'});
+  let html = '<div class="pdf-header"><h2>📋 '+esc(title)+'</h2><p>Genererad: '+now+'</p><p style="font-size:13px;color:#A89FCE;">'+items.length+' uppgifter totalt</p></div>';
+  if(items.length === 0){
+    html += '<div style="text-align:center;padding:40px 20px;color:#A89FCE;">Inga uppgifter att visa</div>';
+  } else {
+    const grouped = {};
+    items.forEach(item => {
+      const key = item.timeFrame || 'sometime';
+      if(!grouped[key]) grouped[key] = [];
+      grouped[key].push(item);
+    });
+    TIME_ORDER.forEach(tf => {
+      if(grouped[tf] && grouped[tf].length > 0){
+        html += '<div style="margin-bottom:16px;"><div style="font-weight:800;color:#7168A0;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;border-bottom:1px solid #E4DEFC;">'+TIME_LABELS[tf]+' ('+grouped[tf].length+')</div>';
+        grouped[tf].forEach(item => {
+          const personLabel = item.person!=='all' ? (personLabels[item.person]||item.person) : null;
+          const pcolor = colorMap[item.person] || '#999';
+          const hasNote = item.note && item.note.trim() !== '';
+          const hasLink = item.link && item.link.trim() !== '';
+          html += '<div class="pdf-task-item"><div class="pdf-check '+(item.completed?'':'empty')+'">'+(item.completed?'✅':'⬜')+'</div><div style="flex:1;"><div class="pdf-text '+(item.completed?'done':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div style="font-size:13px;color:#7168A0;margin-top:4px;"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div style="font-size:13px;color:#6C47E8;margin-top:4px;"><i class="fas fa-link"></i> <a href="'+esc(item.link)+'" style="color:#6C47E8;">'+esc(item.link)+'</a></div>' : '')+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"><span class="pdf-tag">'+(TIME_LABELS[item.timeFrame]||'Någon gång')+'</span>'+(showPerson && personLabel ? '<span class="pdf-person" style="background:'+pcolor+'">'+esc(personLabel)+'</span>' : '')+(item.type==='shopping' ? '<span class="pdf-tag">🛒</span>' : '')+(item.reminder ? '<span class="pdf-tag">🔔 '+new Date(item.reminder).toLocaleDateString('sv-SE')+'</span>' : '')+'</div></div></div>';
+        });
+        html += '</div>';
+      }
+    });
+  }
+  html += '<div class="pdf-footer">Familjens Planerare · Genererad '+now+'</div>';
+  return html;
+}
+
+function exportAllPDF(){
+  const title = 'Alla - Familjens planering';
+  const items = tasks;
+  pdfData = { title, items, showPerson: true };
+  showPDFPreview(title, items, true);
+}
+
+function exportPersonPDF(){
+  const label = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
+  const title = label+' - Familjens planering';
+  const items = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
+  pdfData = { title, items, showPerson: false };
+  showPDFPreview(title, items, false);
+}
+
+function showPDFPreview(title, items, showPerson){
+  const container = document.getElementById('pdfContent');
+  container.innerHTML = generatePDFHTML(title, items, showPerson);
+  document.getElementById('pdfModal').classList.remove('h');
+  tempPDFData = { title, items, showPerson, html: container.innerHTML };
+}
+
+function closePDF(){
+  document.getElementById('pdfModal').classList.add('h');
+  document.getElementById('pdfContent').innerHTML = '';
+  tempPDFData = null;
+}
+
+function downloadPDF(){
+  if(!pdfData) return;
+  const element = document.getElementById('pdfContent');
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: pdfData.title.replace(/[^a-zA-Z0-9åäöÅÄÖ\- ]/g, '').trim()+'.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  toast('Genererar PDF...');
+  html2pdf().set(opt).from(element).save().then(() => {
+    toast('✅ PDF klar!');
+  }).catch(err => {
+    console.error(err);
+    toast('❌ Kunde inte generera PDF','error');
+  });
+}
+
+function savePDFToApp(){
+  if(!tempPDFData) return;
+  const id = Date.now();
+  const pdfEntry = {
+    id: id, title: tempPDFData.title, items: tempPDFData.items,
+    showPerson: tempPDFData.showPerson, savedAt: new Date().toISOString(),
+    html: tempPDFData.html
+  };
+  savedPDFs.push(pdfEntry);
+  localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+  renderSavedPDFs();
+  toast('✅ PDF sparad i appen!');
+  closePDF();
+}
+
+function renderSavedPDFs(){
+  const container = document.getElementById('savedPdfList');
+  if(!savedPDFs.length){
+    container.innerHTML = '<div class="pdf-empty">Inga sparade PDF-filer ännu</div>';
+    return;
+  }
+  container.innerHTML = savedPDFs.slice().reverse().map(pdf => '<div class="pdf-card"><div class="pdf-header"><div><div class="pdf-title"><i class="fas fa-file-pdf" style="color:var(--rose)"></i> '+esc(pdf.title)+'</div><div class="pdf-meta">'+new Date(pdf.savedAt).toLocaleDateString('sv-SE')+' · '+pdf.items.length+' uppgifter</div></div><div class="pdf-actions"><button class="print-btn" onclick="printSavedPDF('+pdf.id+')"><i class="fas fa-print"></i> Skriv ut</button><button class="delete-pdf-btn" onclick="deleteSavedPDF('+pdf.id+')"><i class="fas fa-trash"></i></button></div></div></div>').join('');
+}
+
+function printSavedPDF(id){
+  const pdf = savedPDFs.find(p => p.id === id);
+  if(!pdf) return;
+  const win = window.open('', '_blank');
+  if(win){
+    win.document.write('<html><head><title>'+pdf.title+'</title><style>body{font-family:\'Nunito\',sans-serif;padding:20px;background:#fff;color:#1E1535;max-width:800px;margin:0 auto}.pdf-header{padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px}.pdf-header h2{font-size:24px;color:#1E1535;margin:0}.pdf-header p{color:#7168A0;font-size:14px;margin:4px 0}.pdf-task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8}.pdf-check{font-size:18px;flex-shrink:0}.pdf-text{font-weight:700;color:#1E1535;flex:1}.pdf-text.done{text-decoration:line-through;color:#A89FCE}.pdf-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0}.pdf-person{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}.pdf-footer{text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px}@media print{body{padding:0}.pdf-header{background:#f5f3ff}}</style></head><body>'+pdf.html+'<script>window.onload=function(){window.print();}<\/script></body></html>');
+    win.document.close();
+  }
+}
+
+function deleteSavedPDF(id){
+  if(confirm('Ta bort den sparade PDF-filen?')){
+    savedPDFs = savedPDFs.filter(p => p.id !== id);
+    localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+    renderSavedPDFs();
+    toast('PDF borttagen');
+  }
+}
+
+function openTrash(){renderTrashModal();document.getElementById('trashModal').classList.remove('h');}
+function closeTrash(){document.getElementById('trashModal').classList.add('h');}
+function renderTrashModal(){
+  const b=document.getElementById('trashBody');
+  updateTrashBdg();
+  if(!trash.length){b.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fas fa-trash-can"></i></div><div class="empty-text">Papperskorgen är tom</div></div>';return;}
+  b.innerHTML=trash.slice().reverse().map(item=>'<div class="trash-item"><div class="trash-dot" style="background:'+(item.type==='shopping'?'var(--emerald)':'var(--primary)')+'"></div><div class="trash-text">'+esc(item.text)+'</div><div class="trash-acts"><button class="trash-act restore" onclick="restoreFromTrash('+item.id+')"><i class="fas fa-rotate-left"></i></button><button class="trash-act del" onclick="delPerm('+item.id+')"><i class="fas fa-trash"></i></button></div></div>').join('');
+}
+function updateTrashBdg(){const b=document.getElementById('trashBdg');b.textContent=trash.length;b.classList.toggle('h',trash.length===0);}
+function restoreFromTrash(id){const idx=trash.findIndex(t=>t.id===id);if(idx>-1){const t=trash.splice(idx,1)[0];delete t.deletedAt;t.completed=false;tasks.push(t);saveData();renderTrashModal();renderDetail();renderCards();toast('Återställd!');}}
+function delPerm(id){trash=trash.filter(t=>t.id!==id);saveData();renderTrashModal();toast('Raderad permanent');}
+function emptyTrash(){if(confirm('Töm hela papperskorgen?')){trash=[];saveData();renderTrashModal();toast('Papperskorg tömd');}}
+
+function openNotif(){
+  const b=document.getElementById('notifBody');
+  if(!notifications.length){b.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fas fa-bell-slash"></i></div><div class="empty-text">Inga påminnelser</div></div>';}
+  else b.innerHTML=notifications.slice().reverse().map(n=>'<div class="notif-item"><div class="notif-ico"><i class="fas fa-bell"></i></div><div><div style="font-size:14px;font-weight:700;color:var(--text)">'+esc(n.text)+'</div><div style="font-size:12px;color:var(--text3);margin-top:2px">'+new Date(n.time).toLocaleString('sv-SE')+'</div></div></div>').join('');
+  document.getElementById('notifModal').classList.remove('h');
+  notifications.forEach(n=>n.read=true); updateNotifBdg();
+}
+function closeNotif(){document.getElementById('notifModal').classList.add('h');}
+function updateNotifBdg(){const b=document.getElementById('notifBdg');const u=notifications.filter(n=>!n.read).length;b.textContent=u;b.classList.toggle('h',u===0);}
+function checkReminders(){
+  const now=new Date();
+  tasks.forEach(t=>{
+    if(t.reminder&&!t.reminded&&!t.completed&&new Date(t.reminder)<=now){
+      t.reminded=true;notifications.push({id:Date.now()+Math.random(),text:t.text,time:now.toISOString(),person:t.person});
+      if('Notification' in window&&Notification.permission==='granted')new Notification('Påminnelse!',{body:t.text});
+      toast('🔔 '+t.text,'reminder');
+    }
+  });
+  updateNotifBdg(); saveData();
+}
+
+function saveData(){
+  localStorage.setItem('familyTasks',JSON.stringify(tasks));
+  localStorage.setItem('familyTrash',JSON.stringify(trash));
+  localStorage.setItem('familyScore',score);
+}
+function savePersons(){
+  localStorage.setItem('familyPersons',JSON.stringify(persons));
+  localStorage.setItem('familyPersonLabels',JSON.stringify(personLabels));
+}
+function saveAndConfirm(){
+  saveData();
+  savePersons();
+  toast('✅ Sparat!');
+}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+let toastT;
+function toast(msg,type='success'){
+  const el=document.getElementById('toast'),ic=document.getElementById('toastIcon');
+  document.getElementById('toastMsg').textContent=msg;
+  ic.className=type==='error'?'fas fa-exclamation-circle':type==='reminder'?'fas fa-bell':'fas fa-check-circle';
+  ic.style.color=type==='error'?'var(--rose)':type==='reminder'?'var(--amber)':'var(--emerald)';
+  el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),3000);
+}
+function spawnConfetti(){
+  const em=['🎉','⭐','🎊','✨','💪','🏆','🌈'];
+  for(let i=0;i<18;i++){const el=document.createElement('div');el.className='cp';el.textContent=em[Math.floor(Math.random()*em.length)];el.style.cssText='left:'+Math.random()*100+'vw;top:-10px;font-size:'+(1.4+Math.random()*1.8)+'rem;animation-duration:'+(1.8+Math.random()*1.5)+'s';document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+
+// ===== UPLOAD PDF =====
+function handlePDFUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  toast('PDF-läsning: Välj person att importera till');
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = '<div style="background:var(--surface);border-radius:var(--r);padding:24px;max-width:400px;width:100%;text-align:center;border:1.5px solid var(--border)"><h3 style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px"><i class="fas fa-upload" style="color:var(--primary)"></i> Importera uppgifter</h3><p style="color:var(--text2);font-size:14px;margin-bottom:16px">Välj vilken person uppgifterna ska tillhöra</p><select id="importPersonSelect" style="width:100%;height:48px;border-radius:var(--rsm);border:2px solid var(--border);padding:0 14px;font-family:var(--font);font-size:15px;font-weight:700;color:var(--text);background:var(--surface2);margin-bottom:12px"><option value="all">Alla</option>'+persons.map(p => '<option value="'+p+'">'+esc(personLabels[p]||p)+'</option>').join('')+'</select><div style="display:flex;gap:10px"><button onclick="this.closest(\'div[style]\').remove()" style="flex:1;height:44px;border-radius:var(--rsm);border:1.5px solid var(--border);background:var(--surface2);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:var(--text2)">Avbryt</button><button onclick="importTasksToPerson(this)" data-file="'+file.name+'" style="flex:1;height:44px;border-radius:var(--rsm);border:none;background:var(--primary);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:#fff">Importera</button></div><p style="font-size:12px;color:var(--text3);margin-top:12px">OBS: PDF-innehåll kan inte tolkas automatiskt. Detta är en demonstration.</p></div>';
+  document.body.appendChild(overlay);
+  event.target.value = '';
+}
+
+function importTasksToPerson(btn){
+  const overlay = btn.closest('div[style]');
+  const select = document.getElementById('importPersonSelect');
+  const targetPerson = select.value;
+  const personLabel = targetPerson === 'all' ? 'Alla' : (personLabels[targetPerson]||targetPerson);
+  const demoImportedTasks = [
+    { text: 'Exempeluppgift från PDF', type: 'todo', timeFrame: 'today', note: 'Importerad från PDF', link: '' },
+    { text: 'Kontrollera dokument', type: 'todo', timeFrame: 'week', note: 'Importerad från PDF', link: '' },
+    { text: 'Följ upp ärenden', type: 'shopping', timeFrame: 'thisyear', note: 'Importerad från PDF', link: '' }
+  ];
+  let added = 0;
+  demoImportedTasks.forEach(t => {
+    tasks.push({
+      id: Date.now() + added, text: t.text, type: t.type, timeFrame: t.timeFrame,
+      person: targetPerson, reminder: null, reminded: false, completed: false,
+      createdAt: new Date().toISOString(), note: t.note || '', link: t.link || ''
+    });
+    added++;
+  });
+  saveData();
+  renderCards();
+  renderDetail();
+  overlay.remove();
+  toast('✅ '+added+' uppgifter importerade till '+personLabel+'!');
+}
+
+// ===== SYNC FUNCTIONS =====
+function addSyncLog(message, type='info'){
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('sv-SE');
+  syncLogEntries.push({time: timeStr, message, type});
+  if(syncLogEntries.length > 50) syncLogEntries.shift();
+  renderSyncLog();
+}
+
+function renderSyncLog(){
+  const logEl = document.getElementById('syncLog');
+  const settingsLogEl = document.getElementById('syncSettingsLog');
+  const html = syncLogEntries.map(e => '<div class="log-entry"><span class="log-time">['+e.time+']</span> <span class="log-'+e.type+'">'+esc(e.message)+'</span></div>').join('');
+  if(logEl) logEl.innerHTML = html;
+  if(settingsLogEl) settingsLogEl.innerHTML = html;
+}
+
+function updateSyncUI(){
+  const dot = document.getElementById('syncStatusDot');
+  const text = document.getElementById('syncStatusText');
+  const logEl = document.getElementById('syncLog');
+  if(!dot || !text) return;
+
+  if(supabaseUrl && supabaseKey && syncKey){
+    dot.className = 'sync-status-dot offline';
+    text.textContent = 'Konfigurerad – klicka "Inställningar" för att synka';
+    if(logEl) logEl.classList.remove('h');
+  } else {
+    dot.className = 'sync-status-dot offline';
+    text.textContent = 'Offline – endast lokal lagring';
+    if(logEl) logEl.classList.add('h');
+  }
+}
+
+function openSyncSettings(){
+  document.getElementById('supabaseUrl').value = supabaseUrl;
+  document.getElementById('supabaseKey').value = supabaseKey;
+  document.getElementById('syncKey').value = syncKey;
+  document.getElementById('autoSyncToggle').classList.toggle('on', autoSync);
+  document.getElementById('syncOnStartToggle').classList.toggle('on', syncOnStart);
+  document.getElementById('backupOnSyncToggle').classList.toggle('on', backupOnSync);
+  renderSyncLog();
+  document.getElementById('syncModal').classList.remove('h');
+}
+
+function closeSyncSettings(){
+  document.getElementById('syncModal').classList.add('h');
+}
+
+function toggleAutoSync(){
+  autoSync = !autoSync;
+  localStorage.setItem('autoSync', autoSync);
+  document.getElementById('autoSyncToggle').classList.toggle('on', autoSync);
+  if(autoSync && supabaseUrl && supabaseKey && syncKey){
+    startAutoSync();
+    addSyncLog('Automatisk synk aktiverad', 'success');
+  } else {
+    stopAutoSync();
+    addSyncLog('Automatisk synk avaktiverad', 'info');
+  }
+}
+
+function toggleSyncOnStart(){
+  syncOnStart = !syncOnStart;
+  localStorage.setItem('syncOnStart', syncOnStart);
+  document.getElementById('syncOnStartToggle').classList.toggle('on', syncOnStart);
+}
+
+function toggleBackupOnSync(){
+  backupOnSync = !backupOnSync;
+  localStorage.setItem('backupOnSync', backupOnSync);
+  document.getElementById('backupOnSyncToggle').classList.toggle('on', backupOnSync);
+}
+
+function saveSupabaseConfig(){
+  supabaseUrl = document.getElementById('supabaseUrl').value.trim();
+  supabaseKey = document.getElementById('supabaseKey').value.trim();
+  syncKey = document.getElementById('syncKey').value.trim();
+  if(!supabaseUrl || !supabaseKey || !syncKey){
+    toast('Fyll i alla fält','error');
+    addSyncLog('Saknade fält i konfigurationen', 'error');
+    return;
+  }
+  localStorage.setItem('supabaseUrl', supabaseUrl);
+  localStorage.setItem('supabaseKey', supabaseKey);
+  localStorage.setItem('syncKey', syncKey);
+  toast('✅ Inställningar sparade!');
+  addSyncLog('Supabase-konfiguration sparad', 'success');
+  updateSyncUI();
+  if(autoSync) startAutoSync();
+}
+
+function clearSupabaseConfig(){
+  if(!confirm('Rensa alla molnsynk-inställningar?')) return;
+  supabaseUrl = ''; supabaseKey = ''; syncKey = '';
+  localStorage.removeItem('supabaseUrl');
+  localStorage.removeItem('supabaseKey');
+  localStorage.removeItem('syncKey');
+  stopAutoSync();
+  document.getElementById('supabaseUrl').value = '';
+  document.getElementById('supabaseKey').value = '';
+  document.getElementById('syncKey').value = '';
+  toast('Molnsynk-inställningar rensade');
+  addSyncLog('Molnsynk-inställningar rensade', 'info');
+  updateSyncUI();
+}
+
+function startAutoSync(){
+  stopAutoSync();
+  if(supabaseUrl && supabaseKey && syncKey){
+    syncIntervalId = setInterval(()=>{
+      pushToSupabase(true);
+    }, 30000);
+    addSyncLog('Automatisk synk startad (var 30:e sekund)', 'success');
+  }
+}
+
+function stopAutoSync(){
+  if(syncIntervalId){
+    clearInterval(syncIntervalId);
+    syncIntervalId = null;
+    addSyncLog('Automatisk synk stoppad', 'info');
+  }
+}
+
+// ===== SUPABASE REST API FUNCTIONS =====
+async function testSupabaseConnection(){
+  const url = document.getElementById('supabaseUrl').value.trim();
+  const key = document.getElementById('supabaseKey').value.trim();
+  if(!url || !key){toast('Fyll i URL och Key','error');return;}
+  addSyncLog('Testar anslutning...', 'info');
+  try{
+    const response = await fetch(url+'/rest/v1/', {
+      method: 'GET',
+      headers: {'apikey': key, 'Authorization': 'Bearer '+key}
+    });
+    if(response.ok){
+      toast('✅ Anslutning lyckades!');
+      addSyncLog('Anslutning till Supabase lyckades', 'success');
+    } else {
+      toast('❌ Anslutning misslyckades','error');
+      addSyncLog('Anslutning misslyckades: HTTP '+response.status, 'error');
+    }
+  }catch(e){
+    toast('❌ Anslutningsfel','error');
+    addSyncLog('Anslutningsfel: '+e.message, 'error');
+  }
+}
+
+async function pushToSupabase(silent=false){
+  if(!supabaseUrl || !supabaseKey || !syncKey){
+    if(!silent) toast('Konfigurera Supabase först','error');
+    return;
+  }
+  if(backupOnSync) exportLocalBackup(true);
+
+  const payload = {
+    sync_key: syncKey,
+    data: JSON.stringify({tasks, trash, persons, personLabels, score, savedPDFs}),
+    updated_at: new Date().toISOString()
+  };
+
+  if(!silent) addSyncLog('Skickar data till molnet...', 'info');
+
+  try{
+    // Try to update existing row first
+    const updateResp = await fetch(supabaseUrl+'/rest/v1/family_planner?sync_key=eq.'+encodeURIComponent(syncKey), {
+      method: 'PATCH',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': 'Bearer '+supabaseKey,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if(updateResp.ok){
+      if(!silent){
+        toast('✅ Data synkad till molnet!');
+        addSyncLog('Data skickad till molnet', 'success');
+      }
+      updateSyncStatus('online');
+    } else if(updateResp.status === 404 || updateResp.status === 204){
+      // Row doesn't exist, insert new
+      const insertResp = await fetch(supabaseUrl+'/rest/v1/family_planner', {
+        method: 'POST',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': 'Bearer '+supabaseKey,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
       });
-
-      function onCodePreviewBannerCTAClicked(event) {
-        posthog?.capture?.("code_preview_banner_cta_clicked");
-      }
-
-      function reportContent(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        if (!posthog || !posthog.capture || !posthog.setPersonProperties || !posthog.displaySurvey) return;
-
-        if (!hasStorageKey("survey_completed")) {
-          posthog.setPersonProperties?.({
-            last_reported_message_id: MESSAGE_ID,
-            last_report_timestamp: Date.now(),
-          });
-          posthog.displaySurvey?.(REPORT_SURVEY_ID, {
-            ignoreConditions: true,
-            ignoreDelay: true,
-          });
+      if(insertResp.ok){
+        if(!silent){
+          toast('✅ Data skapad i molnet!');
+          addSyncLog('Ny data skapad i molnet', 'success');
         }
+        updateSyncStatus('online');
+      } else {
+        throw new Error('Insert failed: '+insertResp.status);
       }
+    } else {
+      throw new Error('Update failed: '+updateResp.status);
+    }
+  }catch(e){
+    if(!silent){
+      toast('❌ Synk misslyckades','error');
+      addSyncLog('Synk-fel: '+e.message, 'error');
+    }
+    updateSyncStatus('error');
+  }
+}
 
-      function dismissBanner(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        posthog?.capture?.("code_preview_banner_dismiss");
+async function pullFromSupabase(silent=false){
+  if(!supabaseUrl || !supabaseKey || !syncKey){
+    if(!silent) toast('Konfigurera Supabase först','error');
+    return;
+  }
+  if(!silent) addSyncLog('Hämtar data från molnet...', 'info');
 
-        const banner = document.getElementById("floating-banner");
-        banner.classList.add("dismissed");
-        setTimeout(() => banner.remove(), 300);
+  try{
+    const response = await fetch(supabaseUrl+'/rest/v1/family_planner?sync_key=eq.'+encodeURIComponent(syncKey)+'&select=*&order=updated_at.desc&limit=1', {
+      method: 'GET',
+      headers: {'apikey': supabaseKey, 'Authorization': 'Bearer '+supabaseKey}
+    });
+
+    if(!response.ok) throw new Error('HTTP '+response.status);
+
+    const data = await response.json();
+    if(data && data.length > 0){
+      const remoteData = JSON.parse(data[0].data);
+      if(remoteData.tasks) tasks = remoteData.tasks;
+      if(remoteData.trash) trash = remoteData.trash;
+      if(remoteData.persons) persons = remoteData.persons;
+      if(remoteData.personLabels) personLabels = remoteData.personLabels;
+      if(remoteData.score !== undefined) score = remoteData.score;
+      if(remoteData.savedPDFs) savedPDFs = remoteData.savedPDFs;
+
+      saveData();
+      savePersons();
+      localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+
+      buildColorMap();
+      renderCards();
+      renderSavedPDFs();
+      updateTrashBdg();
+
+      if(!silent){
+        toast('✅ Data hämtad från molnet!');
+        addSyncLog('Data hämtad från molnet ('+tasks.length+' uppgifter)', 'success');
       }
-    </script>
-  </body>
+      updateSyncStatus('online');
+    } else {
+      if(!silent){
+        toast('Ingen data hittades i molnet');
+        addSyncLog('Ingen data hittades för sync_key', 'info');
+      }
+    }
+  }catch(e){
+    if(!silent){
+      toast('❌ Kunde inte hämta data','error');
+      addSyncLog('Hämtningsfel: '+e.message, 'error');
+    }
+    updateSyncStatus('error');
+  }
+}
+
+function updateSyncStatus(status){
+  const dot = document.getElementById('syncStatusDot');
+  const text = document.getElementById('syncStatusText');
+  if(!dot || !text) return;
+  if(status === 'online'){
+    dot.className = 'sync-status-dot online';
+    text.textContent = 'Online – synkad med molnet';
+  } else if(status === 'error'){
+    dot.className = 'sync-status-dot error';
+    text.textContent = 'Fel – kolla inställningarna';
+  } else {
+    dot.className = 'sync-status-dot offline';
+    text.textContent = 'Offline – endast lokal lagring';
+  }
+}
+
+// ===== LOCAL BACKUP FUNCTIONS =====
+function exportLocalBackup(silent=false){
+  const backup = {
+    version: '2.0',
+    exportedAt: new Date().toISOString(),
+    tasks, trash, persons, personLabels, score, savedPDFs,
+    settings: {night, calMode, pcMode: localStorage.getItem('pcMode')==='true'}
+  };
+  const jsonStr = JSON.stringify(backup, null, 2);
+  const blob = new Blob([jsonStr], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'familjens-planerare-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  if(!silent){
+    toast('✅ Backup exporterad!');
+    addSyncLog('Lokal backup exporterad', 'success');
+  }
+}
+
+function importLocalBackup(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event){
+      try{
+        const backup = JSON.parse(event.target.result);
+        if(!backup.tasks){toast('Ogiltig backup-fil','error');return;}
+        if(!confirm('Detta kommer att ersätta all befintlig data. Fortsätta?')) return;
+        tasks = backup.tasks || [];
+        trash = backup.trash || [];
+        persons = backup.persons || ['person1','person2','person3'];
+        personLabels = backup.personLabels || {person1:'Person 1',person2:'Person 2',person3:'Person 3'};
+        score = backup.score || 0;
+        savedPDFs = backup.savedPDFs || [];
+        if(backup.settings){
+          if(backup.settings.night !== undefined){night = backup.settings.night;localStorage.setItem('nightMode',night);applyNight();}
+          if(backup.settings.calMode !== undefined){calMode = backup.settings.calMode;localStorage.setItem('calMode',calMode);}
+          if(backup.settings.pcMode !== undefined){localStorage.setItem('pcMode',backup.settings.pcMode?'true':'false');applyPcMode(backup.settings.pcMode);}
+        }
+        saveData();
+        savePersons();
+        localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+        buildColorMap();
+        renderCards();
+        renderSavedPDFs();
+        updateTrashBdg();
+        toast('✅ Backup importerad!');
+        addSyncLog('Lokal backup importerad ('+tasks.length+' uppgifter)', 'success');
+      }catch(err){
+        toast('❌ Kunde inte läsa filen','error');
+        addSyncLog('Import-fel: '+err.message, 'error');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+</script>
+</body>
 </html>
