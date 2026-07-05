@@ -414,6 +414,7 @@
         <button class="icon-btn" onclick="toggleNight()" title="Nattläge" id="nightBtn">
           <svg id="nightSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
+        <button class="icon-btn" onclick="logoutApp()" title="Logga ut"><i class="fas fa-sign-out-alt"></i></button>
         <button class="icon-btn" onclick="openNotif()" title="Påminnelser">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="bdg h" id="notifBdg">0</span>
@@ -737,7 +738,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 const PW_KEY='familyAppPassword';
 function checkLoginState(){
   const savedPw=localStorage.getItem(PW_KEY);
-  const authed=sessionStorage.getItem('familyAppAuthed')==='true';
+  const authed=localStorage.getItem('familyAppAuthed')==='true';
   if(authed){unlockApp();return;}
   if(savedPw){
     document.getElementById('loginTitle').textContent='Ange lösenord';
@@ -768,7 +769,7 @@ function submitLogin(){
   }
 }
 function unlockApp(){
-  sessionStorage.setItem('familyAppAuthed','true');
+  localStorage.setItem('familyAppAuthed','true');
   document.getElementById('loginOv').classList.add('h');
   document.body.classList.remove('locked');
 }
@@ -804,6 +805,14 @@ function applyNight(){
   }
 }
 function toggleNight(){night=!night;localStorage.setItem('nightMode',night);applyNight();}
+
+/* ===== LOGOUT ===== */
+function logoutApp(){
+  if(confirm('Logga ut? Du måste ange lösenordet igen nästa gång.')){
+    localStorage.removeItem('familyAppAuthed');
+    location.reload();
+  }
+}
 
 // ===== CALENDAR FUNCTIONS =====
 function easterSunday(y){
