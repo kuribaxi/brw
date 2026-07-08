@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
     :root {
       --bg:#F0EDF8; --surface:#fff; --surface2:#F7F5FC; --border:#E4DEFC;
@@ -119,6 +120,11 @@
     .btn-add-task:active{transform:scale(.98);opacity:.92}
     .task-note-input, .task-link-input {width:100%;height:44px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--text);outline:none;margin-top:8px;transition:border .2s}
     .task-note-input:focus, .task-link-input:focus {border-color:var(--primary)}
+    .email-toggle-row{display:flex;align-items:center;gap:10px;margin-top:10px;padding:12px 14px;background:var(--surface2);border-radius:var(--rsm);border:2px solid var(--border);cursor:pointer;transition:border .2s}
+    .email-toggle-row:has(input:checked){border-color:var(--primary);background:var(--primary-soft)}
+    .email-toggle-row input[type="checkbox"]{width:22px;height:22px;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
+    .email-toggle-row label{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;flex:1;line-height:1.3}
+    .email-toggle-row .etr-addr{color:var(--text2);font-weight:800}
     .section-tabs{display:flex;gap:10px;padding:16px 18px 0}
     .sec-tab{flex:1;height:46px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface);font-family:var(--font);font-size:15px;font-weight:800;color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
     .sec-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 4px 14px var(--primary-glow)}
@@ -540,7 +546,10 @@
       <input type="text" class="task-note-input" id="taskNoteInput" placeholder="Anteckning (valfritt)">
       <input type="text" class="task-link-input" id="taskLinkInput" placeholder="Länk (t.ex. https://...)" oninput="if(this.value.startsWith('http'))this.style.borderColor='var(--emerald)'">
       <input type="datetime-local" class="reminder-input" id="reminderTime">
-      <input type="email" class="reminder-input" id="reminderEmail" placeholder="E-post för påminnelse (valfritt)" style="margin-top:8px">
+      <div class="email-toggle-row" onclick="if(event.target.tagName!=='INPUT'){document.getElementById('reminderEmailToggle').checked=!document.getElementById('reminderEmailToggle').checked}">
+        <input type="checkbox" id="reminderEmailToggle" checked>
+        <label for="reminderEmailToggle" onclick="event.stopPropagation()"><i class="fas fa-envelope"></i> Skicka e-postpåminnelse till <span class="etr-addr" id="reminderEmailAddrLabel"></span></label>
+      </div>
       <button class="btn-add-task" onclick="addTask()"><i class="fas fa-plus"></i> Lägg till uppgift</button>
     </div>
 
@@ -665,8 +674,10 @@
         </div>
         <button class="sync-btn-danger" onclick="clearSupabaseConfig()" style="width:100%;margin-top:8px"><i class="fas fa-trash"></i> Rensa molnsynk-inställningar</button>
         <div style="margin-top:16px;padding-top:16px;border-top:1.5px solid var(--border)">
-          <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px"><i class="fas fa-envelope" style="color:var(--primary)"></i> E-postpåminnelser</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:10px">Testa att skicka ett mail via din Supabase Edge Function</div>
+          <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px"><i class="fas fa-envelope" style="color:var(--primary)"></i> E-postpåminnelser (EmailJS)</div>
+          <div style="background:var(--emerald-soft);border-radius:var(--rsm);padding:12px 14px;margin-bottom:10px;border:1.5px solid var(--emerald);color:var(--emerald);font-size:13px">
+            <i class="fas fa-info-circle"></i> Skickas automatiskt till <strong id="fixedEmailDisplay"></strong> när du kryssar i rutan vid en uppgift. Ingen server behövs.
+          </div>
           <button class="sync-btn-primary" onclick="sendTestEmail()" style="width:100%"><i class="fas fa-paper-plane"></i> Skicka testmail</button>
         </div>
       </div>
@@ -680,6 +691,16 @@
 <div class="toast" id="toast"><i id="toastIcon" class="fas fa-check-circle" style="color:var(--emerald)"></i><span id="toastMsg">OK</span></div>
 
 <script>
+/* ===== EMAILJS-KONFIGURATION =====
+   Fyll i dessa tre värden när du har skapat din mall och hämtat din publika nyckel i EmailJS-dashboarden.
+   Service ID är redan ifylld eftersom du redan kopplat Gmail. */
+const EMAILJS_SERVICE_ID  = 'service_0tupd3b';   // Din Gmail-service i EmailJS
+const EMAILJS_TEMPLATE_ID = 'DIN_TEMPLATE_ID';    // Byt ut mot ditt Template ID
+const EMAILJS_PUBLIC_KEY  = 'DIN_PUBLIC_KEY';     // Byt ut mot din Public Key (Account -> General)
+
+/* Den enda e-postadress som påminnelser skickas till. Ändra vid behov. */
+const FIXED_REMINDER_EMAIL = 'ynaser2000@gmail.com';
+
 const PERSON_COLORS = ['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#EC4899','#8B5CF6','#14B8A6'];
 const TIME_LABELS   = {today:'Idag',tomorrow:'Imorgon',week:'Denna vecka',month:'Denna månad',thisyear:'Pågående år',nextyear:'Nästa år',future:'Framtiden',sometime:'Någon gång'};
 const TIME_ORDER    = ['today','tomorrow','week','month','thisyear','nextyear','future','sometime'];
@@ -731,6 +752,16 @@ document.addEventListener('DOMContentLoaded',()=>{
   updateSyncUI();
   checkReminders(); setInterval(checkReminders,30000);
   if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+  // Init EmailJS
+  try{
+    if(window.emailjs && EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY!=='DIN_PUBLIC_KEY'){
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+  }catch(e){ console.error('EmailJS init-fel:', e); }
+  const lbl=document.getElementById('reminderEmailAddrLabel');
+  if(lbl) lbl.textContent = FIXED_REMINDER_EMAIL;
+  const lbl2=document.getElementById('fixedEmailDisplay');
+  if(lbl2) lbl2.textContent = FIXED_REMINDER_EMAIL;
   // Init sync
   if(syncOnStart && supabaseUrl && supabaseKey && syncKey) {
     setTimeout(()=>pullFromSupabase(true), 1000);
@@ -1299,7 +1330,7 @@ function taskHTML(item,isDone){
   const hasNote = item.note && item.note.trim() !== '';
   const hasLink = item.link && item.link.trim() !== '';
   const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
-  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+(item.email?'<span class="tag rem-tag" style="background:#DBEAFE;color:#1D4ED8;border-color:#BFDBFE"><i class="fas fa-envelope"></i> '+esc(item.email)+'</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
+  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+(item.email?'<span class="tag rem-tag" style="background:#DBEAFE;color:#1D4ED8;border-color:#BFDBFE"><i class="fas fa-envelope"></i> E-post på</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
 }
 
 function addTask(){
@@ -1309,7 +1340,8 @@ function addTask(){
   const note = document.getElementById('taskNoteInput').value.trim();
   const link = document.getElementById('taskLinkInput').value.trim();
   const reminder=document.getElementById('reminderTime').value;
-  const email = document.getElementById('reminderEmail').value.trim();
+  const emailEnabled = document.getElementById('reminderEmailToggle').checked;
+  const email = emailEnabled ? FIXED_REMINDER_EMAIL : '';
   tasks.push({
     id:Date.now(),text,
     type:document.getElementById('taskType').value,
@@ -1327,7 +1359,7 @@ function addTask(){
   document.getElementById('taskNoteInput').value='';
   document.getElementById('taskLinkInput').value='';
   document.getElementById('reminderTime').value='';
-  document.getElementById('reminderEmail').value='';
+  // OBS: e-post-kryssrutan lämnas som den är, så du slipper kryssa i den varje gång
   toast('Uppgift tillagd! ✅');
   renderDetail();
 }
@@ -1362,7 +1394,7 @@ function openEditTask(id){
 
   const color = colorMap[t.person] || PERSON_COLORS[0];
 
-  overlay.innerHTML = '<div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen" style="color:'+color+'"></i> Redigera uppgift</div><button class="modal-x" onclick="closeEditTask()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding:12px 16px"><label class="form-lbl">Uppgift</label><input type="text" class="form-input" id="editTaskText" value="'+esc(t.text)+'" placeholder="Vad ska göras?"><label class="form-lbl" style="margin-top:10px">Typ</label><select class="form-select" id="editTaskType"><option value="todo" '+(t.type==='todo'?'selected':'')+'>📋 Uppgift</option><option value="shopping" '+(t.type==='shopping'?'selected':'')+'>🛒 Inköp</option></select><label class="form-lbl" style="margin-top:10px">Tidsram</label><select class="form-select" id="editTaskTimeFrame" style="margin-top:6px"><option value="today" '+(t.timeFrame==='today'?'selected':'')+'>Idag</option><option value="tomorrow" '+(t.timeFrame==='tomorrow'?'selected':'')+'>Imorgon</option><option value="week" '+(t.timeFrame==='week'?'selected':'')+'>Denna vecka</option><option value="month" '+(t.timeFrame==='month'?'selected':'')+'>Denna månad</option><option value="thisyear" '+(t.timeFrame==='thisyear'?'selected':'')+'>Pågående år</option><option value="nextyear" '+(t.timeFrame==='nextyear'?'selected':'')+'>Nästa år</option><option value="future" '+(t.timeFrame==='future'?'selected':'')+'>Framtiden</option><option value="sometime" '+(t.timeFrame==='sometime'?'selected':'')+'>Någon gång</option></select><label class="form-lbl" style="margin-top:10px">Anteckning</label><input type="text" class="task-note-input" id="editTaskNote" value="'+esc(t.note||'')+'" placeholder="Anteckning (valfritt)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Länk</label><input type="text" class="task-link-input" id="editTaskLink" value="'+esc(t.link||'')+'" placeholder="Länk (t.ex. https://...)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Påminnelse</label><input type="datetime-local" class="reminder-input" id="editTaskReminder" value="'+(t.reminder?t.reminder.slice(0,16):'')+'" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">E-post för påminnelse</label><input type="email" class="reminder-input" id="editTaskEmail" value="'+esc(t.email||'')+'" placeholder="E-post för påminnelse" style="margin-top:6px"></div><div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeEditTask()">Avbryt</button><button class="modal-btn" style="background:var(--emerald);color:#fff" onclick="saveEditTask('+id+')"><i class="fas fa-save"></i> Spara ändringar</button></div></div>';
+  overlay.innerHTML = '<div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen" style="color:'+color+'"></i> Redigera uppgift</div><button class="modal-x" onclick="closeEditTask()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding:12px 16px"><label class="form-lbl">Uppgift</label><input type="text" class="form-input" id="editTaskText" value="'+esc(t.text)+'" placeholder="Vad ska göras?"><label class="form-lbl" style="margin-top:10px">Typ</label><select class="form-select" id="editTaskType"><option value="todo" '+(t.type==='todo'?'selected':'')+'>📋 Uppgift</option><option value="shopping" '+(t.type==='shopping'?'selected':'')+'>🛒 Inköp</option></select><label class="form-lbl" style="margin-top:10px">Tidsram</label><select class="form-select" id="editTaskTimeFrame" style="margin-top:6px"><option value="today" '+(t.timeFrame==='today'?'selected':'')+'>Idag</option><option value="tomorrow" '+(t.timeFrame==='tomorrow'?'selected':'')+'>Imorgon</option><option value="week" '+(t.timeFrame==='week'?'selected':'')+'>Denna vecka</option><option value="month" '+(t.timeFrame==='month'?'selected':'')+'>Denna månad</option><option value="thisyear" '+(t.timeFrame==='thisyear'?'selected':'')+'>Pågående år</option><option value="nextyear" '+(t.timeFrame==='nextyear'?'selected':'')+'>Nästa år</option><option value="future" '+(t.timeFrame==='future'?'selected':'')+'>Framtiden</option><option value="sometime" '+(t.timeFrame==='sometime'?'selected':'')+'>Någon gång</option></select><label class="form-lbl" style="margin-top:10px">Anteckning</label><input type="text" class="task-note-input" id="editTaskNote" value="'+esc(t.note||'')+'" placeholder="Anteckning (valfritt)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Länk</label><input type="text" class="task-link-input" id="editTaskLink" value="'+esc(t.link||'')+'" placeholder="Länk (t.ex. https://...)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Påminnelse</label><input type="datetime-local" class="reminder-input" id="editTaskReminder" value="'+(t.reminder?t.reminder.slice(0,16):'')+'" style="margin-top:6px"><div class="email-toggle-row" style="margin-top:10px" onclick="if(event.target.tagName!==\\'INPUT\\'){document.getElementById(\\'editTaskEmailToggle\\').checked=!document.getElementById(\\'editTaskEmailToggle\\').checked}"><input type="checkbox" id="editTaskEmailToggle" '+(t.email?'checked':'')+'><label onclick="event.stopPropagation()"><i class="fas fa-envelope"></i> Skicka e-postpåminnelse till <span class="etr-addr">'+FIXED_REMINDER_EMAIL+'</span></label></div></div><div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeEditTask()">Avbryt</button><button class="modal-btn" style="background:var(--emerald);color:#fff" onclick="saveEditTask('+id+')"><i class="fas fa-save"></i> Spara ändringar</button></div></div>';
 
   document.body.appendChild(overlay);
   document.getElementById('editTaskText').focus();
@@ -1385,7 +1417,9 @@ function saveEditTask(id){
   t.timeFrame = document.getElementById('editTaskTimeFrame').value;
   t.note = document.getElementById('editTaskNote').value.trim();
   t.link = document.getElementById('editTaskLink').value.trim();
-  t.email = document.getElementById('editTaskEmail').value.trim();
+
+  const emailEnabled = document.getElementById('editTaskEmailToggle').checked;
+  t.email = emailEnabled ? FIXED_REMINDER_EMAIL : '';
 
   const reminderVal = document.getElementById('editTaskReminder').value;
   if(reminderVal){
@@ -1553,7 +1587,7 @@ function checkReminders(){
       notifications.push({id:Date.now()+Math.random(),text:t.text,time:now.toISOString(),person:t.person});
       if('Notification' in window&&Notification.permission==='granted')new Notification('Påminnelse!',{body:t.text});
       toast('🔔 '+t.text,'reminder');
-      // Send email reminder if email is set
+      // Skicka e-postpåminnelse om kryssrutan var ikryssad för uppgiften
       if(t.email && t.email.includes('@')){
         sendEmailReminder(t);
       }
@@ -1562,87 +1596,62 @@ function checkReminders(){
   updateNotifBdg(); saveData();
 }
 
-// ===== EMAIL REMINDER VIA SUPABASE EDGE FUNCTION =====
+// ===== E-POSTPÅMINNELSE VIA EMAILJS (ingen server behövs) =====
 async function sendEmailReminder(task){
-  if(!supabaseUrl || !supabaseKey){
-    console.log('Supabase inte konfigurerat — kan inte skicka e-post');
+  if(!window.emailjs){
+    console.log('EmailJS är inte laddat — kan inte skicka e-post');
+    return;
+  }
+  if(EMAILJS_TEMPLATE_ID === 'DIN_TEMPLATE_ID' || EMAILJS_PUBLIC_KEY === 'DIN_PUBLIC_KEY'){
+    console.log('EmailJS är inte färdigkonfigurerat — fyll i Template ID och Public Key i koden');
     return;
   }
   const personName = task.person !== 'all' ? (personLabels[task.person] || task.person) : 'Familjens Planerare';
-  const color = colorMap[task.person] || PERSON_COLORS[0];
   const timeLabel = TIME_LABELS[task.timeFrame] || 'Någon gång';
 
   try{
-    const response = await fetch(supabaseUrl.replace('/rest/v1','') + '/functions/v1/send-reminder', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': supabaseKey,
-        'Authorization': 'Bearer ' + supabaseKey
-      },
-      body: JSON.stringify({
-        to: task.email,
-        subject: '🔔 Påminnelse: ' + task.text,
-        taskText: task.text,
-        taskNote: task.note || '',
-        taskType: task.type === 'shopping' ? '🛒 Inköp' : '📋 Uppgift',
-        timeFrame: timeLabel,
-        person: personName,
-        color: color,
-        reminderTime: new Date(task.reminder).toLocaleString('sv-SE')
-      })
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: task.email,
+      subject: '🔔 Påminnelse: ' + task.text,
+      task_text: task.text,
+      task_note: task.note || '',
+      task_type: task.type === 'shopping' ? '🛒 Inköp' : '📋 Uppgift',
+      time_frame: timeLabel,
+      person: personName,
+      reminder_time: new Date(task.reminder).toLocaleString('sv-SE')
     });
-    if(response.ok){
-      toast('📧 E-postpåminnelse skickad!');
-      addSyncLog('E-postpåminnelse skickad till ' + task.email, 'success');
-    } else {
-      console.error('E-post fel:', await response.text());
-    }
+    toast('📧 E-postpåminnelse skickad!');
+    addSyncLog('E-postpåminnelse skickad till ' + task.email, 'success');
   }catch(e){
     console.error('Kunde inte skicka e-post:', e);
+    addSyncLog('E-postfel: ' + (e && e.text ? e.text : e), 'error');
   }
 }
 
-// ===== MANUAL TEST EMAIL =====
+// ===== MANUELLT TESTMAIL =====
 async function sendTestEmail(){
-  const email = prompt('Ange e-postadress för test:');
-  if(!email || !email.includes('@')){ toast('Ogiltig e-post','error'); return; }
-
-  if(!supabaseUrl || !supabaseKey){
-    toast('Konfigurera Supabase URL och Key först i Synkinställningar','error');
-    openSyncSettings();
+  if(!window.emailjs){ toast('EmailJS är inte laddat','error'); return; }
+  if(EMAILJS_TEMPLATE_ID === 'DIN_TEMPLATE_ID' || EMAILJS_PUBLIC_KEY === 'DIN_PUBLIC_KEY'){
+    toast('Fyll i Template ID och Public Key i koden (EMAILJS_TEMPLATE_ID / EMAILJS_PUBLIC_KEY) först','error');
     return;
   }
-
   toast('Skickar testmail...');
   try{
-    const response = await fetch(supabaseUrl.replace('/rest/v1','') + '/functions/v1/send-reminder', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': supabaseKey,
-        'Authorization': 'Bearer ' + supabaseKey
-      },
-      body: JSON.stringify({
-        to: email,
-        subject: '✅ Test från Familjens Planerare',
-        taskText: 'Detta är ett testmail från din planerare!',
-        taskNote: 'Om du ser detta fungerar e-postpåminnelser.',
-        taskType: '📋 Test',
-        timeFrame: 'Nu',
-        person: 'Familjens Planerare',
-        color: '#6C47E8',
-        reminderTime: new Date().toLocaleString('sv-SE')
-      })
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: FIXED_REMINDER_EMAIL,
+      subject: '✅ Test från Familjens Planerare',
+      task_text: 'Detta är ett testmail från din planerare!',
+      task_note: 'Om du ser detta fungerar e-postpåminnelser.',
+      task_type: '📋 Test',
+      time_frame: 'Nu',
+      person: 'Familjens Planerare',
+      reminder_time: new Date().toLocaleString('sv-SE')
     });
-    if(response.ok){
-      toast('✅ Testmail skickat till ' + email);
-    } else {
-      const err = await response.text();
-      toast('❌ Kunde inte skicka: ' + err,'error');
-    }
+    toast('✅ Testmail skickat till ' + FIXED_REMINDER_EMAIL);
+    addSyncLog('Testmail skickat till ' + FIXED_REMINDER_EMAIL, 'success');
   }catch(e){
-    toast('❌ Fel: ' + e.message,'error');
+    toast('❌ Kunde inte skicka: ' + (e && e.text ? e.text : e.message || e),'error');
+    addSyncLog('Testmail misslyckades: ' + (e && e.text ? e.text : e), 'error');
   }
 }
 
