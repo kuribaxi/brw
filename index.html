@@ -1,16 +1,16 @@
 function openEditTask(id){
   const t = tasks.find(x => x.id === id);
   if(!t) return;
-
+  
   const overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:300;display:flex;align-items:flex-end;justify-content:center';
   overlay.id = 'editTaskOverlay';
   overlay.onclick = function(e){ if(e.target === this) closeEditTask(); };
-
+  
   const color = colorMap[t.person] || PERSON_COLORS[0];
 
   overlay.innerHTML = `
-    <div class="modal-sheet" style="animation:slideUp.28s cubic-bezier(.34,1.2,.64,1)">
+    <div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)">
       <div class="modal-handle"></div>
       <div class="modal-hdr">
         <div class="modal-ttl"><i class="fas fa-pen" style="color:${color}"></i> Redigera uppgift</div>
