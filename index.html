@@ -112,7 +112,7 @@
     .form-input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-glow)}
     .form-input::placeholder{color:var(--text3);font-weight:600}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-    .form-select{width:100%;height:52px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:15px;font-weight:700;color:var(--text);outline:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237168A0' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;transition:border .2s}
+    .form-select{width:100%;height:52px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:15px;font-weight:700;color:var(--text);outline:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237168A0' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;transition:border .2s}
     .form-select:focus{border-color:var(--primary)}
     .reminder-input{width:100%;height:52px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--text);outline:none;margin-top:10px;transition:border .2s;color-scheme:light dark}
     .reminder-input:focus{border-color:var(--primary)}
@@ -243,4 +243,1837 @@
     .saved-pdf-section .pdf-card .pdf-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
     .saved-pdf-section .pdf-card .pdf-title{font-weight:800;font-size:15px;color:var(--text)}
     .saved-pdf-section .pdf-card .pdf-meta{font-size:12px;color:var(--text3)}
-    .saved-pdf-section .pdf-card .pdf
+    .saved-pdf-section .pdf-card .pdf-actions{display:flex;gap:8px}
+    .saved-pdf-section .pdf-card .pdf-actions button{height:38px;padding:0 14px;border-radius:10px;border:none;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+    .saved-pdf-section .pdf-card .pdf-actions .print-btn{background:var(--primary);color:#fff}
+    .saved-pdf-section .pdf-card .pdf-actions .print-btn:active{opacity:.8;transform:scale(.96)}
+    .saved-pdf-section .pdf-card .pdf-actions .delete-pdf-btn{background:var(--rose-soft);color:var(--rose)}
+    .saved-pdf-section .pdf-card .pdf-actions .delete-pdf-btn:active{opacity:.8;transform:scale(.96)}
+    .saved-pdf-section .pdf-empty{text-align:center;padding:30px 16px;color:var(--text3)}
+    .upload-pdf-section{padding:0 18px 16px}
+    .upload-pdf-section .upload-area{background:var(--surface);border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .2s}
+    .upload-pdf-section .upload-area:hover{border-color:var(--primary);background:var(--primary-soft)}
+    .upload-pdf-section .upload-area .upload-icon{font-size:32px;color:var(--text3);margin-bottom:8px}
+    .upload-pdf-section .upload-area .upload-text{font-weight:700;color:var(--text2)}
+    .upload-pdf-section .upload-area .upload-sub{font-size:13px;color:var(--text3)}
+    .upload-pdf-section .upload-area input[type="file"]{display:none}
+    .pdf-preview-body{font-family:'Nunito',sans-serif;padding:20px;background:#fff;color:#1E1535}
+    .pdf-preview-body .pdf-header{padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px}
+    .pdf-preview-body .pdf-header h2{font-size:24px;color:#1E1535;margin:0}
+    .pdf-preview-body .pdf-header p{color:#7168A0;font-size:14px;margin:4px 0}
+    .pdf-preview-body .pdf-task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8}
+    .pdf-preview-body .pdf-check{font-size:18px;flex-shrink:0}
+    .pdf-preview-body .pdf-text{font-weight:700;color:#1E1535;flex:1}
+    .pdf-preview-body .pdf-text.done{text-decoration:line-through;color:#A89FCE}
+    .pdf-preview-body .pdf-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0}
+    .pdf-preview-body .pdf-person{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}
+    .pdf-preview-body .pdf-footer{text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px}
+    .sync-section{padding:16px 18px 0}
+    .sync-card{background:var(--surface);border-radius:var(--r);border:1.5px solid var(--border);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:12px}
+    .sync-card .sync-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .sync-card .sync-header i{font-size:20px;color:var(--primary)}
+    .sync-card .sync-title{font-size:15px;font-weight:900;color:var(--text)}
+    .sync-card .sync-sub{font-size:13px;color:var(--text2);margin-top:2px}
+    .sync-card .sync-status{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;margin-top:8px}
+    .sync-card .sync-status-dot{width:8px;height:8px;border-radius:50%;background:var(--text3)}
+    .sync-card .sync-status-dot.online{background:var(--emerald)}
+    .sync-card .sync-status-dot.offline{background:var(--amber)}
+    .sync-card .sync-status-dot.error{background:var(--rose)}
+    .sync-card .sync-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .sync-card .sync-actions button{height:40px;padding:0 16px;border-radius:10px;border:none;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+    .sync-card .sync-actions .sync-btn-primary{background:var(--primary);color:#fff}
+    .sync-card .sync-actions .sync-btn-primary:active{opacity:.8;transform:scale(.96)}
+    .sync-card .sync-actions .sync-btn-secondary{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}
+    .sync-card .sync-actions .sync-btn-secondary:active{background:var(--primary-soft);color:var(--primary)}
+    .sync-card .sync-actions .sync-btn-danger{background:var(--rose-soft);color:var(--rose)}
+    .sync-card .sync-actions .sync-btn-danger:active{opacity:.8;transform:scale(.96)}
+    .sync-input{width:100%;height:44px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--text);outline:none;margin-top:8px;transition:border .2s}
+    .sync-input:focus{border-color:var(--primary)}
+    .sync-input::placeholder{color:var(--text3)}
+    .sync-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+    .sync-toggle-row:last-child{border-bottom:none}
+    .sync-toggle-label{font-size:14px;font-weight:700;color:var(--text)}
+    .sync-toggle-desc{font-size:12px;color:var(--text3);margin-top:2px}
+    .toggle-switch{width:48px;height:26px;border-radius:13px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .toggle-switch.on{background:var(--primary)}
+    .toggle-switch::after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+    .toggle-switch.on::after{transform:translateX(22px)}
+    .sync-log{background:var(--surface2);border-radius:var(--rsm);padding:10px 12px;margin-top:10px;max-height:120px;overflow-y:auto;font-size:12px;font-family:monospace;color:var(--text2);line-height:1.5}
+    .sync-log .log-entry{padding:2px 0;border-bottom:1px solid var(--border)}
+    .sync-log .log-entry:last-child{border-bottom:none}
+    .sync-log .log-time{color:var(--text3);font-size:11px}
+    .sync-log .log-success{color:var(--emerald)}
+    .sync-log .log-error{color:var(--rose)}
+    .sync-log .log-info{color:var(--primary)}
+    .add-person-row input,.form-select,.form-input{min-width:0}
+    .form-row{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .hdr-info,.dhdr-info{overflow:hidden}
+    @media (max-width:480px){
+      .hdr{padding:12px 12px 12px}
+      .dhdr{padding:12px 12px}
+      .hdr-toprow,.dhdr-toprow{gap:8px}
+      .hdr-actions{gap:5px}
+      .hdr-logo,.dhdr-avatar{width:38px;height:38px;font-size:17px;border-radius:12px}
+      .icon-btn{width:40px;height:40px;border-radius:13px}
+      .icon-btn svg{width:19px;height:19px}
+      .cal-btn{width:40px;height:40px}
+      .hdr-title{font-size:16px}
+      .date-clock{font-size:21px}
+      .date-cal-label{font-size:10px}
+      .save-btn,.pdf-btn,.back-btn{padding:0;width:40px;height:40px;gap:0;flex-shrink:0}
+      .btn-label{display:none}
+      .add-person-row{flex-wrap:wrap}
+      .add-person-row input{flex:1 1 100%}
+      .btn-add-person{flex:1 1 100%}
+    }
+    @media (max-width:360px){
+      .form-row{grid-template-columns:1fr;gap:8px}
+    }
+    @media (max-width:340px){
+      .hdr{padding:10px 8px}
+      .dhdr{padding:10px 8px}
+      .hdr-toprow,.dhdr-toprow{gap:6px}
+      .hdr-actions{gap:3px}
+      .hdr-logo,.dhdr-avatar{width:34px;height:34px;font-size:15px;border-radius:10px}
+      .icon-btn{width:36px;height:36px;border-radius:11px}
+      .icon-btn svg{width:17px;height:17px}
+      .save-btn,.pdf-btn,.back-btn{width:36px;height:36px}
+      .cal-btn{width:36px;height:36px}
+      .hdr-title{font-size:14px}
+      .hdr-sub{font-size:10px}
+    }
+    body.locked > .page,body.locked > .bot-nav{display:none}
+    .login-ov{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
+    .login-ov.h{display:none}
+    .login-card{width:100%;max-width:360px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:32px 24px;box-shadow:var(--shadow);text-align:center}
+    .login-logo{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,var(--primary),#9B59E8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;margin:0 auto 18px;box-shadow:0 4px 14px var(--primary-glow)}
+    .login-title{font-size:19px;font-weight:900;color:var(--text)}
+    .login-sub{font-size:13px;color:var(--text3);font-weight:600;margin-top:4px;margin-bottom:20px}
+    .login-input{width:100%;height:54px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 16px;font-family:var(--font);font-size:17px;font-weight:700;color:var(--text);outline:none;text-align:center;letter-spacing:2px;transition:border .2s}
+    .login-input:focus{border-color:var(--primary)}
+    .login-err{font-size:13px;font-weight:700;color:var(--rose);margin-top:10px}
+    .login-err.h{display:none}
+    .login-btn{width:100%;height:54px;border-radius:var(--rsm);border:none;margin-top:14px;background:linear-gradient(135deg,var(--primary) 0%,#9B59E8 100%);color:#fff;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px var(--primary-glow);transition:opacity .2s,transform .1s}
+    .login-btn:active{transform:scale(.98);opacity:.92}
+    .login-reset{margin-top:16px;font-size:12px;font-weight:700;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--font)}
+    body.pc-mode .home-body,body.pc-mode .detail-body{max-width:980px}
+    body.pc-mode .hdr-toprow,body.pc-mode .dhdr-toprow{gap:14px}
+    body.pc-mode .hdr-logo,body.pc-mode .dhdr-avatar{width:56px;height:56px;font-size:24px;border-radius:16px}
+    body.pc-mode .hdr-title{font-size:21px}
+    body.pc-mode .hdr-sub,body.pc-mode .dhdr-sub{font-size:13px}
+    body.pc-mode .dhdr-name{font-size:21px}
+    body.pc-mode .icon-btn{width:56px;height:56px;border-radius:16px;font-size:19px}
+    body.pc-mode .icon-btn svg{width:25px;height:25px}
+    body.pc-mode .cal-btn{width:56px;height:56px;font-size:23px;border-radius:16px}
+    body.pc-mode .save-btn,body.pc-mode .pdf-btn,body.pc-mode .back-btn{height:56px;width:auto;padding:0 22px;font-size:16px;gap:8px;border-radius:16px}
+    body.pc-mode .btn-label{display:inline}
+    body.pc-mode .date-block{padding:14px 20px}
+    body.pc-mode .date-clock{font-size:30px}
+    body.pc-mode .date-text{font-size:17px}
+    body.pc-mode .add-person-row input,body.pc-mode .form-input,body.pc-mode .form-select,body.pc-mode .reminder-input{height:60px;font-size:17px}
+    body.pc-mode .btn-add-person,body.pc-mode .btn-add-task{height:62px;font-size:18px}
+    body.pc-mode .sec-tab{height:54px;font-size:16px}
+    body.pc-mode .person-card{padding:24px 22px 22px}
+    body.pc-mode .person-card .card-avatar{width:64px;height:64px;font-size:28px;border-radius:18px}
+    body.pc-mode .person-card .card-name{font-size:19px}
+    body.pc-mode .stat-pill{font-size:14px;padding:7px 14px}
+    body.pc-mode .check-btn{width:44px;height:44px;border-radius:13px}
+    body.pc-mode .del-btn{width:46px;height:46px;font-size:18px}
+    body.pc-mode .task-text{font-size:17px}
+    body.pc-mode .task-item{padding:16px 14px}
+    body.pc-mode .tag{font-size:13px;padding:4px 12px}
+    body.pc-mode .nav-btn{height:64px;font-size:13px}
+    body.pc-mode .nav-btn i{font-size:23px}
+    body.pc-mode .modal-sheet{max-width:760px;border-radius:var(--r)}
+    body.pc-mode .modal-btn{height:58px;font-size:17px}
+  </style>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body class="locked">
+
+<!-- ═══════ INLOGGNING ═══════ -->
+<div class="login-ov" id="loginOv">
+  <div class="login-card">
+    <div class="login-logo"><i class="fas fa-lock"></i></div>
+    <div class="login-title" id="loginTitle">Ange lösenord</div>
+    <div class="login-sub" id="loginSub">Skriv lösenordet för att fortsätta</div>
+    <input type="password" class="login-input" id="loginInput" placeholder="••••••" autocomplete="off" onkeydown="if(event.key==='Enter')submitLogin()">
+    <div class="login-err h" id="loginErr">Fel lösenord, försök igen</div>
+    <button class="login-btn" onclick="submitLogin()" id="loginSubmitBtn">Logga in</button>
+    <button class="login-reset" id="loginResetBtn" onclick="resetPassword()">Glömt lösenordet? Återställ</button>
+  </div>
+</div>
+
+<!-- ═══════ HOME PAGE ═══════ -->
+<div class="page" id="pageHome">
+  <header class="hdr">
+    <div class="hdr-toprow">
+      <div class="hdr-logo"><i class="fas fa-clipboard-list"></i></div>
+      <div class="hdr-info">
+        <div class="hdr-title">Familjens Planerare</div>
+        <div class="hdr-sub"></div>
+      </div>
+      <div class="hdr-actions">
+        <button class="save-btn" onclick="saveAndConfirm()" title="Spara"><i class="fas fa-floppy-disk"></i><span class="btn-label"> Spara</span></button>
+        <button class="icon-btn" onclick="togglePcMode()" title="PC-anpassad vy" id="pcModeBtn"><i class="fas fa-desktop"></i></button>
+        <button class="icon-btn" onclick="toggleNight()" title="Nattläge" id="nightBtn">
+          <svg id="nightSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="icon-btn" onclick="logoutApp()" title="Logga ut"><i class="fas fa-sign-out-alt"></i></button>
+        <button class="icon-btn" onclick="openNotif()" title="Påminnelser">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="bdg h" id="notifBdg">0</span>
+        </button>
+        <button class="icon-btn" onclick="openTrash()" title="Papperskorg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          <span class="bdg amber h" id="trashBdg">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="date-row">
+      <div class="date-block" onclick="cycleCalendar()" title="Tryck för att byta kalender">
+        <div class="date-toprow">
+          <span class="date-cal-label" id="calLabel">📅 Gregoriansk</span>
+          <span class="date-clock" id="clockDisplay">00:00</span>
+        </div>
+        <div class="date-main-row">
+          <span class="date-text" id="dateText"></span>
+          <span class="date-redday h" id="reddayTag">🔴 Röd dag</span>
+        </div>
+      </div>
+      <button class="cal-btn" onclick="openCalendar()" title="Öppna kalender"><i class="fas fa-calendar-alt"></i></button>
+    </div>
+  </header>
+
+  <div class="home-body">
+    <div class="add-person-section">
+      <div class="add-person-row">
+        <input type="text" id="newPersonInput" placeholder="Lägg till person…" maxlength="20" onkeydown="if(event.key==='Enter')addPerson()">
+        <button class="btn-add-person" onclick="addPerson()"><i class="fas fa-user-plus"></i> Lägg till</button>
+      </div>
+    </div>
+
+    <div class="cards-section">
+      <div class="cards-grid" id="cardsGrid"></div>
+    </div>
+
+    <!-- SYNC SECTION -->
+    <div class="sync-section" id="syncSection">
+      <div class="sync-card">
+        <div class="sync-header">
+          <i class="fas fa-sync-alt"></i>
+          <div>
+            <div class="sync-title">Synkronisering</div>
+            <div class="sync-sub">Lokal backup + molnsynk via Supabase</div>
+          </div>
+        </div>
+        <div class="sync-status">
+          <span class="sync-status-dot offline" id="syncStatusDot"></span>
+          <span id="syncStatusText">Offline – endast lokal lagring</span>
+        </div>
+        <div class="sync-actions">
+          <button class="sync-btn-primary" onclick="exportLocalBackup()"><i class="fas fa-download"></i> Exportera backup</button>
+          <button class="sync-btn-secondary" onclick="importLocalBackup()"><i class="fas fa-upload"></i> Importera backup</button>
+          <button class="sync-btn-secondary" onclick="openSyncSettings()"><i class="fas fa-cog"></i> Inställningar</button>
+        </div>
+        <div class="sync-log h" id="syncLog"></div>
+      </div>
+    </div>
+
+    <!-- SAVED PDFs SECTION -->
+    <div class="saved-pdf-section" id="savedPdfSection">
+      <div class="pdf-card" style="border-color:var(--primary);background:var(--primary-soft);margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;color:var(--text)">
+          <i class="fas fa-file-pdf" style="color:var(--rose)"></i> Sparade PDF-filer
+        </div>
+      </div>
+      <div id="savedPdfList"></div>
+    </div>
+
+    <!-- UPLOAD PDF SECTION -->
+    <div class="upload-pdf-section">
+      <div class="upload-area" onclick="document.getElementById('pdfUpload').click()">
+        <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+        <div class="upload-text">Ladda upp PDF med uppgifter</div>
+        <div class="upload-sub">Välj en PDF-fil för att importera uppgifter till vald person</div>
+        <input type="file" id="pdfUpload" accept=".pdf" onchange="handlePDFUpload(event)">
+      </div>
+    </div>
+  </div>
+
+  <nav class="bot-nav" id="homeNav">
+    <button class="nav-btn active" onclick=""><i class="fas fa-home"></i>Hem</button>
+    <button class="nav-btn" onclick="openTrash()"><i class="fas fa-trash-can"></i>Papperskorg</button>
+  </nav>
+</div>
+
+<!-- ═══════ DETAIL PAGE ═══════ -->
+<div class="page hidden" id="pageDetail">
+  <header class="dhdr">
+    <div class="dhdr-toprow">
+      <button class="back-btn" onclick="goHome()" title="Tillbaka"><i class="fas fa-chevron-left"></i><span class="btn-label"> Tillbaka</span></button>
+      <div class="dhdr-avatar" id="detailAvatar"><i class="fas fa-users"></i></div>
+      <div class="dhdr-info">
+        <div class="dhdr-name" id="detailName">Alla</div>
+        <div class="dhdr-sub" id="detailSub"></div>
+      </div>
+      <button class="save-btn" onclick="saveAndConfirm()" title="Spara"><i class="fas fa-floppy-disk"></i><span class="btn-label"> Spara</span></button>
+      <button class="pdf-btn" onclick="exportPersonPDF()" title="PDF"><i class="fas fa-file-pdf"></i><span class="btn-label"> PDF</span></button>
+    </div>
+  </header>
+
+  <div class="detail-body">
+    <div class="add-form">
+      <label class="form-lbl"><i class="fas fa-plus-circle" style="color:var(--primary)"></i> Ny uppgift</label>
+      <input type="text" class="form-input" id="taskInput" placeholder="Vad ska göras?" onkeydown="if(event.key==='Enter')addTask()">
+      <div class="form-row">
+        <select class="form-select" id="taskType">
+          <option value="todo">📋 Uppgift</option>
+          <option value="shopping">🛒 Inköp</option>
+        </select>
+        <select class="form-select" id="timeFrame">
+          <option value="today">Idag</option>
+          <option value="tomorrow">Imorgon</option>
+          <option value="week">Denna vecka</option>
+          <option value="month">Denna månad</option>
+          <option value="thisyear">Pågående år</option>
+          <option value="nextyear">Nästa år</option>
+          <option value="future">Framtiden</option>
+          <option value="sometime">Någon gång</option>
+        </select>
+      </div>
+      <input type="text" class="task-note-input" id="taskNoteInput" placeholder="Anteckning (valfritt)">
+      <input type="text" class="task-link-input" id="taskLinkInput" placeholder="Länk (t.ex. https://...)" oninput="if(this.value.startsWith('http'))this.style.borderColor='var(--emerald)'">
+      <input type="datetime-local" class="reminder-input" id="reminderTime">
+      <div class="email-toggle-row" onclick="if(event.target.tagName!=='INPUT'){document.getElementById('reminderEmailToggle').checked=!document.getElementById('reminderEmailToggle').checked}">
+        <input type="checkbox" id="reminderEmailToggle" checked>
+        <label for="reminderEmailToggle" onclick="event.stopPropagation()"><i class="fas fa-envelope"></i> Skicka e-postpåminnelse till <span class="etr-addr" id="reminderEmailAddrLabel"></span></label>
+      </div>
+      <button class="btn-add-task" onclick="addTask()"><i class="fas fa-plus"></i> Lägg till uppgift</button>
+    </div>
+
+    <div class="section-tabs">
+      <button class="sec-tab active" id="tabTodo" onclick="switchTab('todo')">
+        <i class="fas fa-list-check"></i> Att göra <span class="stab-badge" id="todoBadge">0</span>
+      </button>
+      <button class="sec-tab" id="tabDone" onclick="switchTab('done')">
+        <i class="fas fa-check-double"></i> Klara <span class="stab-badge" id="doneBadge">0</span>
+      </button>
+    </div>
+
+    <div class="list-section" id="todoSection">
+      <div class="list-card"><div class="list-body" id="todoContainer"></div></div>
+    </div>
+
+    <div class="list-section done-section h" id="doneSection">
+      <div class="list-card"><div class="list-body" id="doneContainer"></div></div>
+    </div>
+  </div>
+
+  <nav class="bot-nav">
+    <button class="nav-btn active" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i>Toppen</button>
+    <button class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i>Hem</button>
+  </nav>
+</div>
+
+<!-- ═══════ MODALS ═══════ -->
+<div class="modal-ov h" id="trashModal" onclick="if(event.target===this)closeTrash()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-trash-can" style="color:var(--amber)"></i> Papperskorg</div><button class="modal-x" onclick="closeTrash()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="trashBody"></div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-danger" onclick="emptyTrash()"><i class="fas fa-trash"></i> Töm allt</button><button class="modal-btn mbtn-neutral" onclick="closeTrash()">Stäng</button></div>
+  </div>
+</div>
+
+<div class="modal-ov h" id="notifModal" onclick="if(event.target===this)closeNotif()">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-bell" style="color:var(--primary)"></i> Påminnelser</div><button class="modal-x" onclick="closeNotif()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="notifBody"></div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeNotif()" style="flex:1">Stäng</button></div>
+  </div>
+</div>
+
+<div class="modal-ov h" id="calModal" onclick="if(event.target===this)closeCalendar()">
+  <div class="modal-sheet" style="max-height:95vh">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr">
+      <div class="modal-ttl"><i class="fas fa-calendar-alt" style="color:var(--primary)"></i> Kalender</div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="icon-btn" style="width:36px;height:36px;border-radius:10px;font-size:13px" onclick="switchCalView()" title="Byt kalender"><span id="calViewLabel">🇸🇪</span></button>
+        <button class="modal-x" onclick="closeCalendar()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="modal-body" id="calBody" style="padding:8px 16px">
+      <div id="calContainer"></div>
+    </div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeCalendar()" style="flex:1">Stäng</button></div>
+  </div>
+</div>
+
+<div class="modal-ov h" id="pdfModal" onclick="if(event.target===this)closePDF()">
+  <div class="modal-sheet" style="max-height:95vh">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-file-pdf" style="color:var(--rose)"></i> PDF Förhandsvisning</div><button class="modal-x" onclick="closePDF()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="pdfBody" style="padding:0">
+      <div id="pdfContent" class="pdf-preview-body"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn mbtn-danger" onclick="downloadPDF()"><i class="fas fa-download"></i> Ladda ner PDF</button>
+      <button class="modal-btn mbtn-neutral" onclick="savePDFToApp()"><i class="fas fa-save"></i> Spara i appen</button>
+      <button class="modal-btn mbtn-neutral" onclick="closePDF()">Stäng</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SYNC SETTINGS MODAL ═══════ -->
+<div class="modal-ov h" id="syncModal" onclick="if(event.target===this)closeSyncSettings()">
+  <div class="modal-sheet" style="max-height:95vh">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-cog" style="color:var(--primary)"></i> Synkinställningar</div><button class="modal-x" onclick="closeSyncSettings()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="syncSettingsBody" style="padding:12px 16px">
+      <div class="sync-card" style="margin-bottom:0">
+        <div class="sync-toggle-row">
+          <div>
+            <div class="sync-toggle-label">Automatisk synkronisering</div>
+            <div class="sync-toggle-desc">Synka automatiskt med Supabase var 30:e sekund</div>
+          </div>
+          <div class="toggle-switch" id="autoSyncToggle" onclick="toggleAutoSync()"></div>
+        </div>
+        <div class="sync-toggle-row">
+          <div>
+            <div class="sync-toggle-label">Synka vid start</div>
+            <div class="sync-toggle-desc">Hämta data från molnet när appen startar</div>
+          </div>
+          <div class="toggle-switch on" id="syncOnStartToggle" onclick="toggleSyncOnStart()"></div>
+        </div>
+        <div class="sync-toggle-row">
+          <div>
+            <div class="sync-toggle-label">Lokal backup vid synk</div>
+            <div class="sync-toggle-desc">Spara en lokal kopia innan varje molnsynk</div>
+          </div>
+          <div class="toggle-switch on" id="backupOnSyncToggle" onclick="toggleBackupOnSync()"></div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <label class="form-lbl">Supabase URL</label>
+        <input type="text" class="sync-input" id="supabaseUrl" placeholder="https://ditt-projekt.supabase.co">
+        <label class="form-lbl" style="margin-top:10px">Supabase Anon Key</label>
+        <input type="password" class="sync-input" id="supabaseKey" placeholder="eyJhbGciOiJIUzI1NiIs...">
+        <label class="form-lbl" style="margin-top:10px">Synk-nyckel (unik för din familj)</label>
+        <input type="text" class="sync-input" id="syncKey" placeholder="familjen-andersson-2024">
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="sync-btn-primary" onclick="saveSupabaseConfig()" style="flex:1"><i class="fas fa-save"></i> Spara inställningar</button>
+          <button class="sync-btn-secondary" onclick="testSupabaseConnection()" style="flex:1"><i class="fas fa-plug"></i> Testa anslutning</button>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="sync-btn-primary" onclick="pushToSupabase()" style="flex:1"><i class="fas fa-cloud-upload-alt"></i> Skicka till molnet</button>
+          <button class="sync-btn-secondary" onclick="pullFromSupabase()" style="flex:1"><i class="fas fa-cloud-download-alt"></i> Hämta från molnet</button>
+        </div>
+        <button class="sync-btn-danger" onclick="clearSupabaseConfig()" style="width:100%;margin-top:8px"><i class="fas fa-trash"></i> Rensa molnsynk-inställningar</button>
+        <div style="margin-top:16px;padding-top:16px;border-top:1.5px solid var(--border)">
+          <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px"><i class="fas fa-envelope" style="color:var(--primary)"></i> E-postpåminnelser (EmailJS)</div>
+          <div style="background:var(--emerald-soft);border-radius:var(--rsm);padding:12px 14px;margin-bottom:10px;border:1.5px solid var(--emerald);color:var(--emerald);font-size:13px">
+            <i class="fas fa-info-circle"></i> Skickas automatiskt till <strong id="fixedEmailDisplay"></strong> när du kryssar i rutan vid en uppgift. Ingen server behövs.
+          </div>
+          <button class="sync-btn-primary" onclick="sendTestEmail()" style="width:100%"><i class="fas fa-paper-plane"></i> Skicka testmail</button>
+        </div>
+      </div>
+      <div class="sync-log" id="syncSettingsLog" style="margin-top:12px"></div>
+    </div>
+    <div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeSyncSettings()" style="flex:1">Stäng</button></div>
+  </div>
+</div>
+
+<!-- ═══════ TOAST ═══════ -->
+<div class="toast" id="toast"><i id="toastIcon" class="fas fa-check-circle" style="color:var(--emerald)"></i><span id="toastMsg">OK</span></div>
+
+<script>
+/* ===== EMAILJS-KONFIGURATION =====
+   Fyll i dessa tre värden när du har skapat din mall och hämtat din publika nyckel i EmailJS-dashboarden.
+   Service ID är redan ifylld eftersom du redan kopplat Gmail. */
+const EMAILJS_SERVICE_ID  = 'service_0tupd3b';   // Din Gmail-service i EmailJS
+const EMAILJS_TEMPLATE_ID = 'DIN_TEMPLATE_ID';    // Byt ut mot ditt Template ID
+const EMAILJS_PUBLIC_KEY  = 'DIN_PUBLIC_KEY';     // Byt ut mot din Public Key (Account -> General)
+
+/* Den enda e-postadress som påminnelser skickas till. Ändra vid behov. */
+const FIXED_REMINDER_EMAIL = 'ynaser2000@gmail.com';
+
+const PERSON_COLORS = ['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#EC4899','#8B5CF6','#14B8A6'];
+const TIME_LABELS   = {today:'Idag',tomorrow:'Imorgon',week:'Denna vecka',month:'Denna månad',thisyear:'Pågående år',nextyear:'Nästa år',future:'Framtiden',sometime:'Någon gång'};
+const TIME_ORDER    = ['today','tomorrow','week','month','thisyear','nextyear','future','sometime'];
+
+function sl(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
+let tasks        = sl('familyTasks',[]);
+let trash        = sl('familyTrash',[]);
+let score        = parseInt(localStorage.getItem('familyScore')||'0');
+let persons      = sl('familyPersons',['person1','person2','person3']);
+let personLabels = sl('familyPersonLabels',{person1:'Person 1',person2:'Person 2',person3:'Person 3'});
+let notifications= [];
+let night        = localStorage.getItem('nightMode')==='true';
+let currentPerson= 'all';
+let currentTab   = 'todo';
+let colorMap     = {};
+let calMode      = parseInt(localStorage.getItem('calMode')||'0');
+let pdfData      = null;
+let calView      = 0;
+let calMonth     = new Date().getMonth();
+let calYear      = new Date().getFullYear();
+let selectedCalDay = null;
+let savedPDFs = sl('savedPDFs', []);
+let tempPDFData = null;
+
+// ===== SYNC STATE =====
+let supabaseUrl = localStorage.getItem('supabaseUrl') || '';
+let supabaseKey = localStorage.getItem('supabaseKey') || '';
+let syncKey = localStorage.getItem('syncKey') || '';
+let autoSync = localStorage.getItem('autoSync') === 'true';
+let syncOnStart = localStorage.getItem('syncOnStart') !== 'false';
+let backupOnSync = localStorage.getItem('backupOnSync') !== 'false';
+let syncIntervalId = null;
+let syncLogEntries = [];
+
+function buildColorMap(){
+  colorMap['all'] = PERSON_COLORS[0];
+  persons.forEach((p,i)=>{ colorMap[p] = PERSON_COLORS[(i+1)%PERSON_COLORS.length]; });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  if(night)applyNight();
+  if(localStorage.getItem('pcMode')==='true')applyPcMode(true);
+  checkLoginState();
+  rolloverOverdueTasks();
+  updateClock(); setInterval(updateClock,1000);
+  buildColorMap();
+  renderCards();
+  renderSavedPDFs();
+  updateSyncUI();
+  checkReminders(); setInterval(checkReminders,30000);
+  if('Notification' in window && Notification.permission==='default') Notification.requestPermission();
+  // Init EmailJS
+  try{
+    if(window.emailjs && EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY!=='DIN_PUBLIC_KEY'){
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+  }catch(e){ console.error('EmailJS init-fel:', e); }
+  const lbl=document.getElementById('reminderEmailAddrLabel');
+  if(lbl) lbl.textContent = FIXED_REMINDER_EMAIL;
+  const lbl2=document.getElementById('fixedEmailDisplay');
+  if(lbl2) lbl2.textContent = FIXED_REMINDER_EMAIL;
+  // Init sync
+  if(syncOnStart && supabaseUrl && supabaseKey && syncKey) {
+    setTimeout(()=>pullFromSupabase(true), 1000);
+  }
+  if(autoSync && supabaseUrl && supabaseKey && syncKey) {
+    startAutoSync();
+  }
+});
+
+/* ===== INLOGGNING ===== */
+const PW_KEY='familyAppPassword';
+function checkLoginState(){
+  const savedPw=localStorage.getItem(PW_KEY);
+  const authed=localStorage.getItem('familyAppAuthed')==='true';
+  if(authed){unlockApp();return;}
+  if(savedPw){
+    document.getElementById('loginTitle').textContent='Ange lösenord';
+    document.getElementById('loginSub').textContent='Skriv lösenordet för att fortsätta';
+    document.getElementById('loginResetBtn').classList.remove('h');
+  }else{
+    document.getElementById('loginTitle').textContent='Skapa lösenord';
+    document.getElementById('loginSub').textContent='Ange ett lösenord som skyddar appen';
+    document.getElementById('loginResetBtn').classList.add('h');
+  }
+  document.getElementById('loginInput').value='';
+  setTimeout(()=>document.getElementById('loginInput').focus(),50);
+}
+function submitLogin(){
+  const val=document.getElementById('loginInput').value;
+  if(!val.trim())return;
+  const savedPw=localStorage.getItem(PW_KEY);
+  if(!savedPw){
+    localStorage.setItem(PW_KEY,val);
+    unlockApp();
+    toast('🔒 Lösenord skapat!');
+  }else if(val===savedPw){
+    unlockApp();
+  }else{
+    document.getElementById('loginErr').classList.remove('h');
+    document.getElementById('loginInput').value='';
+    document.getElementById('loginInput').focus();
+  }
+}
+function unlockApp(){
+  localStorage.setItem('familyAppAuthed','true');
+  document.getElementById('loginOv').classList.add('h');
+  document.body.classList.remove('locked');
+}
+function resetPassword(){
+  if(confirm('Återställa lösenordet? Du kan då ange ett helt nytt lösenord.')){
+    localStorage.removeItem(PW_KEY);
+    checkLoginState();
+  }
+}
+
+/* ===== PC-LÄGE ===== */
+function applyPcMode(on){
+  document.body.classList.toggle('pc-mode',on);
+  const btn=document.getElementById('pcModeBtn');
+  if(btn)btn.style.color=on?'var(--primary)':'';
+}
+function togglePcMode(){
+  const on=!document.body.classList.contains('pc-mode');
+  applyPcMode(on);
+  localStorage.setItem('pcMode',on?'true':'false');
+  toast(on?'🖥️ PC-anpassad vy på':'📱 Mobilvy på');
+}
+
+function applyNight(){
+  document.body.classList.toggle('night',night);
+  const svg=document.getElementById('nightSvg');
+  if(night){
+    svg.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+    document.getElementById('nightBtn').style.color='var(--amber)';
+  } else {
+    svg.innerHTML='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    document.getElementById('nightBtn').style.color='';
+  }
+}
+function toggleNight(){night=!night;localStorage.setItem('nightMode',night);applyNight();}
+
+/* ===== LOGOUT ===== */
+function logoutApp(){
+  if(confirm('Logga ut? Du måste ange lösenordet igen nästa gång.')){
+    localStorage.removeItem('familyAppAuthed');
+    location.reload();
+  }
+}
+
+// ===== CALENDAR FUNCTIONS =====
+function easterSunday(y){
+  const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+  return new Date(y,month-1,day);
+}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function sameDate(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+
+function getSwedishRedDays(year){
+  const easter=easterSunday(year);
+  const days = [
+    {d:new Date(year,0,1),name:'Nyårsdagen'},
+    {d:new Date(year,0,6),name:'Trettondedag jul'},
+    {d:addDays(easter,-2),name:'Långfredagen'},
+    {d:easter,name:'Påskdagen'},
+    {d:addDays(easter,1),name:'Annandag påsk'},
+    {d:new Date(year,4,1),name:'Första maj'},
+    {d:addDays(easter,39),name:'Kristi himmelsfärdsdag'},
+    {d:new Date(year,5,6),name:'Sveriges nationaldag'},
+    {d:addDays(easter,49),name:'Pingstdagen'},
+    {d:new Date(year,11,25),name:'Juldagen'},
+    {d:new Date(year,11,26),name:'Annandag jul'},
+  ];
+  for(let day=20; day<=26; day++){
+    const d = new Date(year, 5, day);
+    if(d.getDay() === 6) days.push({d, name:'Midsommarafton'});
+  }
+  for(let day=31; day<=37; day++){
+    const realDay = day>31 ? day-31 : day;
+    const month = day>31 ? 10 : 9;
+    const d = new Date(year, month, realDay);
+    if(d.getDay() === 6) days.push({d, name:'Alla helgons dag'});
+  }
+  for(let m=0; m<12; m++){
+    for(let d=1; d<=31; d++){
+      const date = new Date(year, m, d);
+      if(date.getMonth()===m && date.getDay()===0){
+        days.push({d:date, name:'Söndag'});
+      }
+    }
+  }
+  return days;
+}
+
+function getSwedishRedDaysForMonth(year, month){
+  const all = getSwedishRedDays(year);
+  return all.filter(r => r.d.getFullYear()===year && r.d.getMonth()===month);
+}
+
+function getIranianRedDaysForMonth(year, month){
+  const results = [];
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  for(let day=1; day<=daysInMonth; day++){
+    const d = new Date(year, month, day);
+    const [jy,jm,jd] = gregorianToJalali(year, month+1, day);
+    const [hy,hm,hd] = gregorianToHijri(year, month+1, day);
+    let name = null;
+    if(d.getDay()===5) name = 'جمعه (Fredag)';
+    const jKey = jm+'-'+jd;
+    if(IRANIAN_JALALI_HOLIDAYS[jKey]) name = IRANIAN_JALALI_HOLIDAYS[jKey];
+    const hKey = hm+'-'+hd;
+    if(IRANIAN_HIJRI_HOLIDAYS[hKey]) name = IRANIAN_HIJRI_HOLIDAYS[hKey];
+    if(name) results.push({d, name});
+  }
+  return results;
+}
+
+function getSaudiRedDaysForMonth(year, month){
+  const results = [];
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  for(let day=1; day<=daysInMonth; day++){
+    const d = new Date(year, month, day);
+    const [hy,hm,hd] = gregorianToHijri(year, month+1, day);
+    let name = null;
+    if(d.getDay()===5) name = 'Jummah (Fredag)';
+    const hKey = hm+'-'+hd;
+    const saudiHijri = {'1-1':'Hijri New Year','1-10':'Ashura','3-12':'Mawlid','9-1':'Ramadan börjar','10-1':'Eid al-Fitr','12-10':'Eid al-Adha'};
+    if(saudiHijri[hKey]) name = saudiHijri[hKey];
+    const gKey = (d.getMonth()+1)+'-'+d.getDate();
+    const saudiGreg = {'1-1':'Nyårsdagen','9-23':'Saudi Nationaldag'};
+    if(saudiGreg[gKey]) name = saudiGreg[gKey];
+    if(name) results.push({d, name});
+  }
+  return results;
+}
+
+function openCalendar(){
+  calMonth = new Date().getMonth();
+  calYear = new Date().getFullYear();
+  calView = 0;
+  selectedCalDay = null;
+  renderCalendar();
+  document.getElementById('calModal').classList.remove('h');
+}
+function closeCalendar(){
+  document.getElementById('calModal').classList.add('h');
+  document.getElementById('calContainer').innerHTML = '';
+}
+function switchCalView(){
+  calView = (calView + 1) % 3;
+  selectedCalDay = null;
+  renderCalendar();
+}
+function renderCalendar(){
+  const container = document.getElementById('calContainer');
+  const viewLabels = ['🇸🇪 Sverige', '🇮🇷 Iran', '🇸🇦 Saudiarabien'];
+  document.getElementById('calViewLabel').textContent = viewLabels[calView];
+  const monthNames = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrevMonth = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+  const todayDate = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
+  let redDays = [];
+  if(calView === 0) redDays = getSwedishRedDaysForMonth(calYear, calMonth);
+  else if(calView === 1) redDays = getIranianRedDaysForMonth(calYear, calMonth);
+  else redDays = getSaudiRedDaysForMonth(calYear, calMonth);
+  const redDayMap = {};
+  redDays.forEach(r => {
+    const key = r.d.getDate();
+    if(!redDayMap[key]) redDayMap[key] = [];
+    redDayMap[key].push(r.name);
+  });
+  let html = '<div class="cal-header"><button class="cal-nav" onclick="changeCalMonth(-1)"><i class="fas fa-chevron-left"></i></button><div><div class="cal-month">'+monthNames[calMonth]+'</div><div class="cal-year">'+calYear+'</div></div><button class="cal-nav" onclick="changeCalMonth(1)"><i class="fas fa-chevron-right"></i></button></div><div class="cal-grid"><div class="cal-weekday">Mån</div><div class="cal-weekday">Tis</div><div class="cal-weekday">Ons</div><div class="cal-weekday">Tor</div><div class="cal-weekday">Fre</div><div class="cal-weekday">Lör</div><div class="cal-weekday">Sön</div>';
+  let startOffset = firstDay === 0 ? 6 : firstDay - 1;
+  for(let i=0; i<startOffset; i++){
+    const prevDay = daysInPrevMonth - startOffset + i + 1;
+    html += '<div class="cal-day other-month">'+prevDay+'</div>';
+  }
+  for(let day=1; day<=daysInMonth; day++){
+    const isToday = (day === todayDate && calMonth === todayMonth && calYear === todayYear);
+    const isRed = redDayMap[day] && redDayMap[day].length > 0;
+    const redNames = redDayMap[day] || [];
+    const dayOfWeek = new Date(calYear, calMonth, day).getDay();
+    const isSunday = dayOfWeek === 0;
+    let classes = 'cal-day';
+    if(isToday) classes += ' today';
+    if(isRed || isSunday) classes += ' red';
+    let dotHtml = '';
+    if(isRed) dotHtml = '<div class="cal-dot '+(calView===0?'se':calView===1?'ir':'sa')+'"></div>';
+    let tagHtml = '';
+    if(isRed && redNames.length > 0){
+      const shortName = redNames[0].split(' - ')[0];
+      tagHtml = '<div class="cal-tag red-text">'+shortName.substring(0,12)+(shortName.length>12?'…':'')+'</div>';
+    } else if(isSunday && calView===0){
+      tagHtml = '<div class="cal-tag red-text">Söndag</div>';
+    }
+    html += '<div class="'+classes+'" onclick="showDayDetail('+day+', \''+escapeHtml(redNames.join('||'))+'\')">'+day+dotHtml+tagHtml+'</div>';
+  }
+  const totalCells = startOffset + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for(let i=1; i<=remaining; i++){
+    html += '<div class="cal-day other-month">'+i+'</div>';
+  }
+  html += '</div>';
+  const legendLabels = ['🇸🇪 Sverige', '🇮🇷 Iran', '🇸🇦 Saudiarabien'];
+  html += '<div class="cal-legend"><span><span class="leg-dot '+(calView===0?'se':calView===1?'ir':'sa')+'"></span> Röd dag ('+legendLabels[calView]+')</span><span><span class="leg-dot" style="background:var(--primary)"></span> Idag</span></div>';
+  html += '<div class="cal-day-detail" id="calDayDetail"><div class="detail-date" id="detailDate"></div><div id="detailRedDays"></div></div>';
+  container.innerHTML = html;
+}
+function changeCalMonth(delta){
+  calMonth += delta;
+  if(calMonth > 11){ calMonth = 0; calYear++; }
+  if(calMonth < 0){ calMonth = 11; calYear--; }
+  selectedCalDay = null;
+  renderCalendar();
+}
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function showDayDetail(day, redNamesStr){
+  const detailEl = document.getElementById('calDayDetail');
+  const dateEl = document.getElementById('detailDate');
+  const redEl = document.getElementById('detailRedDays');
+  const date = new Date(calYear, calMonth, day);
+  const monthNames = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  const weekdayNames = ['Måndag','Tisdag','Onsdag','Torsdag','Fredag','Lördag','Söndag'];
+  const weekday = date.getDay();
+  const weekdayStr = weekday===0 ? 'Söndag' : weekdayNames[weekday-1];
+  dateEl.textContent = weekdayStr+' '+day+' '+monthNames[calMonth]+' '+calYear;
+  const redNames = redNamesStr ? redNamesStr.split('||') : [];
+  if(calView === 0 && date.getDay() === 0 && !redNames.length) redNames.push('Söndag');
+  if(redNames.length > 0){
+    const flags = ['🇸🇪','🇮🇷','🇸🇦'];
+    const flag = flags[calView] || '🔴';
+    redEl.innerHTML = redNames.map(name => '<div class="detail-red"><span class="detail-flag">'+flag+'</span> '+name+'</div>').join('');
+  } else {
+    redEl.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:4px 0">Ingen röd dag</div>';
+  }
+  detailEl.classList.add('show');
+  selectedCalDay = day;
+  document.querySelectorAll('.cal-day').forEach(el => {
+    el.style.outline = 'none';
+    const d = parseInt(el.innerText);
+    if(d === day && !el.classList.contains('other-month')) el.style.outline = '3px solid var(--primary)';
+  });
+}
+
+const IRANIAN_JALALI_HOLIDAYS={
+  '1-1':'نوروز (Nowruz)','1-2':'نوروز (Nowruz)','1-3':'نوروز (Nowruz)','1-4':'نوروز (Nowruz)',
+  '1-12':'روز جمهوری اسلامی','1-13':'سیزده بدر','3-14':'رحلت امام خمینی','3-15':'قیام ۱۵ خرداد',
+  '11-22':'پیروزی انقلاب اسلامی','12-29':'ملی شدن نفت'
+};
+const IRANIAN_HIJRI_HOLIDAYS={
+  '1-9':'تاسوعای حسینی','1-10':'عاشورا','1-21':'حدیث چهلم (اربعین)','2-28':'رحلت پیامبر',
+  '3-8':'شهادت امام رضا','3-17':'میلاد پیامبر','6-3':'شهادت حضرت فاطمه','7-13':'میلاد امام علی',
+  '7-27':'مبعث پیامبر','8-15':'میلاد امام زمان','9-21':'شهادت امام علی','10-1':'عید فطر',
+  '10-2':'عید فطر','10-25':'شهادت امام جعفر صادق','12-10':'عید قربان','12-18':'عید غدیر'
+};
+
+function gregorianToJalali(gy,gm,gd){
+  const g_days=[0,31,59,90,120,151,181,212,243,273,304,334];
+  let gy2=(gm>2)?(gy+1):gy;
+  let days=355666+(365*gy)+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)+gd+g_days[gm-1];
+  let jy=-1595+(33*Math.floor(days/12053));
+  days%=12053;
+  jy+=4*Math.floor(days/1461);
+  days%=1461;
+  if(days>365){jy+=Math.floor((days-1)/365);days=(days-1)%365;}
+  let jm,jd;
+  if(days<186){jm=1+Math.floor(days/31);jd=1+(days%31);}
+  else{jm=7+Math.floor((days-186)/30);jd=1+((days-186)%30);}
+  return [jy,jm,jd];
+}
+function gregorianToHijri(gy,gm,gd){
+  const jdn=Math.floor((1461*(gy+4800+Math.floor((gm-14)/12)))/4)+Math.floor((367*(gm-2-12*Math.floor((gm-14)/12)))/12)-Math.floor((3*Math.floor((gy+4900+Math.floor((gm-14)/12))/100))/4)+gd-32075;
+  const l=jdn-1948440+10632;
+  const n=Math.floor((l-1)/10631);
+  const l2=l-10631*n+354;
+  const j=(Math.floor((10985-l2)/5316))*(Math.floor((50*l2)/17719))+(Math.floor(l2/5670))*(Math.floor((43*l2)/15238));
+  const l3=l2-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;
+  const hm=Math.floor((24*l3)/709);
+  const hd=l3-Math.floor((709*hm)/24);
+  const hy=30*n+j-30;
+  return [hy,hm,hd];
+}
+
+function checkRedDay(now){
+  const year = now.getFullYear();
+  const allRedDays = getSwedishRedDays(year);
+  for(const rd of allRedDays){
+    if(sameDate(rd.d, now)) return rd.name;
+  }
+  return null;
+}
+
+function updateClock(){
+  const now=new Date();
+  const hh=String(now.getHours()).padStart(2,'0'),mm=String(now.getMinutes()).padStart(2,'0'),ss=String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clockDisplay').textContent=hh+':'+mm+':'+ss;
+  const gy=now.getFullYear(),gm=now.getMonth()+1,gd=now.getDate();
+  const dEl=document.getElementById('dateText');
+  const lbl=document.getElementById('calLabel');
+  dEl.classList.remove('farsi-rtl');
+  let jy,jm,jd; try{[jy,jm,jd]=gregorianToJalali(gy,gm,gd);}catch(e){jy=gy;jm=1;jd=1;}
+  let hy,hm,hd; try{[hy,hm,hd]=gregorianToHijri(gy,gm,gd);}catch(e){hy=gy;hm=1;hd=1;}
+  if(calMode===0){
+    lbl.textContent='📅 Gregoriansk';
+    dEl.textContent=now.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  } else if(calMode===1){
+    lbl.textContent='🇮🇷 Jalali (Iransk)';
+    dEl.classList.add('farsi-rtl');
+    dEl.textContent=JALALI_DAYS[now.getDay()]+' '+toFa(jd)+' '+JALALI_MONTHS[jm-1]+' '+toFa(jy);
+  } else {
+    lbl.textContent='☪️ Hijri Qamari';
+    dEl.textContent=hd+' '+HIJRI_MONTHS[hm-1]+' '+hy+' AH';
+  }
+  const rd=document.getElementById('reddayTag');
+  let redName;
+  if(calMode===0){
+    redName=checkRedDay(now);
+    if(redName) redName = '🇸🇪 ' + redName;
+  } else if(calMode===1){
+    const iranRed=checkIranianRedDay(now,jy,jm,jd,hy,hm,hd);
+    redName=iranRed?'🇮🇷 '+iranRed:null;
+  } else {
+    const saudiRed = checkSaudiRedDay(now, hy, hm, hd);
+    redName = saudiRed ? '🇸🇦 ' + saudiRed : null;
+  }
+  if(redName){rd.textContent=redName;rd.classList.remove('h');}
+  else{rd.classList.add('h');}
+}
+
+function cycleCalendar(){
+  calMode=(calMode+1)%3;
+  localStorage.setItem('calMode',calMode);
+  updateClock();
+  const names=['Gregoriansk kalender','Jalali / Iransk kalender','Hijri Qamari-kalender'];
+  toast('📅 '+names[calMode]);
+}
+
+function checkSaudiRedDay(now, hy, hm, hd){
+  if(now.getDay()===5) return 'Jummah (Fredag)';
+  const hKey = hm+'-'+hd;
+  const saudiHijri = {'1-1':'Hijri New Year','1-10':'Ashura','3-12':'Mawlid','9-1':'Ramadan börjar','10-1':'Eid al-Fitr','12-10':'Eid al-Adha'};
+  if(saudiHijri[hKey]) return saudiHijri[hKey];
+  const gKey = (now.getMonth()+1)+'-'+now.getDate();
+  const saudiGreg = {'1-1':'Nyårsdagen','9-23':'Saudi Nationaldag'};
+  if(saudiGreg[gKey]) return saudiGreg[gKey];
+  return null;
+}
+
+function checkIranianRedDay(now,jy,jm,jd,hy,hm,hd){
+  if(now.getDay()===5) return 'جمعه (Fredag)';
+  const jKey=jm+'-'+jd;
+  if(IRANIAN_JALALI_HOLIDAYS[jKey]) return IRANIAN_JALALI_HOLIDAYS[jKey];
+  const hKey=hm+'-'+hd;
+  if(IRANIAN_HIJRI_HOLIDAYS[hKey]) return IRANIAN_HIJRI_HOLIDAYS[hKey];
+  return null;
+}
+
+const JALALI_MONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const JALALI_DAYS=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+const HIJRI_MONTHS=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Awwal','Jumada al-Thani','Rajab','Shaban','Ramadan','Shawwal','Dhu al-Qidah','Dhu al-Hijjah'];
+const FA_NUM=['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+function toFa(n){return String(n).split('').map(c=>/\d/.test(c)?FA_NUM[+c]:c).join('');}
+
+function rolloverOverdueTasks(){
+  const todayStr=new Date().toDateString();
+  const lastCheck=localStorage.getItem('lastRolloverDate');
+  if(lastCheck===todayStr)return;
+  let moved=0;
+  tasks.forEach(t=>{
+    if(!t.completed && t.timeFrame==='today'){t.timeFrame='tomorrow';moved++;}
+    else if(!t.completed && t.timeFrame==='tomorrow' && lastCheck){t.timeFrame='today';}
+  });
+  localStorage.setItem('lastRolloverDate',todayStr);
+  if(moved>0)saveData();
+}
+
+function renderCards(){
+  buildColorMap();
+  const grid=document.getElementById('cardsGrid');
+  function counts(pid){
+    const mine = pid==='all' ? tasks : tasks.filter(t=>t.person===pid);
+    return { active: mine.filter(t=>!t.completed).length, done: mine.filter(t=>t.completed).length };
+  }
+  let html='';
+  const allC=counts('all');
+  html+='<div class="person-card all-card" onclick="openDetail(\'all\')" style="border-color:'+PERSON_COLORS[0]+'33"><div class="card-accent" style="background:'+PERSON_COLORS[0]+'"></div><div class="card-avatar" style="background:'+PERSON_COLORS[0]+'"><i class="fas fa-users"></i></div><div class="all-info"><div class="card-name">Alla</div><div class="card-stats"><div class="stat-pill active"><i class="fas fa-list-check"></i> '+allC.active+' att göra</div><div class="stat-pill done"><i class="fas fa-check"></i> '+allC.done+' klara</div></div></div><i class="fas fa-chevron-right card-chevron"></i></div>';
+  persons.forEach((pid,i)=>{
+    const color=PERSON_COLORS[(i+1)%PERSON_COLORS.length];
+    const label=personLabels[pid]||pid;
+    const c=counts(pid);
+    const initial=label.charAt(0).toUpperCase();
+    html+='<div class="person-card" onclick="openDetail(\''+pid+'\')" style="border-color:'+color+'33"><div class="card-accent" style="background:'+color+'"></div><div class="card-avatar" style="background:'+color+'">'+initial+'</div><div class="card-name-wrap"><div class="card-name" id="lbl-'+pid+'">'+esc(label)+'</div><button class="card-edit-btn" onclick="event.stopPropagation();startEdit(\''+pid+'\')" title="Byt namn"><i class="fas fa-pen"></i></button><button class="card-delete-btn" onclick="event.stopPropagation();deletePerson(\''+pid+'\')" title="Ta bort person"><i class="fas fa-trash-can"></i></button></div><div class="card-stats"><div class="stat-pill active"><i class="fas fa-list-check"></i> '+c.active+'</div><div class="stat-pill done"><i class="fas fa-check"></i> '+c.done+'</div></div><i class="fas fa-chevron-right card-chevron"></i></div>';
+  });
+  html+='<div class="person-card" style="border-style:dashed;cursor:default;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:130px" onclick="document.getElementById(\'newPersonInput\').focus()"><div style="width:44px;height:44px;border-radius:14px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--text3)"><i class="fas fa-plus"></i></div><div style="font-size:13px;font-weight:800;color:var(--text3)">Ny person</div></div>';
+  grid.innerHTML=html;
+}
+
+function deletePerson(pid){
+  if(persons.length <= 1){toast('Du måste ha minst en person kvar!','error');return;}
+  if(confirm('Ta bort "'+(personLabels[pid]||pid)+'" och alla deras uppgifter?')){
+    tasks = tasks.filter(t => t.person !== pid);
+    trash = trash.filter(t => t.person !== pid);
+    persons = persons.filter(p => p !== pid);
+    delete personLabels[pid];
+    savePersons();
+    saveData();
+    buildColorMap();
+    renderCards();
+    toast('Person borttagen');
+  }
+}
+
+function startEdit(pid){
+  const lbl=document.getElementById('lbl-'+pid);
+  if(!lbl)return;
+  const cur=personLabels[pid]||pid;
+  const inp=document.createElement('input');
+  inp.className='name-edit-input'; inp.value=cur; inp.maxLength=20;
+  inp.onclick=e=>e.stopPropagation();
+  inp.onkeydown=e=>{if(e.key==='Enter')finishEdit(pid,inp);if(e.key==='Escape'){renderCards();}};
+  inp.onblur=()=>finishEdit(pid,inp);
+  lbl.replaceWith(inp); inp.focus(); inp.select();
+}
+function finishEdit(pid,inp){
+  const v=inp.value.trim();
+  if(v){personLabels[pid]=v;savePersons();}
+  renderCards();
+}
+
+function addPerson(){
+  const inp=document.getElementById('newPersonInput');
+  const name=inp.value.trim();
+  if(!name){toast('Ange ett namn','error');return;}
+  let nid='person'+(persons.length+1); let c=1;
+  while(persons.includes(nid)){c++;nid='person'+c;}
+  persons.push(nid); personLabels[nid]=name;
+  savePersons(); buildColorMap(); renderCards();
+  inp.value=''; toast('"'+name+'" tillagd! 🎉');
+}
+
+function openDetail(pid){
+  currentPerson=pid; currentTab='todo';
+  buildColorMap();
+  const color=colorMap[pid]||PERSON_COLORS[0];
+  const label= pid==='all'?'Alla':(personLabels[pid]||pid);
+  const icon = pid==='all'?'<i class="fas fa-users"></i>':label.charAt(0).toUpperCase();
+  const av=document.getElementById('detailAvatar');
+  av.innerHTML=icon; av.style.background=color;
+  document.getElementById('detailName').textContent=label;
+  const mine=pid==='all'?tasks:tasks.filter(t=>t.person===pid);
+  const act=mine.filter(t=>!t.completed).length;
+  const done=mine.filter(t=>t.completed).length;
+  document.getElementById('detailSub').textContent=act+' att göra · '+done+' klara';
+  const home=document.getElementById('pageHome');
+  const detail=document.getElementById('pageDetail');
+  home.classList.add('hidden');
+  detail.classList.remove('hidden');
+  setTimeout(()=>detail.classList.add('open'),10);
+  detail.scrollTop=0;
+  switchTab('todo');
+  renderDetail();
+}
+
+function goHome(){
+  const detail=document.getElementById('pageDetail');
+  const home=document.getElementById('pageHome');
+  detail.classList.remove('open');
+  setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();renderSavedPDFs();},320);
+}
+
+function switchTab(tab){
+  currentTab=tab;
+  document.getElementById('tabTodo').classList.toggle('active',tab==='todo');
+  document.getElementById('tabDone').classList.toggle('active',tab==='done');
+  document.getElementById('todoSection').classList.toggle('h',tab!=='todo');
+  document.getElementById('doneSection').classList.toggle('h',tab!=='done');
+  if(tab==='done')renderDone(); else renderTodo();
+}
+
+function renderDetail(){
+  const mine=currentPerson==='all'?tasks:tasks.filter(t=>t.person===currentPerson);
+  const act=mine.filter(t=>!t.completed);
+  const done=mine.filter(t=>t.completed);
+  document.getElementById('todoBadge').textContent=act.length;
+  document.getElementById('doneBadge').textContent=done.length;
+  document.getElementById('detailSub').textContent=act.length+' att göra · '+done.length+' klara';
+  if(currentTab==='todo')renderTodo(); else renderDone();
+}
+
+function renderTodo(){
+  const mine=currentPerson==='all'?tasks:tasks.filter(t=>t.person===currentPerson);
+  renderList('todoContainer', mine.filter(t=>!t.completed), false);
+}
+function renderDone(){
+  const mine=currentPerson==='all'?tasks:tasks.filter(t=>t.person===currentPerson);
+  renderList('doneContainer', mine.filter(t=>t.completed), true);
+}
+
+function renderList(cid,items,isDone){
+  const c=document.getElementById(cid);
+  if(!items.length){
+    c.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fas fa-'+(isDone?'check-double':'clipboard-list')+'"></i></div><div class="empty-text">'+(isDone?'Inga klara uppgifter än':'Tomt här! Lägg till en uppgift.')+'</div></div>';
+    return;
+  }
+  const grouped={};
+  items.forEach(item=>{if(!grouped[item.timeFrame])grouped[item.timeFrame]=[];grouped[item.timeFrame].push(item);});
+  c.innerHTML=TIME_ORDER.filter(k=>grouped[k]).map(tf=>'<div class="time-group fade-in"><div class="time-group-label">'+TIME_LABELS[tf]+'<hr><span>'+grouped[tf].length+'</span></div>'+grouped[tf].map(item=>taskHTML(item,isDone)).join('')+'</div>').join('');
+  c.querySelectorAll('.check-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>toggleComplete(parseInt(btn.dataset.id)));
+  });
+  c.querySelectorAll('.del-btn[data-id]').forEach(btn=>{
+    btn.addEventListener('click',()=>moveToTrash(parseInt(btn.dataset.id)));
+  });
+}
+
+function taskHTML(item,isDone){
+  const remDate=item.reminder?new Date(item.reminder).toLocaleString('sv-SE',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):null;
+  const personLabel=item.person!=='all'?(personLabels[item.person]||item.person):null;
+  const pcolor=colorMap[item.person]||'#999';
+  const hasNote = item.note && item.note.trim() !== '';
+  const hasLink = item.link && item.link.trim() !== '';
+  const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
+  return '<div class="task-item"><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+(item.email?'<span class="tag rem-tag" style="background:#DBEAFE;color:#1D4ED8;border-color:#BFDBFE"><i class="fas fa-envelope"></i> E-post på</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
+}
+
+function addTask(){
+  const inp=document.getElementById('taskInput');
+  const text=inp.value.trim();
+  if(!text){toast('Ange en uppgift','error');return;}
+  const note = document.getElementById('taskNoteInput').value.trim();
+  const link = document.getElementById('taskLinkInput').value.trim();
+  const reminder=document.getElementById('reminderTime').value;
+  const emailEnabled = document.getElementById('reminderEmailToggle').checked;
+  const email = emailEnabled ? FIXED_REMINDER_EMAIL : '';
+  tasks.push({
+    id:Date.now(),text,
+    type:document.getElementById('taskType').value,
+    timeFrame:document.getElementById('timeFrame').value,
+    person:currentPerson,
+    reminder:reminder?new Date(reminder).toISOString():null,
+    reminded:false,
+    completed:false,
+    createdAt:new Date().toISOString(),
+    note: note || '',link: link || '',
+    email: email || ''
+  });
+  saveData();
+  inp.value='';
+  document.getElementById('taskNoteInput').value='';
+  document.getElementById('taskLinkInput').value='';
+  document.getElementById('reminderTime').value='';
+  // OBS: e-post-kryssrutan lämnas som den är, så du slipper kryssa i den varje gång
+  toast('Uppgift tillagd! ✅');
+  renderDetail();
+}
+
+function toggleComplete(id){
+  const t=tasks.find(x=>x.id===id);
+  if(!t)return;
+  if(!t.completed){
+    t.completed=true; score+=10; localStorage.setItem('familyScore',score);
+    spawnConfetti(); toast('+10 poäng! 🎉');
+    saveData();
+    moveToTrash(id);
+  } else {
+    t.completed=false; saveData(); renderDetail();
+  }
+}
+
+function moveToTrash(id){
+  const idx=tasks.findIndex(t=>t.id===id);
+  if(idx>-1){const t=tasks.splice(idx,1)[0];t.deletedAt=new Date().toISOString();trash.push(t);saveData();updateTrashBdg();renderDetail();}
+}
+
+// ===== EDIT TASK FUNCTION =====
+function openEditTask(id){
+  const t = tasks.find(x => x.id === id);
+  if(!t) return;
+
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:300;display:flex;align-items:flex-end;justify-content:center';
+  overlay.id = 'editTaskOverlay';
+  overlay.onclick = function(e){ if(e.target === this) closeEditTask(); };
+
+  const color = colorMap[t.person] || PERSON_COLORS[0];
+
+  overlay.innerHTML = '<div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen" style="color:'+color+'"></i> Redigera uppgift</div><button class="modal-x" onclick="closeEditTask()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding:12px 16px"><label class="form-lbl">Uppgift</label><input type="text" class="form-input" id="editTaskText" value="'+esc(t.text)+'" placeholder="Vad ska göras?"><label class="form-lbl" style="margin-top:10px">Typ</label><select class="form-select" id="editTaskType"><option value="todo" '+(t.type==='todo'?'selected':'')+'>📋 Uppgift</option><option value="shopping" '+(t.type==='shopping'?'selected':'')+'>🛒 Inköp</option></select><label class="form-lbl" style="margin-top:10px">Tidsram</label><select class="form-select" id="editTaskTimeFrame" style="margin-top:6px"><option value="today" '+(t.timeFrame==='today'?'selected':'')+'>Idag</option><option value="tomorrow" '+(t.timeFrame==='tomorrow'?'selected':'')+'>Imorgon</option><option value="week" '+(t.timeFrame==='week'?'selected':'')+'>Denna vecka</option><option value="month" '+(t.timeFrame==='month'?'selected':'')+'>Denna månad</option><option value="thisyear" '+(t.timeFrame==='thisyear'?'selected':'')+'>Pågående år</option><option value="nextyear" '+(t.timeFrame==='nextyear'?'selected':'')+'>Nästa år</option><option value="future" '+(t.timeFrame==='future'?'selected':'')+'>Framtiden</option><option value="sometime" '+(t.timeFrame==='sometime'?'selected':'')+'>Någon gång</option></select><label class="form-lbl" style="margin-top:10px">Anteckning</label><input type="text" class="task-note-input" id="editTaskNote" value="'+esc(t.note||'')+'" placeholder="Anteckning (valfritt)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Länk</label><input type="text" class="task-link-input" id="editTaskLink" value="'+esc(t.link||'')+'" placeholder="Länk (t.ex. https://...)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Påminnelse</label><input type="datetime-local" class="reminder-input" id="editTaskReminder" value="'+(t.reminder?t.reminder.slice(0,16):'')+'" style="margin-top:6px"><div class="email-toggle-row" style="margin-top:10px" onclick="if(event.target.tagName!==\'INPUT\'){document.getElementById(\'editTaskEmailToggle\').checked=!document.getElementById(\'editTaskEmailToggle\').checked}"><input type="checkbox" id="editTaskEmailToggle" '+(t.email?'checked':'')+'><label onclick="event.stopPropagation()"><i class="fas fa-envelope"></i> Skicka e-postpåminnelse till <span class="etr-addr">'+FIXED_REMINDER_EMAIL+'</span></label></div></div><div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeEditTask()">Avbryt</button><button class="modal-btn" style="background:var(--emerald);color:#fff" onclick="saveEditTask('+id+')"><i class="fas fa-save"></i> Spara ändringar</button></div></div>';
+
+  document.body.appendChild(overlay);
+  document.getElementById('editTaskText').focus();
+}
+
+function closeEditTask(){
+  const overlay = document.getElementById('editTaskOverlay');
+  if(overlay) overlay.remove();
+}
+
+function saveEditTask(id){
+  const t = tasks.find(x => x.id === id);
+  if(!t) return;
+
+  const text = document.getElementById('editTaskText').value.trim();
+  if(!text){ toast('Ange en uppgift','error'); return; }
+
+  t.text = text;
+  t.type = document.getElementById('editTaskType').value;
+  t.timeFrame = document.getElementById('editTaskTimeFrame').value;
+  t.note = document.getElementById('editTaskNote').value.trim();
+  t.link = document.getElementById('editTaskLink').value.trim();
+
+  const emailEnabled = document.getElementById('editTaskEmailToggle').checked;
+  t.email = emailEnabled ? FIXED_REMINDER_EMAIL : '';
+
+  const reminderVal = document.getElementById('editTaskReminder').value;
+  if(reminderVal){
+    t.reminder = new Date(reminderVal).toISOString();
+    t.reminded = false;
+  } else {
+    t.reminder = null;
+    t.reminded = false;
+  }
+
+  saveData();
+  renderDetail();
+  closeEditTask();
+  toast('✅ Uppgift uppdaterad!');
+}
+
+// ===== PDF EXPORT FUNCTIONS =====
+function generatePDFHTML(title, items, showPerson){
+  const now = new Date().toLocaleDateString('sv-SE', {year:'numeric',month:'long',day:'numeric'});
+  let html = '<div class="pdf-header"><h2>📋 '+esc(title)+'</h2><p>Genererad: '+now+'</p><p style="font-size:13px;color:#A89FCE;">'+items.length+' uppgifter totalt</p></div>';
+  if(items.length === 0){
+    html += '<div style="text-align:center;padding:40px 20px;color:#A89FCE;">Inga uppgifter att visa</div>';
+  } else {
+    const grouped = {};
+    items.forEach(item => {
+      const key = item.timeFrame || 'sometime';
+      if(!grouped[key]) grouped[key] = [];
+      grouped[key].push(item);
+    });
+    TIME_ORDER.forEach(tf => {
+      if(grouped[tf] && grouped[tf].length > 0){
+        html += '<div style="margin-bottom:16px;"><div style="font-weight:800;color:#7168A0;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0;border-bottom:1px solid #E4DEFC;">'+TIME_LABELS[tf]+' ('+grouped[tf].length+')</div>';
+        grouped[tf].forEach(item => {
+          const personLabel = item.person!=='all' ? (personLabels[item.person]||item.person) : null;
+          const pcolor = colorMap[item.person] || '#999';
+          const hasNote = item.note && item.note.trim() !== '';
+          const hasLink = item.link && item.link.trim() !== '';
+          html += '<div class="pdf-task-item"><div class="pdf-check '+(item.completed?'':'empty')+'">'+(item.completed?'✅':'⬜')+'</div><div style="flex:1;"><div class="pdf-text '+(item.completed?'done':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div style="font-size:13px;color:#7168A0;margin-top:4px;"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div style="font-size:13px;color:#6C47E8;margin-top:4px;"><i class="fas fa-link"></i> <a href="'+esc(item.link)+'" style="color:#6C47E8;">'+esc(item.link)+'</a></div>' : '')+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"><span class="pdf-tag">'+(TIME_LABELS[item.timeFrame]||'Någon gång')+'</span>'+(showPerson && personLabel ? '<span class="pdf-person" style="background:'+pcolor+'">'+esc(personLabel)+'</span>' : '')+(item.type==='shopping' ? '<span class="pdf-tag">🛒</span>' : '')+(item.reminder ? '<span class="pdf-tag">🔔 '+new Date(item.reminder).toLocaleDateString('sv-SE')+'</span>' : '')+'</div></div></div>';
+        });
+        html += '</div>';
+      }
+    });
+  }
+  html += '<div class="pdf-footer">Familjens Planerare · Genererad '+now+'</div>';
+  return html;
+}
+
+function exportAllPDF(){
+  const title = 'Alla - Familjens planering';
+  const items = tasks;
+  pdfData = { title, items, showPerson: true };
+  showPDFPreview(title, items, true);
+}
+
+function exportPersonPDF(){
+  const label = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
+  const title = label+' - Familjens planering';
+  const items = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
+  pdfData = { title, items, showPerson: false };
+  showPDFPreview(title, items, false);
+}
+
+function showPDFPreview(title, items, showPerson){
+  const container = document.getElementById('pdfContent');
+  container.innerHTML = generatePDFHTML(title, items, showPerson);
+  document.getElementById('pdfModal').classList.remove('h');
+  tempPDFData = { title, items, showPerson, html: container.innerHTML };
+}
+
+function closePDF(){
+  document.getElementById('pdfModal').classList.add('h');
+  document.getElementById('pdfContent').innerHTML = '';
+  tempPDFData = null;
+}
+
+function downloadPDF(){
+  if(!pdfData) return;
+  const element = document.getElementById('pdfContent');
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: pdfData.title.replace(/[^a-zA-Z0-9åäöÅÄÖ\- ]/g, '').trim()+'.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+  toast('Genererar PDF...');
+  html2pdf().set(opt).from(element).save().then(() => {
+    toast('✅ PDF klar!');
+  }).catch(err => {
+    console.error(err);
+    toast('❌ Kunde inte generera PDF','error');
+  });
+}
+
+function savePDFToApp(){
+  if(!tempPDFData) return;
+  const id = Date.now();
+  const pdfEntry = {
+    id: id, title: tempPDFData.title, items: tempPDFData.items,
+    showPerson: tempPDFData.showPerson, savedAt: new Date().toISOString(),
+    html: tempPDFData.html
+  };
+  savedPDFs.push(pdfEntry);
+  localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+  renderSavedPDFs();
+  toast('✅ PDF sparad i appen!');
+  closePDF();
+}
+
+function renderSavedPDFs(){
+  const container = document.getElementById('savedPdfList');
+  if(!savedPDFs.length){
+    container.innerHTML = '<div class="pdf-empty">Inga sparade PDF-filer ännu</div>';
+    return;
+  }
+  container.innerHTML = savedPDFs.slice().reverse().map(pdf => '<div class="pdf-card"><div class="pdf-header"><div><div class="pdf-title"><i class="fas fa-file-pdf" style="color:var(--rose)"></i> '+esc(pdf.title)+'</div><div class="pdf-meta">'+new Date(pdf.savedAt).toLocaleDateString('sv-SE')+' · '+pdf.items.length+' uppgifter</div></div><div class="pdf-actions"><button class="print-btn" onclick="printSavedPDF('+pdf.id+')"><i class="fas fa-print"></i> Skriv ut</button><button class="delete-pdf-btn" onclick="deleteSavedPDF('+pdf.id+')"><i class="fas fa-trash"></i></button></div></div></div>').join('');
+}
+
+function printSavedPDF(id){
+  const pdf = savedPDFs.find(p => p.id === id);
+  if(!pdf) return;
+  const win = window.open('', '_blank');
+  if(win){
+    win.document.write('<html><head><title>'+pdf.title+'</title><style>body{font-family:\'Nunito\',sans-serif;padding:20px;background:#fff;color:#1E1535;max-width:800px;margin:0 auto}.pdf-header{padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px}.pdf-header h2{font-size:24px;color:#1E1535;margin:0}.pdf-header p{color:#7168A0;font-size:14px;margin:4px 0}.pdf-task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8}.pdf-check{font-size:18px;flex-shrink:0}.pdf-text{font-weight:700;color:#1E1535;flex:1}.pdf-text.done{text-decoration:line-through;color:#A89FCE}.pdf-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0}.pdf-person{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}.pdf-footer{text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px}@media print{body{padding:0}.pdf-header{background:#f5f3ff}}</style></head><body>'+pdf.html+'<script>window.onload=function(){window.print();}<\/script></body></html>');
+    win.document.close();
+  }
+}
+
+function deleteSavedPDF(id){
+  if(confirm('Ta bort den sparade PDF-filen?')){
+    savedPDFs = savedPDFs.filter(p => p.id !== id);
+    localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+    renderSavedPDFs();
+    toast('PDF borttagen');
+  }
+}
+
+function openTrash(){renderTrashModal();document.getElementById('trashModal').classList.remove('h');}
+function closeTrash(){document.getElementById('trashModal').classList.add('h');}
+function renderTrashModal(){
+  const b=document.getElementById('trashBody');
+  updateTrashBdg();
+  if(!trash.length){b.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fas fa-trash-can"></i></div><div class="empty-text">Papperskorgen är tom</div></div>';return;}
+  b.innerHTML=trash.slice().reverse().map(item=>'<div class="trash-item"><div class="trash-dot" style="background:'+(item.type==='shopping'?'var(--emerald)':'var(--primary)')+'"></div><div class="trash-text">'+esc(item.text)+'</div><div class="trash-acts"><button class="trash-act restore" onclick="restoreFromTrash('+item.id+')"><i class="fas fa-rotate-left"></i></button><button class="trash-act del" onclick="delPerm('+item.id+')"><i class="fas fa-trash"></i></button></div></div>').join('');
+}
+function updateTrashBdg(){const b=document.getElementById('trashBdg');b.textContent=trash.length;b.classList.toggle('h',trash.length===0);}
+function restoreFromTrash(id){const idx=trash.findIndex(t=>t.id===id);if(idx>-1){const t=trash.splice(idx,1)[0];delete t.deletedAt;t.completed=false;tasks.push(t);saveData();renderTrashModal();renderDetail();renderCards();toast('Återställd!');}}
+function delPerm(id){trash=trash.filter(t=>t.id!==id);saveData();renderTrashModal();toast('Raderad permanent');}
+function emptyTrash(){if(confirm('Töm hela papperskorgen?')){trash=[];saveData();renderTrashModal();toast('Papperskorg tömd');}}
+
+function openNotif(){
+  const b=document.getElementById('notifBody');
+  if(!notifications.length){b.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fas fa-bell-slash"></i></div><div class="empty-text">Inga påminnelser</div></div>';}
+  else b.innerHTML=notifications.slice().reverse().map(n=>'<div class="notif-item"><div class="notif-ico"><i class="fas fa-bell"></i></div><div><div style="font-size:14px;font-weight:700;color:var(--text)">'+esc(n.text)+'</div><div style="font-size:12px;color:var(--text3);margin-top:2px">'+new Date(n.time).toLocaleString('sv-SE')+'</div></div></div>').join('');
+  document.getElementById('notifModal').classList.remove('h');
+  notifications.forEach(n=>n.read=true); updateNotifBdg();
+}
+function closeNotif(){document.getElementById('notifModal').classList.add('h');}
+function updateNotifBdg(){const b=document.getElementById('notifBdg');const u=notifications.filter(n=>!n.read).length;b.textContent=u;b.classList.toggle('h',u===0);}
+function checkReminders(){
+  const now=new Date();
+  tasks.forEach(t=>{
+    if(t.reminder&&!t.reminded&&!t.completed&&new Date(t.reminder)<=now){
+      t.reminded=true;
+      notifications.push({id:Date.now()+Math.random(),text:t.text,time:now.toISOString(),person:t.person});
+      if('Notification' in window&&Notification.permission==='granted')new Notification('Påminnelse!',{body:t.text});
+      toast('🔔 '+t.text,'reminder');
+      // Skicka e-postpåminnelse om kryssrutan var ikryssad för uppgiften
+      if(t.email && t.email.includes('@')){
+        sendEmailReminder(t);
+      }
+    }
+  });
+  updateNotifBdg(); saveData();
+}
+
+// ===== E-POSTPÅMINNELSE VIA EMAILJS (ingen server behövs) =====
+async function sendEmailReminder(task){
+  if(!window.emailjs){
+    console.log('EmailJS är inte laddat — kan inte skicka e-post');
+    return;
+  }
+  if(EMAILJS_TEMPLATE_ID === 'DIN_TEMPLATE_ID' || EMAILJS_PUBLIC_KEY === 'DIN_PUBLIC_KEY'){
+    console.log('EmailJS är inte färdigkonfigurerat — fyll i Template ID och Public Key i koden');
+    return;
+  }
+  const personName = task.person !== 'all' ? (personLabels[task.person] || task.person) : 'Familjens Planerare';
+  const timeLabel = TIME_LABELS[task.timeFrame] || 'Någon gång';
+
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: task.email,
+      subject: '🔔 Påminnelse: ' + task.text,
+      task_text: task.text,
+      task_note: task.note || '',
+      task_type: task.type === 'shopping' ? '🛒 Inköp' : '📋 Uppgift',
+      time_frame: timeLabel,
+      person: personName,
+      reminder_time: new Date(task.reminder).toLocaleString('sv-SE')
+    });
+    toast('📧 E-postpåminnelse skickad!');
+    addSyncLog('E-postpåminnelse skickad till ' + task.email, 'success');
+  }catch(e){
+    console.error('Kunde inte skicka e-post:', e);
+    addSyncLog('E-postfel: ' + (e && e.text ? e.text : e), 'error');
+  }
+}
+
+// ===== MANUELLT TESTMAIL =====
+async function sendTestEmail(){
+  if(!window.emailjs){ toast('EmailJS är inte laddat','error'); return; }
+  if(EMAILJS_TEMPLATE_ID === 'DIN_TEMPLATE_ID' || EMAILJS_PUBLIC_KEY === 'DIN_PUBLIC_KEY'){
+    toast('Fyll i Template ID och Public Key i koden (EMAILJS_TEMPLATE_ID / EMAILJS_PUBLIC_KEY) först','error');
+    return;
+  }
+  toast('Skickar testmail...');
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: FIXED_REMINDER_EMAIL,
+      subject: '✅ Test från Familjens Planerare',
+      task_text: 'Detta är ett testmail från din planerare!',
+      task_note: 'Om du ser detta fungerar e-postpåminnelser.',
+      task_type: '📋 Test',
+      time_frame: 'Nu',
+      person: 'Familjens Planerare',
+      reminder_time: new Date().toLocaleString('sv-SE')
+    });
+    toast('✅ Testmail skickat till ' + FIXED_REMINDER_EMAIL);
+    addSyncLog('Testmail skickat till ' + FIXED_REMINDER_EMAIL, 'success');
+  }catch(e){
+    toast('❌ Kunde inte skicka: ' + (e && e.text ? e.text : e.message || e),'error');
+    addSyncLog('Testmail misslyckades: ' + (e && e.text ? e.text : e), 'error');
+  }
+}
+
+function saveData(){
+  localStorage.setItem('familyTasks',JSON.stringify(tasks));
+  localStorage.setItem('familyTrash',JSON.stringify(trash));
+  localStorage.setItem('familyScore',score);
+}
+function savePersons(){
+  localStorage.setItem('familyPersons',JSON.stringify(persons));
+  localStorage.setItem('familyPersonLabels',JSON.stringify(personLabels));
+}
+function saveAndConfirm(){
+  saveData();
+  savePersons();
+  toast('✅ Sparat!');
+}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+let toastT;
+function toast(msg,type='success'){
+  const el=document.getElementById('toast'),ic=document.getElementById('toastIcon');
+  document.getElementById('toastMsg').textContent=msg;
+  ic.className=type==='error'?'fas fa-exclamation-circle':type==='reminder'?'fas fa-bell':'fas fa-check-circle';
+  ic.style.color=type==='error'?'var(--rose)':type==='reminder'?'var(--amber)':'var(--emerald)';
+  el.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),3000);
+}
+function spawnConfetti(){
+  const em=['🎉','⭐','🎊','✨','💪','🏆','🌈'];
+  for(let i=0;i<18;i++){const el=document.createElement('div');el.className='cp';el.textContent=em[Math.floor(Math.random()*em.length)];el.style.cssText='left:'+Math.random()*100+'vw;top:-10px;font-size:'+(1.4+Math.random()*1.8)+'rem;animation-duration:'+(1.8+Math.random()*1.5)+'s';document.body.appendChild(el);setTimeout(()=>el.remove(),3500);}
+}
+
+// ===== UPLOAD PDF =====
+function handlePDFUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  toast('PDF-läsning: Välj person att importera till');
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = '<div style="background:var(--surface);border-radius:var(--r);padding:24px;max-width:400px;width:100%;text-align:center;border:1.5px solid var(--border)"><h3 style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px"><i class="fas fa-upload" style="color:var(--primary)"></i> Importera uppgifter</h3><p style="color:var(--text2);font-size:14px;margin-bottom:16px">Välj vilken person uppgifterna ska tillhöra</p><select id="importPersonSelect" style="width:100%;height:48px;border-radius:var(--rsm);border:2px solid var(--border);padding:0 14px;font-family:var(--font);font-size:15px;font-weight:700;color:var(--text);background:var(--surface2);margin-bottom:12px"><option value="all">Alla</option>'+persons.map(p => '<option value="'+p+'">'+esc(personLabels[p]||p)+'</option>').join('')+'</select><div style="display:flex;gap:10px"><button onclick="this.closest(\'div[style]\').remove()" style="flex:1;height:44px;border-radius:var(--rsm);border:1.5px solid var(--border);background:var(--surface2);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:var(--text2)">Avbryt</button><button onclick="importTasksToPerson(this)" data-file="'+file.name+'" style="flex:1;height:44px;border-radius:var(--rsm);border:none;background:var(--primary);font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;color:#fff">Importera</button></div><p style="font-size:12px;color:var(--text3);margin-top:12px">OBS: PDF-innehåll kan inte tolkas automatiskt. Detta är en demonstration.</p></div>';
+  document.body.appendChild(overlay);
+  event.target.value = '';
+}
+
+function importTasksToPerson(btn){
+  const overlay = btn.closest('div[style]');
+  const select = document.getElementById('importPersonSelect');
+  const targetPerson = select.value;
+  const personLabel = targetPerson === 'all' ? 'Alla' : (personLabels[targetPerson]||targetPerson);
+  const demoImportedTasks = [
+    { text: 'Exempeluppgift från PDF', type: 'todo', timeFrame: 'today', note: 'Importerad från PDF', link: '' },
+    { text: 'Kontrollera dokument', type: 'todo', timeFrame: 'week', note: 'Importerad från PDF', link: '' },
+    { text: 'Följ upp ärenden', type: 'shopping', timeFrame: 'thisyear', note: 'Importerad från PDF', link: '' }
+  ];
+  let added = 0;
+  demoImportedTasks.forEach(t => {
+    tasks.push({
+      id: Date.now() + added, text: t.text, type: t.type, timeFrame: t.timeFrame,
+      person: targetPerson, reminder: null, reminded: false, completed: false,
+      createdAt: new Date().toISOString(), note: t.note || '', link: t.link || ''
+    });
+    added++;
+  });
+  saveData();
+  renderCards();
+  renderDetail();
+  overlay.remove();
+  toast('✅ '+added+' uppgifter importerade till '+personLabel+'!');
+}
+
+// ===== SYNC FUNCTIONS =====
+function addSyncLog(message, type='info'){
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('sv-SE');
+  syncLogEntries.push({time: timeStr, message, type});
+  if(syncLogEntries.length > 50) syncLogEntries.shift();
+  renderSyncLog();
+}
+
+function renderSyncLog(){
+  const logEl = document.getElementById('syncLog');
+  const settingsLogEl = document.getElementById('syncSettingsLog');
+  const html = syncLogEntries.map(e => '<div class="log-entry"><span class="log-time">['+e.time+']</span> <span class="log-'+e.type+'">'+esc(e.message)+'</span></div>').join('');
+  if(logEl) logEl.innerHTML = html;
+  if(settingsLogEl) settingsLogEl.innerHTML = html;
+}
+
+function updateSyncUI(){
+  const dot = document.getElementById('syncStatusDot');
+  const text = document.getElementById('syncStatusText');
+  const logEl = document.getElementById('syncLog');
+  if(!dot || !text) return;
+
+  if(supabaseUrl && supabaseKey && syncKey){
+    dot.className = 'sync-status-dot offline';
+    text.textContent = 'Konfigurerad – klicka "Inställningar" för att synka';
+    if(logEl) logEl.classList.remove('h');
+  } else {
+    dot.className = 'sync-status-dot offline';
+    text.textContent = 'Offline – endast lokal lagring';
+    if(logEl) logEl.classList.add('h');
+  }
+}
+
+function openSyncSettings(){
+  document.getElementById('supabaseUrl').value = supabaseUrl;
+  document.getElementById('supabaseKey').value = supabaseKey;
+  document.getElementById('syncKey').value = syncKey;
+  document.getElementById('autoSyncToggle').classList.toggle('on', autoSync);
+  document.getElementById('syncOnStartToggle').classList.toggle('on', syncOnStart);
+  document.getElementById('backupOnSyncToggle').classList.toggle('on', backupOnSync);
+  renderSyncLog();
+  document.getElementById('syncModal').classList.remove('h');
+}
+
+function closeSyncSettings(){
+  document.getElementById('syncModal').classList.add('h');
+}
+
+function toggleAutoSync(){
+  autoSync = !autoSync;
+  localStorage.setItem('autoSync', autoSync);
+  document.getElementById('autoSyncToggle').classList.toggle('on', autoSync);
+  if(autoSync && supabaseUrl && supabaseKey && syncKey){
+    startAutoSync();
+    addSyncLog('Automatisk synk aktiverad', 'success');
+  } else {
+    stopAutoSync();
+    addSyncLog('Automatisk synk avaktiverad', 'info');
+  }
+}
+
+function toggleSyncOnStart(){
+  syncOnStart = !syncOnStart;
+  localStorage.setItem('syncOnStart', syncOnStart);
+  document.getElementById('syncOnStartToggle').classList.toggle('on', syncOnStart);
+}
+
+function toggleBackupOnSync(){
+  backupOnSync = !backupOnSync;
+  localStorage.setItem('backupOnSync', backupOnSync);
+  document.getElementById('backupOnSyncToggle').classList.toggle('on', backupOnSync);
+}
+
+function saveSupabaseConfig(){
+  supabaseUrl = document.getElementById('supabaseUrl').value.trim();
+  supabaseKey = document.getElementById('supabaseKey').value.trim();
+  syncKey = document.getElementById('syncKey').value.trim();
+  if(!supabaseUrl || !supabaseKey || !syncKey){
+    toast('Fyll i alla fält','error');
+    addSyncLog('Saknade fält i konfigurationen', 'error');
+    return;
+  }
+  localStorage.setItem('supabaseUrl', supabaseUrl);
+  localStorage.setItem('supabaseKey', supabaseKey);
+  localStorage.setItem('syncKey', syncKey);
+  toast('✅ Inställningar sparade!');
+  addSyncLog('Supabase-konfiguration sparad', 'success');
+  updateSyncUI();
+  if(autoSync) startAutoSync();
+}
+
+function clearSupabaseConfig(){
+  if(!confirm('Rensa alla molnsynk-inställningar?')) return;
+  supabaseUrl = ''; supabaseKey = ''; syncKey = '';
+  localStorage.removeItem('supabaseUrl');
+  localStorage.removeItem('supabaseKey');
+  localStorage.removeItem('syncKey');
+  stopAutoSync();
+  document.getElementById('supabaseUrl').value = '';
+  document.getElementById('supabaseKey').value = '';
+  document.getElementById('syncKey').value = '';
+  toast('Molnsynk-inställningar rensade');
+  addSyncLog('Molnsynk-inställningar rensade', 'info');
+  updateSyncUI();
+}
+
+function startAutoSync(){
+  stopAutoSync();
+  if(supabaseUrl && supabaseKey && syncKey){
+    syncIntervalId = setInterval(()=>{
+      pushToSupabase(true);
+    }, 30000);
+    addSyncLog('Automatisk synk startad (var 30:e sekund)', 'success');
+  }
+}
+
+function stopAutoSync(){
+  if(syncIntervalId){
+    clearInterval(syncIntervalId);
+    syncIntervalId = null;
+    addSyncLog('Automatisk synk stoppad', 'info');
+  }
+}
+
+// ===== SUPABASE REST API FUNCTIONS =====
+async function testSupabaseConnection(){
+  const url = document.getElementById('supabaseUrl').value.trim();
+  const key = document.getElementById('supabaseKey').value.trim();
+  if(!url || !key){toast('Fyll i URL och Key','error');return;}
+  addSyncLog('Testar anslutning...', 'info');
+  try{
+    const response = await fetch(url+'/rest/v1/', {
+      method: 'GET',
+      headers: {'apikey': key, 'Authorization': 'Bearer '+key}
+    });
+    if(response.ok){
+      toast('✅ Anslutning lyckades!');
+      addSyncLog('Anslutning till Supabase lyckades', 'success');
+    } else {
+      toast('❌ Anslutning misslyckades','error');
+      addSyncLog('Anslutning misslyckades: HTTP '+response.status, 'error');
+    }
+  }catch(e){
+    toast('❌ Anslutningsfel','error');
+    addSyncLog('Anslutningsfel: '+e.message, 'error');
+  }
+}
+
+async function pushToSupabase(silent=false){
+  if(!supabaseUrl || !supabaseKey || !syncKey){
+    if(!silent) toast('Konfigurera Supabase först','error');
+    return;
+  }
+  if(backupOnSync) exportLocalBackup(true);
+
+  const payload = {
+    sync_key: syncKey,
+    data: JSON.stringify({tasks, trash, persons, personLabels, score, savedPDFs}),
+    updated_at: new Date().toISOString()
+  };
+
+  if(!silent) addSyncLog('Skickar data till molnet...', 'info');
+
+  try{
+    // Try to update existing row first
+    const updateResp = await fetch(supabaseUrl+'/rest/v1/family_planner?sync_key=eq.'+encodeURIComponent(syncKey), {
+      method: 'PATCH',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': 'Bearer '+supabaseKey,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if(updateResp.ok){
+      if(!silent){
+        toast('✅ Data synkad till molnet!');
+        addSyncLog('Data skickad till molnet', 'success');
+      }
+      updateSyncStatus('online');
+    } else if(updateResp.status === 404 || updateResp.status === 204){
+      // Row doesn't exist, insert new
+      const insertResp = await fetch(supabaseUrl+'/rest/v1/family_planner', {
+        method: 'POST',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': 'Bearer '+supabaseKey,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      });
+      if(insertResp.ok){
+        if(!silent){
+          toast('✅ Data skapad i molnet!');
+          addSyncLog('Ny data skapad i molnet', 'success');
+        }
+        updateSyncStatus('online');
+      } else {
+        throw new Error('Insert failed: '+insertResp.status);
+      }
+    } else {
+      throw new Error('Update failed: '+updateResp.status);
+    }
+  }catch(e){
+    if(!silent){
+      toast('❌ Synk misslyckades','error');
+      addSyncLog('Synk-fel: '+e.message, 'error');
+    }
+    updateSyncStatus('error');
+  }
+}
+
+async function pullFromSupabase(silent=false){
+  if(!supabaseUrl || !supabaseKey || !syncKey){
+    if(!silent) toast('Konfigurera Supabase först','error');
+    return;
+  }
+  if(!silent) addSyncLog('Hämtar data från molnet...', 'info');
+
+  try{
+    const response = await fetch(supabaseUrl+'/rest/v1/family_planner?sync_key=eq.'+encodeURIComponent(syncKey)+'&select=*&order=updated_at.desc&limit=1', {
+      method: 'GET',
+      headers: {'apikey': supabaseKey, 'Authorization': 'Bearer '+supabaseKey}
+    });
+
+    if(!response.ok) throw new Error('HTTP '+response.status);
+
+    const data = await response.json();
+    if(data && data.length > 0){
+      const remoteData = JSON.parse(data[0].data);
+      if(remoteData.tasks) tasks = remoteData.tasks;
+      if(remoteData.trash) trash = remoteData.trash;
+      if(remoteData.persons) persons = remoteData.persons;
+      if(remoteData.personLabels) personLabels = remoteData.personLabels;
+      if(remoteData.score !== undefined) score = remoteData.score;
+      if(remoteData.savedPDFs) savedPDFs = remoteData.savedPDFs;
+
+      saveData();
+      savePersons();
+      localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+
+      buildColorMap();
+      renderCards();
+      renderSavedPDFs();
+      updateTrashBdg();
+
+      if(!silent){
+        toast('✅ Data hämtad från molnet!');
+        addSyncLog('Data hämtad från molnet ('+tasks.length+' uppgifter)', 'success');
+      }
+      updateSyncStatus('online');
+    } else {
+      if(!silent){
+        toast('Ingen data hittades i molnet');
+        addSyncLog('Ingen data hittades för sync_key', 'info');
+      }
+    }
+  }catch(e){
+    if(!silent){
+      toast('❌ Kunde inte hämta data','error');
+      addSyncLog('Hämtningsfel: '+e.message, 'error');
+    }
+    updateSyncStatus('error');
+  }
+}
+
+function updateSyncStatus(status){
+  const dot = document.getElementById('syncStatusDot');
+  const text = document.getElementById('syncStatusText');
+  if(!dot || !text) return;
+  if(status === 'online'){
+    dot.className = 'sync-status-dot online';
+    text.textContent = 'Online – synkad med molnet';
+  } else if(status === 'error'){
+    dot.className = 'sync-status-dot error';
+    text.textContent = 'Fel – kolla inställningarna';
+  } else {
+    dot.className = 'sync-status-dot offline';
+    text.textContent = 'Offline – endast lokal lagring';
+  }
+}
+
+// ===== LOCAL BACKUP FUNCTIONS =====
+function exportLocalBackup(silent=false){
+  const backup = {
+    version: '2.0',
+    exportedAt: new Date().toISOString(),
+    tasks, trash, persons, personLabels, score, savedPDFs,
+    settings: {night, calMode, pcMode: localStorage.getItem('pcMode')==='true'}
+  };
+  const jsonStr = JSON.stringify(backup, null, 2);
+  const blob = new Blob([jsonStr], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'familjens-planerare-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  if(!silent){
+    toast('✅ Backup exporterad!');
+    addSyncLog('Lokal backup exporterad', 'success');
+  }
+}
+
+function importLocalBackup(){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event){
+      try{
+        const backup = JSON.parse(event.target.result);
+        if(!backup.tasks){toast('Ogiltig backup-fil','error');return;}
+        if(!confirm('Detta kommer att ersätta all befintlig data. Fortsätta?')) return;
+        tasks = backup.tasks || [];
+        trash = backup.trash || [];
+        persons = backup.persons || ['person1','person2','person3'];
+        personLabels = backup.personLabels || {person1:'Person 1',person2:'Person 2',person3:'Person 3'};
+        score = backup.score || 0;
+        savedPDFs = backup.savedPDFs || [];
+        if(backup.settings){
+          if(backup.settings.night !== undefined){night = backup.settings.night;localStorage.setItem('nightMode',night);applyNight();}
+          if(backup.settings.calMode !== undefined){calMode = backup.settings.calMode;localStorage.setItem('calMode',calMode);}
+          if(backup.settings.pcMode !== undefined){localStorage.setItem('pcMode',backup.settings.pcMode?'true':'false');applyPcMode(backup.settings.pcMode);}
+        }
+        saveData();
+        savePersons();
+        localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+        buildColorMap();
+        renderCards();
+        renderSavedPDFs();
+        updateTrashBdg();
+        toast('✅ Backup importerad!');
+        addSyncLog('Lokal backup importerad ('+tasks.length+' uppgifter)', 'success');
+      }catch(err){
+        toast('❌ Kunde inte läsa filen','error');
+        addSyncLog('Import-fel: '+err.message, 'error');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+</script>
+</body>
+</html>
