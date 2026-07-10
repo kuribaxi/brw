@@ -1861,9 +1861,26 @@ async function testSupabaseConnection(){
     if(response.ok){
       toast('✅ Anslutning lyckades!');
       addSyncLog('Anslutning till Supabase lyckades', 'success');
+      // Testa även att tabellen family_planner faktiskt går att läsa (finns + RLS tillåter det)
+      try{
+        const tableResp = await fetch(url+'/rest/v1/family_planner?limit=1', {
+          method: 'GET',
+          headers: {'apikey': key, 'Authorization': 'Bearer '+key}
+        });
+        if(tableResp.ok){
+          addSyncLog('Tabellen "family_planner" gick att läsa ✔', 'success');
+        } else {
+          const errText = await tableResp.text().catch(()=> '');
+          addSyncLog('OBS: Kunde inte läsa tabellen "family_planner" (HTTP '+tableResp.status+'). '+
+            'Kontrollera att tabellen finns och att Row Level Security tillåter läsning/skrivning. '+errText, 'error');
+        }
+      }catch(e2){
+        addSyncLog('Kunde inte kontrollera tabellen: '+e2.message, 'error');
+      }
     } else {
+      const errText = await response.text().catch(()=> '');
       toast('❌ Anslutning misslyckades','error');
-      addSyncLog('Anslutning misslyckades: HTTP '+response.status, 'error');
+      addSyncLog('Anslutning misslyckades: HTTP '+response.status+' '+errText, 'error');
     }
   }catch(e){
     toast('❌ Anslutningsfel','error');
@@ -1887,26 +1904,35 @@ async function pushToSupabase(silent=false){
   if(!silent) addSyncLog('Skickar data till molnet...', 'info');
 
   try{
-    // Try to update existing row first
+    // Försök uppdatera en befintlig rad. Vi ber om "return=representation" så vi
+    // faktiskt FÅR TILLBAKA vilka rader som träffades - annars går det inte att
+    // skilja på "uppdaterade en rad" och "träffade noll rader" (båda gav tidigare 204/ok).
     const updateResp = await fetch(supabaseUrl+'/rest/v1/family_planner?sync_key=eq.'+encodeURIComponent(syncKey), {
       method: 'PATCH',
       headers: {
         'apikey': supabaseKey,
         'Authorization': 'Bearer '+supabaseKey,
         'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
+        'Prefer': 'return=representation'
       },
       body: JSON.stringify(payload)
     });
 
-    if(updateResp.ok){
+    if(!updateResp.ok){
+      throw new Error('Update failed: HTTP '+updateResp.status+' - kontrollera att tabellen "family_planner" finns och att Row Level Security tillåter din anon-nyckel att skriva.');
+    }
+
+    const updatedRows = await updateResp.json();
+
+    if(Array.isArray(updatedRows) && updatedRows.length > 0){
+      // Raden fanns redan och uppdaterades.
       if(!silent){
         toast('✅ Data synkad till molnet!');
-        addSyncLog('Data skickad till molnet', 'success');
+        addSyncLog('Data uppdaterad i molnet', 'success');
       }
       updateSyncStatus('online');
-    } else if(updateResp.status === 404 || updateResp.status === 204){
-      // Row doesn't exist, insert new
+    } else {
+      // Ingen rad matchade sync_key -> skapa en ny rad istället.
       const insertResp = await fetch(supabaseUrl+'/rest/v1/family_planner', {
         method: 'POST',
         headers: {
@@ -1920,14 +1946,13 @@ async function pushToSupabase(silent=false){
       if(insertResp.ok){
         if(!silent){
           toast('✅ Data skapad i molnet!');
-          addSyncLog('Ny data skapad i molnet', 'success');
+          addSyncLog('Ny rad skapad i molnet', 'success');
         }
         updateSyncStatus('online');
       } else {
-        throw new Error('Insert failed: '+insertResp.status);
+        const errText = await insertResp.text().catch(()=> '');
+        throw new Error('Insert failed: HTTP '+insertResp.status+' '+errText);
       }
-    } else {
-      throw new Error('Update failed: '+updateResp.status);
     }
   }catch(e){
     if(!silent){
