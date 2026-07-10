@@ -1876,7 +1876,7 @@ async function pushToSupabase(silent=false){
     if(!silent) toast('Konfigurera Supabase först','error');
     return;
   }
-  if(backupOnSync) exportLocalBackup(true);
+  if(backupOnSync) saveLocalBackupSnapshot();
 
   const payload = {
     sync_key: syncKey,
@@ -2009,13 +2009,18 @@ function updateSyncStatus(status){
 }
 
 // ===== LOCAL BACKUP FUNCTIONS =====
-function exportLocalBackup(silent=false){
-  const backup = {
+function buildBackupObject(){
+  return {
     version: '2.0',
     exportedAt: new Date().toISOString(),
     tasks, trash, persons, personLabels, score, savedPDFs,
     settings: {night, calMode, pcMode: localStorage.getItem('pcMode')==='true'}
   };
+}
+
+/* Riktig nedladdning – används bara när användaren själv klickar på "Exportera backup". */
+function exportLocalBackup(){
+  const backup = buildBackupObject();
   const jsonStr = JSON.stringify(backup, null, 2);
   const blob = new Blob([jsonStr], {type: 'application/json'});
   const url = URL.createObjectURL(blob);
@@ -2026,9 +2031,19 @@ function exportLocalBackup(silent=false){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  if(!silent){
-    toast('✅ Backup exporterad!');
-    addSyncLog('Lokal backup exporterad', 'success');
+  toast('✅ Backup exporterad!');
+  addSyncLog('Lokal backup exporterad', 'success');
+}
+
+/* Tyst bakgrunds-backup – sparas bara i webbläsarens lagring, laddar ALDRIG ner en fil.
+   Används av den automatiska synkroniseringen så den inte spammar nedladdningar. */
+function saveLocalBackupSnapshot(){
+  try{
+    const backup = buildBackupObject();
+    localStorage.setItem('lastAutoBackup', JSON.stringify(backup));
+    addSyncLog('Bakgrunds-backup sparad lokalt (ingen nedladdning)', 'info');
+  }catch(e){
+    console.error('Kunde inte spara bakgrunds-backup:', e);
   }
 }
 
