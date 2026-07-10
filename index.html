@@ -1797,7 +1797,7 @@ function toggleBackupOnSync(){
 }
 
 function saveSupabaseConfig(){
-  supabaseUrl = document.getElementById('supabaseUrl').value.trim();
+  supabaseUrl = document.getElementById('supabaseUrl').value.trim().replace(/\/+$/,'');
   supabaseKey = document.getElementById('supabaseKey').value.trim();
   syncKey = document.getElementById('syncKey').value.trim();
   if(!supabaseUrl || !supabaseKey || !syncKey){
@@ -1805,6 +1805,7 @@ function saveSupabaseConfig(){
     addSyncLog('Saknade fält i konfigurationen', 'error');
     return;
   }
+  document.getElementById('supabaseUrl').value = supabaseUrl;
   localStorage.setItem('supabaseUrl', supabaseUrl);
   localStorage.setItem('supabaseKey', supabaseKey);
   localStorage.setItem('syncKey', syncKey);
@@ -1849,40 +1850,32 @@ function stopAutoSync(){
 
 // ===== SUPABASE REST API FUNCTIONS =====
 async function testSupabaseConnection(){
-  const url = document.getElementById('supabaseUrl').value.trim();
+  const url = document.getElementById('supabaseUrl').value.trim().replace(/\/+$/,'');
   const key = document.getElementById('supabaseKey').value.trim();
   if(!url || !key){toast('Fyll i URL och Key','error');return;}
+  document.getElementById('supabaseUrl').value = url;
   addSyncLog('Testar anslutning...', 'info');
   try{
-    const response = await fetch(url+'/rest/v1/', {
+    // Vi testar direkt mot tabellen family_planner - det är den enda endpoint appen
+    // faktiskt behöver. Root-sökvägen /rest/v1/ (utan tabellnamn) kräver i Supabase
+    // nyare nyckelmodell en "secret"-nyckel även om den inte behövs för vanlig
+    // läsning/skrivning, så vi undviker den helt här.
+    const tableResp = await fetch(url+'/rest/v1/family_planner?limit=1', {
       method: 'GET',
       headers: {'apikey': key, 'Authorization': 'Bearer '+key}
     });
-    if(response.ok){
+    if(tableResp.ok){
       toast('✅ Anslutning lyckades!');
-      addSyncLog('Anslutning till Supabase lyckades', 'success');
-      // Testa även att tabellen family_planner faktiskt går att läsa (finns + RLS tillåter det)
-      try{
-        const tableResp = await fetch(url+'/rest/v1/family_planner?limit=1', {
-          method: 'GET',
-          headers: {'apikey': key, 'Authorization': 'Bearer '+key}
-        });
-        if(tableResp.ok){
-          addSyncLog('Tabellen "family_planner" gick att läsa ✔', 'success');
-        } else {
-          const errText = await tableResp.text().catch(()=> '');
-          addSyncLog('OBS: Kunde inte läsa tabellen "family_planner" (HTTP '+tableResp.status+'). '+
-            'Kontrollera att tabellen finns och att Row Level Security tillåter läsning/skrivning. '+errText, 'error');
-        }
-      }catch(e2){
-        addSyncLog('Kunde inte kontrollera tabellen: '+e2.message, 'error');
-      }
+      addSyncLog('Anslutning lyckades - tabellen "family_planner" gick att läsa ✔', 'success');
     } else {
-      const errText = await response.text().catch(()=> '');
+      const errText = await tableResp.text().catch(()=> '');
       toast('❌ Anslutning misslyckades','error');
-      addSyncLog('Anslutning misslyckades: HTTP '+response.status+' '+errText, 'error');
+      addSyncLog('Kunde inte läsa tabellen "family_planner" (HTTP '+tableResp.status+'). '+
+        'Kontrollera att tabellen finns, att nyckeln är rätt (publishable/anon, inte secret), '+
+        'och att Row Level Security tillåter läsning. '+errText, 'error');
     }
   }catch(e){
+
     toast('❌ Anslutningsfel','error');
     addSyncLog('Anslutningsfel: '+e.message, 'error');
   }
