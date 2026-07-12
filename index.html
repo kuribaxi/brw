@@ -23,10 +23,10 @@
       --font:'Nunito',sans-serif;
     }
     body.night {
-      --bg:#12102A; --surface:#1E1B3A; --surface2:#2A2550; --border:#332F5C;
-      --primary-soft:#2D2560; --emerald-soft:#0C2E22; --rose-soft:#2E121A; --amber-soft:#2C2100;
-      --text:#EDE8FC; --text2:#9B93CC; --text3:#5E5890;
-      --shadow:0 4px 24px rgba(0,0,0,0.3);
+      --bg:#211D42; --surface:#2C2761; --surface2:#373072; --border:#4B4392;
+      --primary-soft:#3E3680; --emerald-soft:#123B2C; --rose-soft:#3D1826; --amber-soft:#3C2C00;
+      --text:#F4F1FC; --text2:#BDB6E0; --text3:#8A82BE;
+      --shadow:0 4px 24px rgba(0,0,0,0.22);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s;overflow-x:hidden}
@@ -195,6 +195,7 @@
     .notif-item{display:flex;gap:12px;padding:12px;background:var(--primary-soft);border-radius:var(--rsm);margin-bottom:8px;border:1.5px solid var(--border)}
     .notif-ico{width:38px;height:38px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
     .bot-nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:var(--surface);border-top:1.5px solid var(--border);padding:8px 16px max(12px,env(safe-area-inset-bottom));display:flex;justify-content:space-around}
+    .bot-nav.hidden{display:none}
     .nav-btn{flex:1;height:52px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--text3);font-size:11px;font-weight:700;border-radius:14px;transition:color .2s,background .2s;font-family:var(--font)}
     .nav-btn i{font-size:20px}
     .nav-btn.active{color:var(--primary);background:var(--primary-soft)}
@@ -341,6 +342,38 @@
       .cal-btn{width:36px;height:36px}
       .hdr-title{font-size:14px}
       .hdr-sub{font-size:10px}
+    }
+    /* iPhone 5 / 5s / SE (1st gen) – 320px bred skärm */
+    @media (max-width:320px){
+      .hdr{padding:8px 6px}
+      .dhdr{padding:8px 6px}
+      .hdr-toprow,.dhdr-toprow{gap:5px}
+      .hdr-actions{gap:2px}
+      .hdr-title{font-size:13px}
+      .hdr-sub{font-size:9px}
+      .dhdr-name{font-size:15px}
+      .dhdr-sub{font-size:10px}
+      .date-block{padding:8px 10px}
+      .date-clock{font-size:18px}
+      .date-cal-label{font-size:9px}
+      .date-text{font-size:12px}
+      .date-redday{font-size:10px;padding:2px 7px}
+      .hdr-logo,.dhdr-avatar{width:30px;height:30px;font-size:13px;border-radius:9px}
+      .icon-btn{width:30px;height:30px;border-radius:9px}
+      .icon-btn svg{width:14px;height:14px}
+      .save-btn,.pdf-btn,.back-btn{width:30px;height:30px}
+      .cal-btn{width:30px;height:30px;font-size:14px}
+      .add-person-row input,.form-input,.reminder-input,.form-select{height:44px;font-size:14px;padding:0 10px}
+      .form-select{padding-right:30px;background-position:right 10px center}
+      .btn-add-person,.btn-add-task{height:46px;font-size:14px}
+      .form-row{grid-template-columns:1fr;gap:8px}
+      .sec-tab{font-size:13px;height:42px}
+      .task-text{font-size:14px}
+      .tag{font-size:10px;padding:2px 7px}
+      .nav-btn{font-size:10px}
+      .nav-btn i{font-size:16px}
+      .person-card .card-name{font-size:14px}
+      .toast{left:10px;right:10px;padding:10px 14px;font-size:13px}
     }
     body.locked > .page,body.locked > .bot-nav{display:none}
     .login-ov{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -570,12 +603,12 @@
       <div class="list-card"><div class="list-body" id="doneContainer"></div></div>
     </div>
   </div>
-
-  <nav class="bot-nav">
-    <button class="nav-btn active" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i>Toppen</button>
-    <button class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i>Hem</button>
-  </nav>
 </div>
+
+<nav class="bot-nav hidden" id="detailNav">
+  <button class="nav-btn active" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i>Toppen</button>
+  <button class="nav-btn" onclick="goHome()"><i class="fas fa-home"></i>Hem</button>
+</nav>
 
 <!-- ═══════ MODALS ═══════ -->
 <div class="modal-ov h" id="trashModal" onclick="if(event.target===this)closeTrash()">
@@ -1267,6 +1300,7 @@ function openDetail(pid){
   detail.classList.remove('hidden');
   setTimeout(()=>detail.classList.add('open'),10);
   detail.scrollTop=0;
+  document.getElementById('detailNav').classList.remove('hidden');
   switchTab('todo');
   renderDetail();
 }
@@ -1275,6 +1309,7 @@ function goHome(){
   const detail=document.getElementById('pageDetail');
   const home=document.getElementById('pageHome');
   detail.classList.remove('open');
+  document.getElementById('detailNav').classList.add('hidden');
   setTimeout(()=>{detail.classList.add('hidden');home.classList.remove('hidden');renderCards();renderSavedPDFs();},320);
 }
 
