@@ -509,6 +509,7 @@
           <button class="sync-btn-primary" onclick="exportLocalBackup()"><i class="fas fa-download"></i> Exportera backup</button>
           <button class="sync-btn-secondary" onclick="importLocalBackup()"><i class="fas fa-upload"></i> Importera backup</button>
           <button class="sync-btn-secondary" onclick="openSyncSettings()"><i class="fas fa-cog"></i> Inställningar</button>
+          <button class="sync-btn-secondary" onclick="openVersionHistory()"><i class="fas fa-clock-rotate-left"></i> Versionshistorik</button>
         </div>
         <div class="sync-log h" id="syncLog"></div>
       </div>
@@ -720,6 +721,24 @@
   </div>
 </div>
 
+<!-- ═══════ VERSION HISTORY MODAL ═══════ -->
+<div class="modal-ov h" id="versionModal" onclick="if(event.target===this)closeVersionHistory()">
+  <div class="modal-sheet" style="max-height:90vh">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-clock-rotate-left" style="color:var(--primary)"></i> Versionshistorik</div><button class="modal-x" onclick="closeVersionHistory()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="versionBody" style="padding:12px 16px">
+      <div style="background:var(--primary-soft);border-radius:var(--rsm);padding:12px 14px;margin-bottom:12px;border:1.5px solid var(--border);color:var(--text2);font-size:13px">
+        <i class="fas fa-info-circle"></i> Appen sparar automatiskt en ögonblicksbild av din data innan varje synk (skicka/hämta från molnet, eller import). Om något försvinner efter en synk kan du återställa en tidigare version här.
+      </div>
+      <div id="versionList"></div>
+    </div>
+    <div class="modal-ftr">
+      <button class="modal-btn mbtn-danger" onclick="clearVersionHistory()"><i class="fas fa-trash"></i> Rensa historik</button>
+      <button class="modal-btn mbtn-neutral" onclick="closeVersionHistory()">Stäng</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════ TOAST ═══════ -->
 <div class="toast" id="toast"><i id="toastIcon" class="fas fa-check-circle" style="color:var(--emerald)"></i><span id="toastMsg">OK</span></div>
 
@@ -767,6 +786,11 @@ let syncOnStart = localStorage.getItem('syncOnStart') !== 'false';
 let backupOnSync = localStorage.getItem('backupOnSync') !== 'false';
 let syncIntervalId = null;
 let syncLogEntries = [];
+
+// ===== VERSION HISTORY STATE =====
+const VERSION_HISTORY_KEY = 'familyVersionHistory';
+const VERSION_HISTORY_MAX = 20;
+let versionHistory = sl(VERSION_HISTORY_KEY, []);
 
 function buildColorMap(){
   colorMap['all'] = PERSON_COLORS[0];
@@ -1922,6 +1946,7 @@ async function pushToSupabase(silent=false){
     return;
   }
   if(backupOnSync) saveLocalBackupSnapshot();
+  saveVersionSnapshot('Innan synk till molnet (skicka)');
 
   const payload = {
     sync_key: syncKey,
@@ -2008,6 +2033,12 @@ async function pullFromSupabase(silent=false){
 
     const data = await response.json();
     if(data && data.length > 0){
+      // Spara en ögonblicksbild av DEN LOKALA datan innan den skrivs över av molnet.
+      // Detta är den vanligaste orsaken till att data "försvinner" vid synk:
+      // en annan enhet hann synka in en äldre/mindre version till molnet, och
+      // den här enheten hämtar och skriver över sin egen (nyare) lokala data.
+      saveVersionSnapshot('Innan hämtning från molnet skrev över lokal data');
+
       const remoteData = JSON.parse(data[0].data);
       if(remoteData.tasks) tasks = remoteData.tasks;
       if(remoteData.trash) trash = remoteData.trash;
@@ -2100,6 +2131,88 @@ function saveLocalBackupSnapshot(){
   }
 }
 
+// ===== VERSION HISTORY (flera ögonblicksbilder, går att bläddra & återställa) =====
+function saveVersionSnapshot(label){
+  try{
+    const snap = {
+      id: Date.now() + Math.random(),
+      time: new Date().toISOString(),
+      label: label || 'Ögonblicksbild',
+      data: {
+        tasks: JSON.parse(JSON.stringify(tasks)),
+        trash: JSON.parse(JSON.stringify(trash)),
+        persons: JSON.parse(JSON.stringify(persons)),
+        personLabels: JSON.parse(JSON.stringify(personLabels)),
+        score: score,
+        savedPDFs: JSON.parse(JSON.stringify(savedPDFs))
+      }
+    };
+    versionHistory.push(snap);
+    if(versionHistory.length > VERSION_HISTORY_MAX) versionHistory.shift();
+    localStorage.setItem(VERSION_HISTORY_KEY, JSON.stringify(versionHistory));
+  }catch(e){
+    console.error('Kunde inte spara versionshistorik:', e);
+  }
+}
+
+function openVersionHistory(){
+  renderVersionHistory();
+  document.getElementById('versionModal').classList.remove('h');
+}
+function closeVersionHistory(){
+  document.getElementById('versionModal').classList.add('h');
+}
+
+function renderVersionHistory(){
+  const c = document.getElementById('versionList');
+  if(!versionHistory.length){
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon"><i class="fas fa-clock-rotate-left"></i></div><div class="empty-text">Inga tidigare versioner ännu. En ögonblicksbild sparas automatiskt nästa gång du synkar eller importerar data.</div></div>';
+    return;
+  }
+  c.innerHTML = versionHistory.slice().reverse().map(snap => {
+    const dt = new Date(snap.time).toLocaleString('sv-SE');
+    const n = snap.data.tasks.length;
+    return '<div class="trash-item" style="align-items:flex-start"><div class="trash-dot" style="background:var(--primary);margin-top:5px"></div><div style="flex:1"><div style="font-size:14px;font-weight:800;color:var(--text)">'+esc(snap.label)+'</div><div style="font-size:12px;color:var(--text3);margin-top:2px">'+dt+' · '+n+' uppgifter</div></div><div class="trash-acts"><button class="trash-act restore" onclick="restoreVersionSnapshot('+"'"+snap.id+"'"+')" title="Återställ denna version"><i class="fas fa-rotate-left"></i></button></div></div>';
+  }).join('');
+}
+
+function restoreVersionSnapshot(id){
+  const snap = versionHistory.find(s => String(s.id) === String(id));
+  if(!snap) return;
+  if(!confirm('Återställa denna version? Din nuvarande data ersätts (en ny ögonblicksbild av det du har nu sparas först, så du kan ångra).')) return;
+
+  // Spara nuvarande läge innan vi återställer, så man kan ångra en felaktig återställning också.
+  saveVersionSnapshot('Innan återställning till tidigare version');
+
+  tasks = JSON.parse(JSON.stringify(snap.data.tasks));
+  trash = JSON.parse(JSON.stringify(snap.data.trash));
+  persons = JSON.parse(JSON.stringify(snap.data.persons));
+  personLabels = JSON.parse(JSON.stringify(snap.data.personLabels));
+  score = snap.data.score;
+  savedPDFs = JSON.parse(JSON.stringify(snap.data.savedPDFs));
+
+  saveData();
+  savePersons();
+  localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+
+  buildColorMap();
+  renderCards();
+  renderSavedPDFs();
+  updateTrashBdg();
+  renderVersionHistory();
+
+  toast('✅ Version återställd!');
+  addSyncLog('Återställde version från '+new Date(snap.time).toLocaleString('sv-SE'), 'success');
+}
+
+function clearVersionHistory(){
+  if(!confirm('Rensa hela versionshistoriken? Detta går inte att ångra.')) return;
+  versionHistory = [];
+  localStorage.setItem(VERSION_HISTORY_KEY, JSON.stringify(versionHistory));
+  renderVersionHistory();
+  toast('Versionshistorik rensad');
+}
+
 function importLocalBackup(){
   const input = document.createElement('input');
   input.type = 'file';
@@ -2113,6 +2226,7 @@ function importLocalBackup(){
         const backup = JSON.parse(event.target.result);
         if(!backup.tasks){toast('Ogiltig backup-fil','error');return;}
         if(!confirm('Detta kommer att ersätta all befintlig data. Fortsätta?')) return;
+        saveVersionSnapshot('Innan import av backup-fil');
         tasks = backup.tasks || [];
         trash = backup.trash || [];
         persons = backup.persons || ['person1','person2','person3'];
