@@ -1727,47 +1727,15 @@ function saveAndConfirm(){
   saveData();
   savePersons();
   saveVersionSnapshot('Manuell spara (Spara-knappen)');
-  toast('✅ Sparat! Laddar ner JSON + PDF...');
+  toast('✅ Sparat! Laddar ner JSON-backup...');
   autoDownloadFilesOnSave();
 }
 
 /* Körs varje gång man trycker på Spara-knappen (både på hemsidan och i personvyn).
-   Laddar automatiskt ner en fullständig JSON-backup OCH en PDF-kopia av det som
-   just nu visas (alla uppgifter, eller bara den valda personens om man är i en personvy). */
+   Laddar automatiskt ner en fullständig JSON-backup av all data. */
 function autoDownloadFilesOnSave(){
-  // 1) JSON-backup (all data, kan importeras igen via "Importera backup")
   exportLocalBackup();
-
-  // 2) PDF-kopia av aktuell vy
-  const label = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
-  const title = label+' - Familjens planering';
-  const items = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
-  const showPerson = currentPerson==='all';
-  const html = generatePDFHTML(title, items, showPerson);
-
-  const hidden = document.createElement('div');
-  hidden.className = 'pdf-preview-body';
-  hidden.style.cssText = 'position:fixed;left:-9999px;top:0;width:800px;background:#fff';
-  hidden.innerHTML = html;
-  document.body.appendChild(hidden);
-
-  const opt = {
-    margin: [10, 10, 10, 10],
-    filename: title.replace(/[^a-zA-Z0-9åäöÅÄÖ\- ]/g, '').trim()+'.pdf',
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-
-  html2pdf().set(opt).from(hidden).save().then(() => {
-    document.body.removeChild(hidden);
-    addSyncLog('Automatisk JSON + PDF-backup nedladdad vid Spara', 'success');
-  }).catch(err => {
-    console.error(err);
-    if(document.body.contains(hidden)) document.body.removeChild(hidden);
-    toast('⚠️ JSON sparad, men PDF misslyckades','error');
-    addSyncLog('PDF-nedladdning vid Spara misslyckades: '+err.message, 'error');
-  });
+  addSyncLog('Automatisk JSON-backup nedladdad vid Spara', 'success');
 }
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
