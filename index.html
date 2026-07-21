@@ -1351,22 +1351,36 @@ function renderDone(){
 
 function renderList(cid,items,isDone){
   const c=document.getElementById(cid);
+  const page=c ? c.closest('.page') : null;
+  const scrollTop = page ? page.scrollTop : 0;
   if(!items.length){
     const isAktuell = cid==='aktuellContainer';
     const icon = isDone ? 'check-double' : (isAktuell ? 'star' : 'clipboard-list');
     const msg = isDone ? 'Inga klara uppgifter än' : (isAktuell ? 'Inga aktuella uppgifter. Tryck på stjärnan vid en uppgift för att lägga den här.' : 'Tomt här! Lägg till en uppgift.');
     c.innerHTML='<div class="empty-state"><div class="empty-icon"><i class="fas fa-'+icon+'"></i></div><div class="empty-text">'+msg+'</div></div>';
+    restoreScroll(page,scrollTop);
     return;
   }
   const grouped={};
   items.forEach(item=>{if(!grouped[item.timeFrame])grouped[item.timeFrame]=[];grouped[item.timeFrame].push(item);});
-  c.innerHTML=TIME_ORDER.filter(k=>grouped[k]).map(tf=>'<div class="time-group fade-in"><div class="time-group-label">'+TIME_LABELS[tf]+'<hr><span>'+grouped[tf].length+'</span></div>'+grouped[tf].map(item=>taskHTML(item,isDone)).join('')+'</div>').join('');
+  c.innerHTML=TIME_ORDER.filter(k=>grouped[k]).map(tf=>'<div class="time-group"><div class="time-group-label">'+TIME_LABELS[tf]+'<hr><span>'+grouped[tf].length+'</span></div>'+grouped[tf].map(item=>taskHTML(item,isDone)).join('')+'</div>').join('');
   c.querySelectorAll('.check-btn').forEach(btn=>{
     btn.addEventListener('click',()=>toggleComplete(parseInt(btn.dataset.id)));
   });
   c.querySelectorAll('.del-btn[data-id]').forEach(btn=>{
     btn.addEventListener('click',()=>moveToTrash(parseInt(btn.dataset.id)));
   });
+  restoreScroll(page,scrollTop);
+}
+
+/* Håller kvar scrollpositionen när listan ritas om (t.ex. vid stjärn-klick eller
+   att man klarmarkerar en uppgift). Utan detta kan hela sidan hoppa upp till
+   toppen eftersom hela listan byts ut i DOM:en. */
+function restoreScroll(page, scrollTop){
+  if(!page) return;
+  page.scrollTop = scrollTop;
+  requestAnimationFrame(()=>{ page.scrollTop = scrollTop; });
+  setTimeout(()=>{ page.scrollTop = scrollTop; }, 0);
 }
 
 function taskHTML(item,isDone){
