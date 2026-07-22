@@ -81,7 +81,9 @@
     .mm-group{width:92%;border-radius:16px;background:var(--surface);border:2px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden}
     .mm-group.align-left{margin-right:auto}
     .mm-group.align-right{margin-left:auto}
-    .mm-group-header{padding:10px 16px;font-weight:900;font-size:14px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+    .mm-group-header{padding:10px 16px;font-weight:900;font-size:14px;color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .mm-group-header>span:first-child{display:flex;flex-direction:column;gap:2px}
+    .mm-group-date{font-size:11px;font-weight:700;opacity:.9}
     .mm-group-body{padding:8px 14px 12px}
     .mm-task-item{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-size:13px;font-weight:700;color:var(--text);padding:7px 0;border-bottom:1px solid var(--border);word-break:break-word;line-height:1.35}
     .mm-task-item:last-child{border-bottom:none}
@@ -1587,6 +1589,37 @@ function closePDF(){
 }
 
 // ===== TANKEKARTA (MINDMAP) =====
+// ===== TANKEKARTA (MINDMAP) =====
+function getGroupDateLabel(tf){
+  const now = new Date();
+  const monthNames = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
+  if(tf==='today'){
+    return now.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'});
+  }
+  if(tf==='tomorrow'){
+    const t=new Date(now); t.setDate(t.getDate()+1);
+    return t.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'});
+  }
+  if(tf==='week'){
+    const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+    return 'Vecka '+weekNo+', '+now.getFullYear();
+  }
+  if(tf==='month'){
+    return monthNames[now.getMonth()]+' '+now.getFullYear();
+  }
+  if(tf==='thisyear'){
+    return String(now.getFullYear());
+  }
+  if(tf==='nextyear'){
+    return String(now.getFullYear()+1);
+  }
+  return null;
+}
+
 function openMindmapSelector(){
   const mine = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
   const active = mine.filter(t=>!t.completed);
@@ -1602,7 +1635,8 @@ function openMindmapSelector(){
   html += '<div id="mmSelectList">';
   TIME_ORDER.forEach(tf=>{
     if(grouped[tf] && grouped[tf].length){
-      html += '<div class="mm-select-row" onclick="if(event.target.tagName!==\'INPUT\'){const cb=this.querySelector(\'input\');cb.checked=!cb.checked}"><input type="checkbox" class="mm-tf-check" value="'+tf+'" checked><label>'+TIME_LABELS[tf]+'</label><span class="mm-count">'+grouped[tf].length+'</span></div>';
+      const dl = getGroupDateLabel(tf);
+      html += '<div class="mm-select-row" onclick="if(event.target.tagName!==\'INPUT\'){const cb=this.querySelector(\'input\');cb.checked=!cb.checked}"><input type="checkbox" class="mm-tf-check" value="'+tf+'" checked><label>'+TIME_LABELS[tf]+(dl?' <span style="color:var(--text3);font-weight:600">('+dl+')</span>':'')+'</label><span class="mm-count">'+grouped[tf].length+'</span></div>';
     }
   });
   html += '</div>';
@@ -1633,7 +1667,8 @@ function buildMindmapDiagram(selectedTimeframes){
     if(grouped[tf] && grouped[tf].length){
       const color = MM_GROUP_COLORS[tf] || '#999';
       const align = (i%2===0) ? 'align-left' : 'align-right';
-      groupsHtml += '<div class="mm-group '+align+'" data-tf="'+tf+'"><div class="mm-group-header" style="background:'+color+'"><span>'+TIME_LABELS[tf]+'</span><span>'+grouped[tf].length+'</span></div><div class="mm-group-body">';
+      const dl = getGroupDateLabel(tf);
+      groupsHtml += '<div class="mm-group '+align+'" data-tf="'+tf+'"><div class="mm-group-header" style="background:'+color+'"><span>'+TIME_LABELS[tf]+(dl?'<span class="mm-group-date">'+dl+'</span>':'')+'</span><span>'+grouped[tf].length+'</span></div><div class="mm-group-body">';
       grouped[tf].forEach(t=>{
         const pLabel = currentPerson==='all' && t.person!=='all' ? (personLabels[t.person]||t.person) : null;
         const dateLabel = t.reminder ? new Date(t.reminder).toLocaleDateString('sv-SE',{day:'numeric',month:'short',year:'numeric'}) : null;
