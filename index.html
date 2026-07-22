@@ -83,9 +83,10 @@
     .mm-group.align-right{margin-left:auto}
     .mm-group-header{padding:10px 16px;font-weight:900;font-size:14px;color:#fff;display:flex;align-items:center;justify-content:space-between}
     .mm-group-body{padding:8px 14px 12px}
-    .mm-task-item{font-size:13px;font-weight:700;color:var(--text);padding:7px 0;border-bottom:1px solid var(--border);word-break:break-word;line-height:1.35}
+    .mm-task-item{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-size:13px;font-weight:700;color:var(--text);padding:7px 0;border-bottom:1px solid var(--border);word-break:break-word;line-height:1.35}
     .mm-task-item:last-child{border-bottom:none}
     .mm-task-item .mm-task-person{display:block;font-size:11px;font-weight:800;color:var(--text3);margin-top:2px}
+    .mm-task-item .mm-task-date{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#92400E;background:var(--amber-soft);padding:2px 8px;border-radius:50px;margin-top:5px}
     #mmLines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
     .mm-empty{text-align:center;padding:30px 16px;color:var(--text3);font-weight:700}
     .dhdr-avatar{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;font-weight:900}
@@ -1635,7 +1636,8 @@ function buildMindmapDiagram(selectedTimeframes){
       groupsHtml += '<div class="mm-group '+align+'" data-tf="'+tf+'"><div class="mm-group-header" style="background:'+color+'"><span>'+TIME_LABELS[tf]+'</span><span>'+grouped[tf].length+'</span></div><div class="mm-group-body">';
       grouped[tf].forEach(t=>{
         const pLabel = currentPerson==='all' && t.person!=='all' ? (personLabels[t.person]||t.person) : null;
-        groupsHtml += '<div class="mm-task-item">'+esc(t.text)+(pLabel ? '<span class="mm-task-person">'+esc(pLabel)+'</span>' : '')+'</div>';
+        const dateLabel = t.reminder ? new Date(t.reminder).toLocaleDateString('sv-SE',{day:'numeric',month:'short',year:'numeric'}) : null;
+        groupsHtml += '<div class="mm-task-item">'+esc(t.text)+(dateLabel ? '<span class="mm-task-date"><i class="fas fa-clock"></i> '+dateLabel+'</span>' : '')+(pLabel ? '<span class="mm-task-person">'+esc(pLabel)+'</span>' : '')+'</div>';
       });
       groupsHtml += '</div></div>';
       i++; groupCount++;
