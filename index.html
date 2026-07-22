@@ -68,6 +68,26 @@
     .save-btn:active{transform:scale(.96);opacity:.9}
     .pdf-btn{height:44px;padding:0 14px;border-radius:14px;border:none;background:var(--rose);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;flex-shrink:0;transition:opacity .2s,transform .1s;font-family:var(--font);box-shadow:0 4px 14px rgba(240,94,122,.25);white-space:nowrap}
     .pdf-btn:active{transform:scale(.96);opacity:.9}
+    .mindmap-btn{height:44px;padding:0 14px;border-radius:14px;border:none;background:var(--primary);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;flex-shrink:0;transition:opacity .2s,transform .1s;font-family:var(--font);box-shadow:0 4px 14px var(--primary-glow);white-space:nowrap}
+    .mindmap-btn:active{transform:scale(.96);opacity:.9}
+    .mm-select-row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--surface2);border-radius:var(--rsm);border:2px solid var(--border);margin-bottom:8px;cursor:pointer;transition:border .2s}
+    .mm-select-row:has(input:checked){border-color:var(--primary);background:var(--primary-soft)}
+    .mm-select-row input[type="checkbox"]{width:20px;height:20px;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
+    .mm-select-row label{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;flex:1}
+    .mm-select-row .mm-count{font-size:12px;font-weight:800;color:var(--text2);background:var(--surface);padding:2px 9px;border-radius:50px;border:1.5px solid var(--border)}
+    .mm-canvas{position:relative;padding:20px 8px 40px;background:var(--surface2);border-radius:var(--rsm)}
+    .mm-root{width:fit-content;max-width:80%;margin:0 auto 30px;background:var(--primary);color:#fff;font-weight:900;font-size:16px;padding:14px 22px;border-radius:18px;text-align:center;box-shadow:0 6px 20px var(--primary-glow);position:relative;z-index:2}
+    .mm-groups{display:flex;flex-direction:column;gap:22px;position:relative;z-index:2}
+    .mm-group{width:92%;border-radius:16px;background:var(--surface);border:2px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden}
+    .mm-group.align-left{margin-right:auto}
+    .mm-group.align-right{margin-left:auto}
+    .mm-group-header{padding:10px 16px;font-weight:900;font-size:14px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+    .mm-group-body{padding:8px 14px 12px}
+    .mm-task-item{font-size:13px;font-weight:700;color:var(--text);padding:7px 0;border-bottom:1px solid var(--border);word-break:break-word;line-height:1.35}
+    .mm-task-item:last-child{border-bottom:none}
+    .mm-task-item .mm-task-person{display:block;font-size:11px;font-weight:800;color:var(--text3);margin-top:2px}
+    #mmLines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+    .mm-empty{text-align:center;padding:30px 16px;color:var(--text3);font-weight:700}
     .dhdr-avatar{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;font-weight:900}
     .dhdr-info{flex:1;min-width:0}
     .dhdr-name{font-size:18px;font-weight:900;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px}
@@ -555,6 +575,7 @@
       </div>
       <button class="save-btn" onclick="saveAndConfirm()" title="Spara"><i class="fas fa-floppy-disk"></i><span class="btn-label"> Spara</span></button>
       <button class="pdf-btn" onclick="exportPersonPDF()" title="PDF"><i class="fas fa-file-pdf"></i><span class="btn-label"> PDF</span></button>
+      <button class="mindmap-btn" onclick="openMindmapSelector()" title="Tankekarta"><i class="fas fa-diagram-project"></i><span class="btn-label"> Tankekarta</span></button>
     </div>
   </header>
 
@@ -736,6 +757,18 @@
   </div>
 </div>
 
+<!-- ═══════ MINDMAP MODAL ═══════ -->
+<div class="modal-ov h" id="mindmapModal" onclick="if(event.target===this)closeMindmap()">
+  <div class="modal-sheet" style="max-height:95vh">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-diagram-project" style="color:var(--primary)"></i> Tankekarta</div><button class="modal-x" onclick="closeMindmap()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="mindmapBody" style="padding:12px 16px"></div>
+    <div class="modal-ftr" id="mindmapFtr">
+      <button class="modal-btn mbtn-neutral" onclick="closeMindmap()" style="flex:1">Stäng</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════ TOAST ═══════ -->
 <div class="toast" id="toast"><i id="toastIcon" class="fas fa-check-circle" style="color:var(--emerald)"></i><span id="toastMsg">OK</span></div>
 
@@ -743,6 +776,7 @@
 const PERSON_COLORS = ['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#EC4899','#8B5CF6','#14B8A6'];
 const TIME_LABELS   = {today:'Idag',tomorrow:'Imorgon',week:'Denna vecka',month:'Denna månad',thisyear:'Pågående år',nextyear:'Nästa år',future:'Framtiden',sometime:'Någon gång'};
 const TIME_ORDER    = ['today','tomorrow','week','month','thisyear','nextyear','future','sometime'];
+const MM_GROUP_COLORS = {today:'#EF4444',tomorrow:'#F97316',week:'#F59E0B',month:'#3B82F6',thisyear:'#4338CA',nextyear:'#8B5CF6',future:'#A855F7',sometime:'#64748B'};
 
 function sl(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
 let tasks        = sl('familyTasks',[]);
@@ -1549,6 +1583,130 @@ function closePDF(){
   document.getElementById('pdfModal').classList.add('h');
   document.getElementById('pdfContent').innerHTML = '';
   tempPDFData = null;
+}
+
+// ===== TANKEKARTA (MINDMAP) =====
+function openMindmapSelector(){
+  const mine = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
+  const active = mine.filter(t=>!t.completed);
+  if(!active.length){
+    toast('Inga aktiva uppgifter att visa i en tankekarta','error');
+    return;
+  }
+  const grouped = {};
+  active.forEach(t=>{ if(!grouped[t.timeFrame]) grouped[t.timeFrame]=[]; grouped[t.timeFrame].push(t); });
+
+  const rootLabel = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
+  let html = '<div style="background:var(--primary-soft);border-radius:var(--rsm);padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--border);color:var(--text2);font-size:13px"><i class="fas fa-info-circle"></i> Välj vilka grupper (mappar) som ska vara med i tankekartan för <strong>'+esc(rootLabel)+'</strong>.</div>';
+  html += '<div id="mmSelectList">';
+  TIME_ORDER.forEach(tf=>{
+    if(grouped[tf] && grouped[tf].length){
+      html += '<div class="mm-select-row" onclick="if(event.target.tagName!==\'INPUT\'){const cb=this.querySelector(\'input\');cb.checked=!cb.checked}"><input type="checkbox" class="mm-tf-check" value="'+tf+'" checked><label>'+TIME_LABELS[tf]+'</label><span class="mm-count">'+grouped[tf].length+'</span></div>';
+    }
+  });
+  html += '</div>';
+
+  document.getElementById('mindmapBody').innerHTML = html;
+  document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="closeMindmap()">Avbryt</button><button class="modal-btn" style="background:var(--primary);color:#fff" onclick="renderMindmapFromSelector()"><i class="fas fa-diagram-project"></i> Skapa tankekarta</button>';
+  document.getElementById('mindmapModal').classList.remove('h');
+}
+
+function renderMindmapFromSelector(){
+  const checks = document.querySelectorAll('.mm-tf-check');
+  const selected = Array.from(checks).filter(c=>c.checked).map(c=>c.value);
+  if(!selected.length){ toast('Välj minst en grupp','error'); return; }
+  buildMindmapDiagram(selected);
+}
+
+function buildMindmapDiagram(selectedTimeframes){
+  const mine = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
+  const active = mine.filter(t=>!t.completed && selectedTimeframes.includes(t.timeFrame));
+  const grouped = {};
+  active.forEach(t=>{ if(!grouped[t.timeFrame]) grouped[t.timeFrame]=[]; grouped[t.timeFrame].push(t); });
+
+  const rootLabel = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
+  let groupCount = 0;
+  let groupsHtml = '';
+  let i=0;
+  TIME_ORDER.forEach(tf=>{
+    if(grouped[tf] && grouped[tf].length){
+      const color = MM_GROUP_COLORS[tf] || '#999';
+      const align = (i%2===0) ? 'align-left' : 'align-right';
+      groupsHtml += '<div class="mm-group '+align+'" data-tf="'+tf+'"><div class="mm-group-header" style="background:'+color+'"><span>'+TIME_LABELS[tf]+'</span><span>'+grouped[tf].length+'</span></div><div class="mm-group-body">';
+      grouped[tf].forEach(t=>{
+        const pLabel = currentPerson==='all' && t.person!=='all' ? (personLabels[t.person]||t.person) : null;
+        groupsHtml += '<div class="mm-task-item">'+esc(t.text)+(pLabel ? '<span class="mm-task-person">'+esc(pLabel)+'</span>' : '')+'</div>';
+      });
+      groupsHtml += '</div></div>';
+      i++; groupCount++;
+    }
+  });
+
+  const body = document.getElementById('mindmapBody');
+  if(groupCount===0){
+    body.innerHTML = '<div class="mm-empty"><i class="fas fa-diagram-project" style="font-size:28px;display:block;margin-bottom:10px"></i>Inga uppgifter i valda grupper.</div>';
+    document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="openMindmapSelector()"><i class="fas fa-arrow-left"></i> Tillbaka</button>';
+    return;
+  }
+
+  body.innerHTML = '<div class="mm-canvas" id="mmCanvas"><div class="mm-root">'+esc(rootLabel)+'</div><div class="mm-groups" id="mmGroups">'+groupsHtml+'</div><svg id="mmLines"></svg></div>';
+  document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="openMindmapSelector()"><i class="fas fa-arrow-left"></i> Tillbaka</button><button class="modal-btn" style="background:var(--rose);color:#fff" onclick="downloadMindmapPDF()"><i class="fas fa-download"></i> Ladda ner</button>';
+
+  requestAnimationFrame(()=>drawMindmapLines());
+}
+
+function drawMindmapLines(){
+  const canvas = document.getElementById('mmCanvas');
+  const root = canvas ? canvas.querySelector('.mm-root') : null;
+  const svg = document.getElementById('mmLines');
+  if(!canvas || !root || !svg) return;
+
+  const canvasRect = canvas.getBoundingClientRect();
+  svg.setAttribute('width', canvas.scrollWidth);
+  svg.setAttribute('height', canvas.scrollHeight);
+  svg.setAttribute('viewBox', '0 0 '+canvas.scrollWidth+' '+canvas.scrollHeight);
+
+  const rootRect = root.getBoundingClientRect();
+  const rootX = rootRect.left - canvasRect.left + rootRect.width/2;
+  const rootY = rootRect.bottom - canvasRect.top;
+
+  let linesHtml = '';
+  canvas.querySelectorAll('.mm-group').forEach(group=>{
+    const tf = group.dataset.tf;
+    const color = MM_GROUP_COLORS[tf] || '#999';
+    const gRect = group.getBoundingClientRect();
+    const gx = gRect.left - canvasRect.left + gRect.width/2;
+    const gy = gRect.top - canvasRect.top;
+    const midY = (rootY + gy)/2;
+    linesHtml += '<path d="M'+rootX+' '+rootY+' C '+rootX+' '+midY+', '+gx+' '+midY+', '+gx+' '+gy+'" stroke="'+color+'" stroke-width="2.5" fill="none" opacity="0.85"/>';
+  });
+  svg.innerHTML = linesHtml;
+}
+
+function closeMindmap(){
+  document.getElementById('mindmapModal').classList.add('h');
+  document.getElementById('mindmapBody').innerHTML = '';
+  document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="closeMindmap()" style="flex:1">Stäng</button>';
+}
+
+function downloadMindmapPDF(){
+  const element = document.getElementById('mmCanvas');
+  if(!element){ toast('Inget att ladda ner','error'); return; }
+  const label = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
+  const opt = {
+    margin: [8, 8, 8, 8],
+    filename: ('Tankekarta - '+label).replace(/[^a-zA-Z0-9åäöÅÄÖ\- ]/g, '').trim()+'.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }
+  };
+  toast('Genererar PDF...');
+  html2pdf().set(opt).from(element).save().then(() => {
+    toast('✅ Tankekarta sparad som PDF!');
+  }).catch(err => {
+    console.error(err);
+    toast('❌ Kunde inte generera PDF','error');
+  });
 }
 
 function downloadPDF(){
