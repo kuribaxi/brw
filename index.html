@@ -160,6 +160,11 @@
     .time-group-label hr{flex:1;border:none;border-top:1.5px solid var(--border)}
     .task-item{display:flex;align-items:flex-start;gap:10px;padding:11px 10px;border-radius:var(--rsm);transition:background .15s;border:1.5px solid transparent}
     .task-item:active{background:var(--surface2)}
+    .task-item.overdue{border-color:var(--rose);background:var(--rose-soft)}
+    .task-item.overdue:active{background:var(--rose-soft)}
+    .task-text.overdue-text{color:var(--rose)}
+    .tag.overdue-tag{background:var(--rose);color:#fff;border-color:var(--rose)}
+    body.night .task-item.overdue{background:rgba(240,94,122,.12)}
     .check-btn{width:36px;height:36px;border-radius:11px;flex-shrink:0;border:2.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:transparent;transition:all .2s;margin-top:2px}
     .check-btn:active{border-color:var(--primary)}
     .check-btn.done-style{background:var(--emerald);border-color:var(--emerald);color:#fff}
@@ -1363,7 +1368,7 @@ function rolloverOverdueTasks(){
   if(lastCheck===todayStr)return;
   let moved=0;
   tasks.forEach(t=>{
-    if(!t.completed && t.timeFrame==='today'){t.timeFrame='tomorrow';moved++;}
+    if(!t.completed && t.timeFrame==='today'){t.timeFrame='tomorrow';t.overdue=true;moved++;}
     else if(!t.completed && t.timeFrame==='tomorrow' && lastCheck){t.timeFrame='today';}
   });
   localStorage.setItem('lastRolloverDate',todayStr);
@@ -1543,7 +1548,8 @@ function taskHTML(item,isDone){
   const hasNote = item.note && item.note.trim() !== '';
   const hasLink = item.link && item.link.trim() !== '';
   const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
-  return '<div class="task-item"><button class="star-btn'+(item.starred?' starred':'')+'" onclick="event.stopPropagation();toggleStar('+item.id+')" title="Markera som aktuell"><i class="'+(item.starred?'fas':'far')+' fa-star"></i></button><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta"><span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
+  const isOverdue = !isDone && ( item.overdue || (item.reminder && new Date(item.reminder) < new Date()) );
+  return '<div class="task-item'+(isOverdue?' overdue':'')+'"><button class="star-btn'+(item.starred?' starred':'')+'" onclick="event.stopPropagation();toggleStar('+item.id+')" title="Markera som aktuell"><i class="'+(item.starred?'fas':'far')+' fa-star"></i></button><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+(isOverdue?' overdue-text':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta">'+(isOverdue?'<span class="tag overdue-tag"><i class="fas fa-triangle-exclamation"></i> Försenad</span>':'')+'<span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
 }
 
 function addTask(){
