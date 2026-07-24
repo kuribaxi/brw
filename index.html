@@ -137,6 +137,19 @@
     .btn-add-task{width:100%;height:56px;border-radius:var(--rsm);border:none;margin-top:12px;background:linear-gradient(135deg,var(--primary) 0%,#9B59E8 100%);color:#fff;font-family:var(--font);font-size:17px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 20px var(--primary-glow);transition:opacity .2s,transform .1s}
     .btn-add-task:active{transform:scale(.98);opacity:.92}
     .task-note-input, .task-link-input {width:100%;height:44px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--text);outline:none;margin-top:8px;transition:border .2s}
+    .task-link-row{display:flex;gap:6px;align-items:center}
+    .task-link-row .task-link-input{margin-top:8px;flex:1}
+    .task-link-row-remove{width:36px;height:36px;margin-top:8px;border-radius:10px;border:none;background:var(--rose-soft);color:var(--rose);font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+    .task-add-link-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:40px;border-radius:var(--rsm);border:2px dashed var(--border);background:var(--surface2);color:var(--text2);font-family:var(--font);font-weight:700;font-size:13px;cursor:pointer;margin-top:8px}
+    .task-add-link-btn:active{border-color:var(--primary);color:var(--primary)}
+    .task-image-add-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:44px;border-radius:var(--rsm);border:2px dashed var(--border);background:var(--surface2);color:var(--text2);font-family:var(--font);font-weight:700;font-size:14px;cursor:pointer;margin-top:10px}
+    .task-image-add-btn:active{border-color:var(--primary);color:var(--primary)}
+    .task-image-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .task-image-thumb-wrap{position:relative;width:64px;height:64px}
+    .task-image-thumb{width:64px;height:64px;object-fit:cover;border-radius:10px;border:2px solid var(--border);display:block}
+    .task-image-remove{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:var(--rose);color:#fff;border:2px solid var(--surface);font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+    .task-images{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .task-image-view-thumb{width:52px;height:52px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border);cursor:pointer}
     .task-note-input:focus, .task-link-input:focus {border-color:var(--primary)}
     .star-btn{width:32px;height:32px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text3);flex-shrink:0;margin-top:2px;transition:color .2s,transform .15s}
     .star-btn:active{transform:scale(.85)}
@@ -605,7 +618,13 @@
         </select>
       </div>
       <input type="text" class="task-note-input" id="taskNoteInput" placeholder="Anteckning (valfritt)">
-      <input type="text" class="task-link-input" id="taskLinkInput" placeholder="Länk (t.ex. https://...)" oninput="if(this.value.startsWith('http'))this.style.borderColor='var(--emerald)'">
+      <div id="newTaskLinksList">
+        <div class="task-link-row"><input type="text" class="task-link-input" placeholder="Länk (t.ex. https://...)" oninput="if(this.value.startsWith('http'))this.style.borderColor='var(--emerald)'"><button type="button" class="task-link-row-remove" onclick="this.parentElement.remove()" title="Ta bort länk"><i class="fas fa-times"></i></button></div>
+      </div>
+      <button type="button" class="task-add-link-btn" onclick="addLinkRow('newTaskLinksList')"><i class="fas fa-plus"></i> Lägg till fler länkar</button>
+      <input type="file" id="taskImageInput" accept="image/*" multiple style="display:none" onchange="handleNewTaskImages(event)">
+      <button type="button" class="task-image-add-btn" onclick="document.getElementById('taskImageInput').click()"><i class="fas fa-image"></i> Lägg till bild(er)</button>
+      <div class="task-image-preview" id="newTaskImagePreview"></div>
       <input type="datetime-local" class="reminder-input" id="reminderTime">
       <button class="btn-add-task" onclick="addTask()"><i class="fas fa-plus"></i> Lägg till uppgift</button>
     </div>
@@ -1540,10 +1559,112 @@ function taskHTML(item,isDone){
   const personLabel=item.person!=='all'?(personLabels[item.person]||item.person):null;
   const pcolor=colorMap[item.person]||'#999';
   const hasNote = item.note && item.note.trim() !== '';
-  const hasLink = item.link && item.link.trim() !== '';
-  const linkDisplay = hasLink ? (item.link.startsWith('http') ? item.link : 'https://' + item.link) : '';
+  const links = (item.links && item.links.length) ? item.links : (item.link ? [item.link] : []);
+  const linksHtml = links.map(l=>{
+    const disp = l.startsWith('http') ? l : 'https://'+l;
+    return '<div class="task-link"><i class="fas fa-link"></i> <a href="'+disp+'" target="_blank">'+esc(l)+'</a></div>';
+  }).join('');
+  const images = item.images || [];
+  const imagesHtml = images.length ? '<div class="task-images">'+images.map((img,i)=>'<img src="'+img+'" class="task-image-view-thumb" onclick="event.stopPropagation();viewTaskImage('+item.id+','+i+')">').join('')+'</div>' : '';
   const isOverdue = !isDone && ( item.overdue || (item.reminder && new Date(item.reminder) < new Date()) );
-  return '<div class="task-item'+(isOverdue?' overdue':'')+'"><button class="star-btn'+(item.starred?' starred':'')+'" onclick="event.stopPropagation();toggleStar('+item.id+')" title="Markera som aktuell"><i class="'+(item.starred?'fas':'far')+' fa-star"></i></button><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+(isOverdue?' overdue-text':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div class="task-link"><i class="fas fa-link"></i> <a href="'+linkDisplay+'" target="_blank">'+esc(item.link)+'</a></div>' : '')+'<div class="task-meta">'+(isOverdue?'<span class="tag overdue-tag"><i class="fas fa-triangle-exclamation"></i> Försenad</span>':'')+'<span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
+  return '<div class="task-item'+(isOverdue?' overdue':'')+'"><button class="star-btn'+(item.starred?' starred':'')+'" onclick="event.stopPropagation();toggleStar('+item.id+')" title="Markera som aktuell"><i class="'+(item.starred?'fas':'far')+' fa-star"></i></button><div class="check-btn'+(isDone?' done-style':'')+'" data-id="'+item.id+'"><i class="fas fa-check"></i></div><div class="task-content"><div class="task-text'+(isDone?' struck':'')+(isOverdue?' overdue-text':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div class="task-note"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+linksHtml+imagesHtml+'<div class="task-meta">'+(isOverdue?'<span class="tag overdue-tag"><i class="fas fa-triangle-exclamation"></i> Försenad</span>':'')+'<span class="tag '+item.timeFrame+'">'+TIME_LABELS[item.timeFrame]+'</span>'+(currentPerson==='all'&&personLabel?'<span class="tag person-tag" style="background:'+pcolor+'">'+esc(personLabel)+'</span>':'')+(item.type==='shopping'?'<span class="tag sometime">🛒</span>':'')+(remDate?'<span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span>':'')+'</div></div><div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;margin-top:2px"><button class="del-btn" style="width:36px;height:36px;margin-top:0" onclick="event.stopPropagation();openEditTask('+item.id+')" title="Redigera"><i class="fas fa-pen" style="font-size:13px"></i></button><button class="del-btn" data-id="'+item.id+'" style="width:36px;height:36px;margin-top:0" title="Ta bort"><i class="fas fa-trash-can"></i></button></div></div>';
+}
+
+// ===== FLERA LÄNKAR =====
+function addLinkRow(containerId, value){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  const row = document.createElement('div');
+  row.className = 'task-link-row';
+  row.innerHTML = '<input type="text" class="task-link-input" placeholder="Länk (t.ex. https://...)" value="'+esc(value||'')+'"><button type="button" class="task-link-row-remove" onclick="this.parentElement.remove()" title="Ta bort länk"><i class="fas fa-times"></i></button>';
+  container.appendChild(row);
+}
+function collectLinks(containerId){
+  const container = document.getElementById(containerId);
+  if(!container) return [];
+  return Array.from(container.querySelectorAll('.task-link-input')).map(i=>i.value.trim()).filter(v=>v);
+}
+function resetLinkRows(containerId){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  container.innerHTML = '<div class="task-link-row"><input type="text" class="task-link-input" placeholder="Länk (t.ex. https://...)"><button type="button" class="task-link-row-remove" onclick="this.parentElement.remove()" title="Ta bort länk"><i class="fas fa-times"></i></button></div>';
+}
+
+// ===== BILDER PÅ UPPGIFTER =====
+let pendingTaskImages = [];
+let editPendingImages = [];
+const MAX_TASK_IMAGES = 6;
+
+function resizeImageFile(file, maxDim, quality){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w>maxDim || h>maxDim){
+          if(w>h){ h = Math.round(h*maxDim/w); w = maxDim; }
+          else { w = Math.round(w*maxDim/h); h = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg', quality||0.72));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderImagePreview(containerId, imagesArr, mode){
+  const c = document.getElementById(containerId);
+  if(!c) return;
+  const removeFnName = mode==='new' ? 'removeNewTaskImage' : 'removeEditTaskImage';
+  c.innerHTML = imagesArr.map((img,i)=>'<div class="task-image-thumb-wrap"><img src="'+img+'" class="task-image-thumb"><button type="button" class="task-image-remove" onclick="'+removeFnName+'('+i+')" title="Ta bort bild"><i class="fas fa-times"></i></button></div>').join('');
+}
+
+async function handleNewTaskImages(event){
+  const files = Array.from(event.target.files || []);
+  if(!files.length) return;
+  for(const file of files){
+    if(pendingTaskImages.length>=MAX_TASK_IMAGES){ toast('Max '+MAX_TASK_IMAGES+' bilder per uppgift','error'); break; }
+    try{ pendingTaskImages.push(await resizeImageFile(file, 1000, 0.72)); }catch(e){ console.error(e); }
+  }
+  renderImagePreview('newTaskImagePreview', pendingTaskImages, 'new');
+  event.target.value = '';
+}
+function removeNewTaskImage(idx){
+  pendingTaskImages.splice(idx,1);
+  renderImagePreview('newTaskImagePreview', pendingTaskImages, 'new');
+}
+
+async function handleEditTaskImages(event){
+  const files = Array.from(event.target.files || []);
+  if(!files.length) return;
+  for(const file of files){
+    if(editPendingImages.length>=MAX_TASK_IMAGES){ toast('Max '+MAX_TASK_IMAGES+' bilder per uppgift','error'); break; }
+    try{ editPendingImages.push(await resizeImageFile(file, 1000, 0.72)); }catch(e){ console.error(e); }
+  }
+  renderImagePreview('editTaskImagePreview', editPendingImages, 'edit');
+  event.target.value = '';
+}
+function removeEditTaskImage(idx){
+  editPendingImages.splice(idx,1);
+  renderImagePreview('editTaskImagePreview', editPendingImages, 'edit');
+}
+
+function viewTaskImage(taskId, idx){
+  const t = tasks.find(x=>x.id===taskId);
+  if(!t || !t.images || !t.images[idx]) return;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:400;display:flex;align-items:center;justify-content:center;padding:24px';
+  overlay.onclick = ()=> overlay.remove();
+  overlay.innerHTML = '<img src="'+t.images[idx]+'" style="max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.5)"><button style="position:fixed;top:20px;right:20px;width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.95);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center" onclick="event.stopPropagation();this.parentElement.remove()"><i class="fas fa-times"></i></button>';
+  document.body.appendChild(overlay);
 }
 
 function addTask(){
@@ -1551,7 +1672,7 @@ function addTask(){
   const text=inp.value.trim();
   if(!text){toast('Ange en uppgift','error');return;}
   const note = document.getElementById('taskNoteInput').value.trim();
-  const link = document.getElementById('taskLinkInput').value.trim();
+  const links = collectLinks('newTaskLinksList');
   const reminder=document.getElementById('reminderTime').value;
   tasks.push({
     id:Date.now(),text,
@@ -1562,13 +1683,17 @@ function addTask(){
     reminded:false,
     completed:false,
     createdAt:new Date().toISOString(),
-    note: note || '',link: link || '',
+    note: note || '',
+    links: links,
+    images: pendingTaskImages.slice(),
     starred: false
   });
   saveData();
   inp.value='';
   document.getElementById('taskNoteInput').value='';
-  document.getElementById('taskLinkInput').value='';
+  resetLinkRows('newTaskLinksList');
+  pendingTaskImages = [];
+  renderImagePreview('newTaskImagePreview', [], 'new');
   document.getElementById('reminderTime').value='';
   // OBS: e-post-kryssrutan lämnas som den är, så du slipper kryssa i den varje gång
   toast('Uppgift tillagd! ✅');
@@ -1604,16 +1729,22 @@ function openEditTask(id){
   overlay.onclick = function(e){ if(e.target === this) closeEditTask(); };
 
   const color = colorMap[t.person] || PERSON_COLORS[0];
+  const existingLinks = (t.links && t.links.length) ? t.links : (t.link ? [t.link] : []);
+  const linksRowsHtml = (existingLinks.length ? existingLinks : ['']).map(l=>'<div class="task-link-row"><input type="text" class="task-link-input" placeholder="Länk (t.ex. https://...)" value="'+esc(l)+'"><button type="button" class="task-link-row-remove" onclick="this.parentElement.remove()" title="Ta bort länk"><i class="fas fa-times"></i></button></div>').join('');
 
-  overlay.innerHTML = '<div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen" style="color:'+color+'"></i> Redigera uppgift</div><button class="modal-x" onclick="closeEditTask()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding:12px 16px"><label class="form-lbl">Uppgift</label><input type="text" class="form-input" id="editTaskText" value="'+esc(t.text)+'" placeholder="Vad ska göras?"><label class="form-lbl" style="margin-top:10px">Typ</label><select class="form-select" id="editTaskType"><option value="todo" '+(t.type==='todo'?'selected':'')+'>📋 Uppgift</option><option value="shopping" '+(t.type==='shopping'?'selected':'')+'>🛒 Inköp</option></select><label class="form-lbl" style="margin-top:10px">Tidsram</label><select class="form-select" id="editTaskTimeFrame" style="margin-top:6px"><option value="today" '+(t.timeFrame==='today'?'selected':'')+'>Idag</option><option value="tomorrow" '+(t.timeFrame==='tomorrow'?'selected':'')+'>Imorgon</option><option value="week" '+(t.timeFrame==='week'?'selected':'')+'>Denna vecka</option><option value="month" '+(t.timeFrame==='month'?'selected':'')+'>Denna månad</option><option value="thisyear" '+(t.timeFrame==='thisyear'?'selected':'')+'>Pågående år</option><option value="nextyear" '+(t.timeFrame==='nextyear'?'selected':'')+'>Nästa år</option><option value="future" '+(t.timeFrame==='future'?'selected':'')+'>Framtiden</option><option value="sometime" '+(t.timeFrame==='sometime'?'selected':'')+'>Någon gång</option></select><label class="form-lbl" style="margin-top:10px">Anteckning</label><input type="text" class="task-note-input" id="editTaskNote" value="'+esc(t.note||'')+'" placeholder="Anteckning (valfritt)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Länk</label><input type="text" class="task-link-input" id="editTaskLink" value="'+esc(t.link||'')+'" placeholder="Länk (t.ex. https://...)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Påminnelse</label><input type="datetime-local" class="reminder-input" id="editTaskReminder" value="'+(t.reminder?t.reminder.slice(0,16):'')+'" style="margin-top:6px"></div><div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeEditTask()">Avbryt</button><button class="modal-btn" style="background:var(--emerald);color:#fff" onclick="saveEditTask('+id+')"><i class="fas fa-save"></i> Spara ändringar</button></div></div>';
+  editPendingImages = (t.images ? t.images.slice() : []);
+
+  overlay.innerHTML = '<div class="modal-sheet" style="animation:slideUp .28s cubic-bezier(.34,1.2,.64,1)"><div class="modal-handle"></div><div class="modal-hdr"><div class="modal-ttl"><i class="fas fa-pen" style="color:'+color+'"></i> Redigera uppgift</div><button class="modal-x" onclick="closeEditTask()"><i class="fas fa-times"></i></button></div><div class="modal-body" style="padding:12px 16px"><label class="form-lbl">Uppgift</label><input type="text" class="form-input" id="editTaskText" value="'+esc(t.text)+'" placeholder="Vad ska göras?"><label class="form-lbl" style="margin-top:10px">Typ</label><select class="form-select" id="editTaskType"><option value="todo" '+(t.type==='todo'?'selected':'')+'>📋 Uppgift</option><option value="shopping" '+(t.type==='shopping'?'selected':'')+'>🛒 Inköp</option></select><label class="form-lbl" style="margin-top:10px">Tidsram</label><select class="form-select" id="editTaskTimeFrame" style="margin-top:6px"><option value="today" '+(t.timeFrame==='today'?'selected':'')+'>Idag</option><option value="tomorrow" '+(t.timeFrame==='tomorrow'?'selected':'')+'>Imorgon</option><option value="week" '+(t.timeFrame==='week'?'selected':'')+'>Denna vecka</option><option value="month" '+(t.timeFrame==='month'?'selected':'')+'>Denna månad</option><option value="thisyear" '+(t.timeFrame==='thisyear'?'selected':'')+'>Pågående år</option><option value="nextyear" '+(t.timeFrame==='nextyear'?'selected':'')+'>Nästa år</option><option value="future" '+(t.timeFrame==='future'?'selected':'')+'>Framtiden</option><option value="sometime" '+(t.timeFrame==='sometime'?'selected':'')+'>Någon gång</option></select><label class="form-lbl" style="margin-top:10px">Anteckning</label><input type="text" class="task-note-input" id="editTaskNote" value="'+esc(t.note||'')+'" placeholder="Anteckning (valfritt)" style="margin-top:6px"><label class="form-lbl" style="margin-top:10px">Länkar</label><div id="editTaskLinksList" style="margin-top:6px">'+linksRowsHtml+'</div><button type="button" class="task-add-link-btn" onclick="addLinkRow(\'editTaskLinksList\')"><i class="fas fa-plus"></i> Lägg till fler länkar</button><label class="form-lbl" style="margin-top:10px">Bilder</label><input type="file" id="editTaskImageInput" accept="image/*" multiple style="display:none" onchange="handleEditTaskImages(event)"><button type="button" class="task-image-add-btn" onclick="document.getElementById(\'editTaskImageInput\').click()" style="margin-top:6px"><i class="fas fa-image"></i> Lägg till bild(er)</button><div class="task-image-preview" id="editTaskImagePreview"></div><label class="form-lbl" style="margin-top:10px">Påminnelse</label><input type="datetime-local" class="reminder-input" id="editTaskReminder" value="'+(t.reminder?t.reminder.slice(0,16):'')+'" style="margin-top:6px"></div><div class="modal-ftr"><button class="modal-btn mbtn-neutral" onclick="closeEditTask()">Avbryt</button><button class="modal-btn" style="background:var(--emerald);color:#fff" onclick="saveEditTask('+id+')"><i class="fas fa-save"></i> Spara ändringar</button></div></div>';
 
   document.body.appendChild(overlay);
   document.getElementById('editTaskText').focus();
+  renderImagePreview('editTaskImagePreview', editPendingImages, 'edit');
 }
 
 function closeEditTask(){
   const overlay = document.getElementById('editTaskOverlay');
   if(overlay) overlay.remove();
+  editPendingImages = [];
 }
 
 function saveEditTask(id){
@@ -1627,7 +1758,9 @@ function saveEditTask(id){
   t.type = document.getElementById('editTaskType').value;
   t.timeFrame = document.getElementById('editTaskTimeFrame').value;
   t.note = document.getElementById('editTaskNote').value.trim();
-  t.link = document.getElementById('editTaskLink').value.trim();
+  t.links = collectLinks('editTaskLinksList');
+  delete t.link;
+  t.images = editPendingImages.slice();
 
   const reminderVal = document.getElementById('editTaskReminder').value;
   if(reminderVal){
@@ -1664,8 +1797,11 @@ function generatePDFHTML(title, items, showPerson){
           const personLabel = item.person!=='all' ? (personLabels[item.person]||item.person) : null;
           const pcolor = colorMap[item.person] || '#999';
           const hasNote = item.note && item.note.trim() !== '';
-          const hasLink = item.link && item.link.trim() !== '';
-          html += '<div class="pdf-task-item"><div class="pdf-check '+(item.completed?'':'empty')+'">'+(item.completed?'✅':'⬜')+'</div><div style="flex:1;"><div class="pdf-text '+(item.completed?'done':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div style="font-size:13px;color:#7168A0;margin-top:4px;"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+(hasLink ? '<div style="font-size:13px;color:#6C47E8;margin-top:4px;"><i class="fas fa-link"></i> <a href="'+esc(item.link)+'" style="color:#6C47E8;">'+esc(item.link)+'</a></div>' : '')+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"><span class="pdf-tag">'+(TIME_LABELS[item.timeFrame]||'Någon gång')+'</span>'+(showPerson && personLabel ? '<span class="pdf-person" style="background:'+pcolor+'">'+esc(personLabel)+'</span>' : '')+(item.type==='shopping' ? '<span class="pdf-tag">🛒</span>' : '')+(item.reminder ? '<span class="pdf-tag">🔔 '+new Date(item.reminder).toLocaleDateString('sv-SE')+'</span>' : '')+'</div></div></div>';
+          const pdfLinks = (item.links && item.links.length) ? item.links : (item.link ? [item.link] : []);
+          const linksHtml = pdfLinks.map(l=>'<div style="font-size:13px;color:#6C47E8;margin-top:4px;"><i class="fas fa-link"></i> <a href="'+esc(l)+'" style="color:#6C47E8;">'+esc(l)+'</a></div>').join('');
+          const pdfImages = item.images || [];
+          const imagesHtml = pdfImages.length ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">'+pdfImages.map(img=>'<img src="'+img+'" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid #E4DEFC;">').join('')+'</div>' : '';
+          html += '<div class="pdf-task-item"><div class="pdf-check '+(item.completed?'':'empty')+'">'+(item.completed?'✅':'⬜')+'</div><div style="flex:1;"><div class="pdf-text '+(item.completed?'done':'')+'">'+esc(item.text)+'</div>'+(hasNote ? '<div style="font-size:13px;color:#7168A0;margin-top:4px;"><i class="fas fa-pencil-alt"></i> '+esc(item.note)+'</div>' : '')+linksHtml+imagesHtml+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"><span class="pdf-tag">'+(TIME_LABELS[item.timeFrame]||'Någon gång')+'</span>'+(showPerson && personLabel ? '<span class="pdf-person" style="background:'+pcolor+'">'+esc(personLabel)+'</span>' : '')+(item.type==='shopping' ? '<span class="pdf-tag">🛒</span>' : '')+(item.reminder ? '<span class="pdf-tag">🔔 '+new Date(item.reminder).toLocaleDateString('sv-SE')+'</span>' : '')+'</div></div></div>';
         });
         html += '</div>';
       }
@@ -2050,7 +2186,7 @@ function importTasksToPerson(btn){
     tasks.push({
       id: Date.now() + added, text: t.text, type: t.type, timeFrame: t.timeFrame,
       person: targetPerson, reminder: null, reminded: false, completed: false,
-      createdAt: new Date().toISOString(), note: t.note || '', link: t.link || ''
+      createdAt: new Date().toISOString(), note: t.note || '', links: [], images: []
     });
     added++;
   });
