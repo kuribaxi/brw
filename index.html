@@ -413,6 +413,15 @@
     .login-btn{width:100%;height:54px;border-radius:var(--rsm);border:none;margin-top:14px;background:linear-gradient(135deg,var(--primary) 0%,#9B59E8 100%);color:#fff;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px var(--primary-glow);transition:opacity .2s,transform .1s}
     .login-btn:active{transform:scale(.98);opacity:.92}
     .login-reset{margin-top:16px;font-size:12px;font-weight:700;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:var(--font)}
+    .login-back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--text3);font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;font-family:var(--font);padding:4px 0}
+    .login-back-btn:active{color:var(--primary)}
+    .login-profile-list{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+    .login-profile-btn{width:100%;display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:var(--rsm);border:2px solid var(--border);background:var(--surface2);cursor:pointer;font-family:var(--font);font-size:15px;font-weight:800;color:var(--text);transition:border .2s,background .2s;text-align:left}
+    .login-profile-btn:active{border-color:var(--primary);background:var(--primary-soft)}
+    .login-profile-avatar{width:36px;height:36px;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:15px}
+    .login-add-btn{width:100%;height:52px;border-radius:var(--rsm);margin-top:16px;background:var(--surface2);color:var(--text2);font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;gap:8px;transition:border .2s,color .2s}
+    .login-add-btn:active{border-color:var(--primary);color:var(--primary)}
+    .login-name-input{text-align:left !important;letter-spacing:normal !important;text-transform:none !important}
     body.pc-mode .home-body,body.pc-mode .detail-body{max-width:980px}
     body.pc-mode .hdr-toprow,body.pc-mode .dhdr-toprow{gap:14px}
     body.pc-mode .hdr-logo,body.pc-mode .dhdr-avatar{width:56px;height:56px;font-size:24px;border-radius:16px}
@@ -451,14 +460,8 @@
 
 <!-- ═══════ INLOGGNING ═══════ -->
 <div class="login-ov" id="loginOv">
-  <div class="login-card">
-    <div class="login-logo"><i class="fas fa-lock"></i></div>
-    <div class="login-title" id="loginTitle">Ange lösenord</div>
-    <div class="login-sub" id="loginSub">Skriv lösenordet för att fortsätta</div>
-    <input type="password" class="login-input" id="loginInput" placeholder="••••••" autocomplete="off" onkeydown="if(event.key==='Enter')submitLogin()">
-    <div class="login-err h" id="loginErr">Fel lösenord, försök igen</div>
-    <button class="login-btn" onclick="submitLogin()" id="loginSubmitBtn">Logga in</button>
-    <button class="login-reset" id="loginResetBtn" onclick="resetPassword()">Glömt lösenordet? Återställ</button>
+  <div class="login-card" id="loginContent">
+    <!-- Fylls dynamiskt av JS: profilval, skapa profil, eller lösenordsprompt -->
   </div>
 </div>
 
@@ -477,7 +480,7 @@
         <button class="icon-btn" onclick="toggleNight()" title="Nattläge" id="nightBtn">
           <svg id="nightSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <button class="icon-btn" onclick="logoutApp()" title="Logga ut"><i class="fas fa-sign-out-alt"></i></button>
+        <button class="icon-btn" onclick="logoutApp()" title="Byt profil / Logga ut"><i class="fas fa-sign-out-alt"></i></button>
         <button class="icon-btn" onclick="openNotif()" title="Påminnelser">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="bdg h" id="notifBdg">0</span>
@@ -844,48 +847,160 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 /* ===== INLOGGNING ===== */
 const PW_KEY='familyAppPassword';
+const PROFILES_KEY='familyProfiles';
+const CURRENT_PROFILE_KEY='familyCurrentProfileId';
+let currentProfileId=null;
+
+function loadProfiles(){ return sl(PROFILES_KEY, []); }
+function saveProfiles(profiles){ localStorage.setItem(PROFILES_KEY, JSON.stringify(profiles)); }
+
+/* Migrerar automatiskt det gamla enskilda lösenordet (om det finns) till en första profil,
+   så tidigare användare inte behöver skapa om allt. */
+function migrateOldPassword(){
+  let profiles = loadProfiles();
+  if(!profiles.length){
+    const oldPw = localStorage.getItem(PW_KEY);
+    if(oldPw){
+      profiles = [{id:'p_'+Date.now(), name:'Familj', password: oldPw}];
+      saveProfiles(profiles);
+      localStorage.removeItem(PW_KEY);
+    }
+  }
+  return profiles;
+}
+
 function checkLoginState(){
-  const savedPw=localStorage.getItem(PW_KEY);
-  const authed=localStorage.getItem('familyAppAuthed')==='true';
-  if(authed){unlockApp();return;}
-  if(savedPw){
-    document.getElementById('loginTitle').textContent='Ange lösenord';
-    document.getElementById('loginSub').textContent='Skriv lösenordet för att fortsätta';
-    document.getElementById('loginResetBtn').classList.remove('h');
-  }else{
-    document.getElementById('loginTitle').textContent='Skapa lösenord';
-    document.getElementById('loginSub').textContent='Ange ett lösenord som skyddar appen';
-    document.getElementById('loginResetBtn').classList.add('h');
+  const profiles = migrateOldPassword();
+  const savedCurrent = localStorage.getItem(CURRENT_PROFILE_KEY);
+  if(savedCurrent && profiles.find(p=>p.id===savedCurrent)){
+    unlockApp(savedCurrent);
+    return;
   }
-  document.getElementById('loginInput').value='';
-  setTimeout(()=>document.getElementById('loginInput').focus(),50);
+  if(!profiles.length){
+    renderCreateProfileForm(true);
+  } else {
+    renderProfileList();
+  }
 }
-function submitLogin(){
-  const val=document.getElementById('loginInput').value;
-  if(!val.trim())return;
-  const savedPw=localStorage.getItem(PW_KEY);
-  if(!savedPw){
-    localStorage.setItem(PW_KEY,val);
-    unlockApp();
-    toast('🔒 Lösenord skapat!');
-  }else if(val===savedPw){
-    unlockApp();
-  }else{
+
+function renderProfileList(){
+  const profiles = loadProfiles();
+  const wrap = document.getElementById('loginContent');
+  wrap.innerHTML =
+    '<div class="login-logo"><i class="fas fa-users"></i></div>'+
+    '<div class="login-title">Vem loggar in?</div>'+
+    '<div class="login-sub">Välj din profil</div>'+
+    '<div class="login-profile-list">'+
+    profiles.map(p=>'<button class="login-profile-btn" onclick="selectProfile(\''+p.id+'\')"><span class="login-profile-avatar">'+esc(p.name.charAt(0).toUpperCase())+'</span><span>'+esc(p.name)+'</span><i class="fas fa-chevron-right" style="margin-left:auto;color:var(--text3)"></i></button>').join('')+
+    '</div>'+
+    '<button class="login-add-btn" onclick="renderCreateProfileForm(false)"><i class="fas fa-user-plus"></i> Ny profil</button>';
+}
+
+function selectProfile(id){
+  const p = loadProfiles().find(x=>x.id===id);
+  if(p) renderPasswordPrompt(p);
+}
+
+function renderPasswordPrompt(profile){
+  const wrap = document.getElementById('loginContent');
+  wrap.innerHTML =
+    '<button class="login-back-btn" onclick="renderProfileList()"><i class="fas fa-chevron-left"></i> Alla profiler</button>'+
+    '<div class="login-logo"><i class="fas fa-lock"></i></div>'+
+    '<div class="login-title">'+esc(profile.name)+'</div>'+
+    '<div class="login-sub">Ange lösenord för att logga in</div>'+
+    '<input type="password" class="login-input" id="loginInput" placeholder="••••••" autocomplete="off" onkeydown="if(event.key===\'Enter\')submitProfileLogin(\''+profile.id+'\')">'+
+    '<div class="login-err h" id="loginErr">Fel lösenord, försök igen</div>'+
+    '<button class="login-btn" onclick="submitProfileLogin(\''+profile.id+'\')">Logga in</button>'+
+    '<button class="login-reset" onclick="resetProfilePassword(\''+profile.id+'\')">Glömt lösenordet? Återställ</button>';
+  setTimeout(()=>{ const i=document.getElementById('loginInput'); if(i)i.focus(); },50);
+}
+
+function submitProfileLogin(id){
+  const input = document.getElementById('loginInput');
+  const val = input ? input.value : '';
+  const p = loadProfiles().find(x=>x.id===id);
+  if(!p) return;
+  if(val===p.password){
+    unlockApp(p.id);
+  } else {
     document.getElementById('loginErr').classList.remove('h');
-    document.getElementById('loginInput').value='';
-    document.getElementById('loginInput').focus();
+    input.value='';
+    input.focus();
   }
 }
-function unlockApp(){
-  localStorage.setItem('familyAppAuthed','true');
+
+function renderCreateProfileForm(isFirst){
+  const wrap = document.getElementById('loginContent');
+  wrap.innerHTML =
+    (!isFirst ? '<button class="login-back-btn" onclick="renderProfileList()"><i class="fas fa-chevron-left"></i> Alla profiler</button>' : '')+
+    '<div class="login-logo"><i class="fas fa-user-plus"></i></div>'+
+    '<div class="login-title">'+(isFirst?'Skapa din profil':'Ny profil')+'</div>'+
+    '<div class="login-sub">'+(isFirst?'Ange ett namn och lösenord som skyddar appen':'Ange namn och lösenord för den nya profilen')+'</div>'+
+    '<input type="text" class="login-input login-name-input" id="newProfileName" placeholder="Namn" maxlength="20">'+
+    '<input type="password" class="login-input" id="newProfilePw" placeholder="Lösenord" style="margin-top:10px" autocomplete="new-password">'+
+    '<input type="password" class="login-input" id="newProfilePw2" placeholder="Bekräfta lösenord" style="margin-top:10px" autocomplete="new-password" onkeydown="if(event.key===\'Enter\')createProfile('+isFirst+')">'+
+    '<div class="login-err h" id="loginErr">Lösenorden matchar inte</div>'+
+    '<button class="login-btn" onclick="createProfile('+isFirst+')">Skapa profil</button>';
+  setTimeout(()=>{ const i=document.getElementById('newProfileName'); if(i)i.focus(); },50);
+}
+
+function createProfile(isFirst){
+  const name = document.getElementById('newProfileName').value.trim();
+  const pw = document.getElementById('newProfilePw').value;
+  const pw2 = document.getElementById('newProfilePw2').value;
+  const err = document.getElementById('loginErr');
+  if(!name){ err.textContent='Ange ett namn'; err.classList.remove('h'); return; }
+  if(!pw){ err.textContent='Ange ett lösenord'; err.classList.remove('h'); return; }
+  if(pw!==pw2){ err.textContent='Lösenorden matchar inte'; err.classList.remove('h'); return; }
+  const profiles = loadProfiles();
+  const newProfile = {id:'p_'+Date.now(), name, password: pw};
+  profiles.push(newProfile);
+  saveProfiles(profiles);
+  unlockApp(newProfile.id);
+  toast('🔒 Profil "'+name+'" skapad!');
+}
+
+function resetProfilePassword(id){
+  if(!confirm('Återställa lösenordet för denna profil? Du kan då ange ett helt nytt lösenord.')) return;
+  const profile = loadProfiles().find(x=>x.id===id);
+  if(!profile) return;
+  const wrap = document.getElementById('loginContent');
+  wrap.innerHTML =
+    '<button class="login-back-btn" onclick="renderProfileList()"><i class="fas fa-chevron-left"></i> Alla profiler</button>'+
+    '<div class="login-logo"><i class="fas fa-key"></i></div>'+
+    '<div class="login-title">Nytt lösenord</div>'+
+    '<div class="login-sub">Ange ett nytt lösenord för '+esc(profile.name)+'</div>'+
+    '<input type="password" class="login-input" id="newProfilePw" placeholder="Nytt lösenord" autocomplete="new-password">'+
+    '<input type="password" class="login-input" id="newProfilePw2" placeholder="Bekräfta lösenord" style="margin-top:10px" autocomplete="new-password" onkeydown="if(event.key===\'Enter\')saveNewPassword(\''+id+'\')">'+
+    '<div class="login-err h" id="loginErr">Lösenorden matchar inte</div>'+
+    '<button class="login-btn" onclick="saveNewPassword(\''+id+'\')">Spara nytt lösenord</button>';
+}
+
+function saveNewPassword(id){
+  const pw = document.getElementById('newProfilePw').value;
+  const pw2 = document.getElementById('newProfilePw2').value;
+  const err = document.getElementById('loginErr');
+  if(!pw){ err.textContent='Ange ett lösenord'; err.classList.remove('h'); return; }
+  if(pw!==pw2){ err.textContent='Lösenorden matchar inte'; err.classList.remove('h'); return; }
+  const profiles = loadProfiles();
+  const idx = profiles.findIndex(p=>p.id===id);
+  if(idx>-1){ profiles[idx].password = pw; saveProfiles(profiles); }
+  unlockApp(id);
+  toast('✅ Nytt lösenord sparat!');
+}
+
+function unlockApp(profileId){
+  currentProfileId = profileId;
+  localStorage.setItem(CURRENT_PROFILE_KEY, profileId);
   document.getElementById('loginOv').classList.add('h');
   document.body.classList.remove('locked');
+  updateProfileBadge();
 }
-function resetPassword(){
-  if(confirm('Återställa lösenordet? Du kan då ange ett helt nytt lösenord.')){
-    localStorage.removeItem(PW_KEY);
-    checkLoginState();
-  }
+
+function updateProfileBadge(){
+  const profile = loadProfiles().find(p=>p.id===currentProfileId);
+  const el = document.querySelector('#pageHome .hdr-sub');
+  if(el) el.textContent = profile ? 'Inloggad som '+profile.name : '';
 }
 
 /* ===== PC-LÄGE ===== */
@@ -916,8 +1031,8 @@ function toggleNight(){night=!night;localStorage.setItem('nightMode',night);appl
 
 /* ===== LOGOUT ===== */
 function logoutApp(){
-  if(confirm('Logga ut? Du måste ange lösenordet igen nästa gång.')){
-    localStorage.removeItem('familyAppAuthed');
+  if(confirm('Logga ut? Du kommer tillbaka till profilväljaren och behöver ange lösenord igen nästa gång.')){
+    localStorage.removeItem(CURRENT_PROFILE_KEY);
     location.reload();
   }
 }
