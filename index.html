@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Familjens Planerare</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -70,27 +70,21 @@
     .pdf-btn:active{transform:scale(.96);opacity:.9}
     .mindmap-btn{height:44px;padding:0 14px;border-radius:14px;border:none;background:var(--primary);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:800;flex-shrink:0;transition:opacity .2s,transform .1s;font-family:var(--font);box-shadow:0 4px 14px var(--primary-glow);white-space:nowrap}
     .mindmap-btn:active{transform:scale(.96);opacity:.9}
-    .mm-select-row{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--surface2);border-radius:var(--rsm);border:2px solid var(--border);margin-bottom:8px;cursor:pointer;transition:border .2s}
-    .mm-select-row:has(input:checked){border-color:var(--primary);background:var(--primary-soft)}
-    .mm-select-row input[type="checkbox"]{width:20px;height:20px;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
-    .mm-select-row label{font-size:14px;font-weight:700;color:var(--text);cursor:pointer;flex:1}
-    .mm-select-row .mm-count{font-size:12px;font-weight:800;color:var(--text2);background:var(--surface);padding:2px 9px;border-radius:50px;border:1.5px solid var(--border)}
-    .mm-canvas{position:relative;padding:20px 8px 40px;background:var(--surface2);border-radius:var(--rsm)}
-    .mm-root{width:fit-content;max-width:80%;margin:0 auto 30px;background:var(--primary);color:#fff;font-weight:900;font-size:16px;padding:14px 22px;border-radius:18px;text-align:center;box-shadow:0 6px 20px var(--primary-glow);position:relative;z-index:2}
-    .mm-groups{display:flex;flex-direction:column;gap:22px;position:relative;z-index:2}
-    .mm-group{width:92%;border-radius:16px;background:var(--surface);border:2px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden}
-    .mm-group.align-left{margin-right:auto}
-    .mm-group.align-right{margin-left:auto}
-    .mm-group-header{padding:10px 16px;font-weight:900;font-size:14px;color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-    .mm-group-header>span:first-child{display:flex;flex-direction:column;gap:2px}
-    .mm-group-date{font-size:11px;font-weight:700;opacity:.9}
-    .mm-group-body{padding:8px 14px 12px}
-    .mm-task-item{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-size:13px;font-weight:700;color:var(--text);padding:7px 0;border-bottom:1px solid var(--border);word-break:break-word;line-height:1.35}
-    .mm-task-item:last-child{border-bottom:none}
-    .mm-task-item .mm-task-person{display:block;font-size:11px;font-weight:800;color:var(--text3);margin-top:2px}
-    .mm-task-item .mm-task-date{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:800;color:#92400E;background:var(--amber-soft);padding:2px 8px;border-radius:50px;margin-top:5px}
-    #mmLines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
-    .mm-empty{text-align:center;padding:30px 16px;color:var(--text3);font-weight:700}
+    .mm-cat-list{display:flex;flex-direction:column;gap:8px}
+    .mm-cat-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-radius:var(--rsm);background:var(--surface2);border:2px solid var(--border);cursor:pointer;transition:all .2s}
+    .mm-cat-row:active{background:var(--primary-soft);border-color:var(--primary)}
+    .mm-cat-name{font-size:15px;font-weight:800;color:var(--text)}
+    .mm-cat-date{font-size:12px;color:var(--text3);font-weight:600;margin-top:2px}
+    .mm-cat-count{font-size:13px;font-weight:900;color:#fff;background:var(--primary);padding:4px 12px;border-radius:50px;min-width:26px;text-align:center}
+    .mm-sticky-header{text-align:center;margin-bottom:16px}
+    .mm-sticky-title{font-size:19px;font-weight:900;color:var(--text)}
+    .mm-sticky-date{font-size:13px;font-weight:700;color:var(--primary);margin-top:2px}
+    .mm-sticky-sub{font-size:12px;color:var(--text3);font-weight:600;margin-top:4px}
+    .mm-note-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;padding:6px 4px 20px}
+    .mm-note{border-radius:2px;min-height:130px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-family:'Caveat',cursive;font-size:24px;font-weight:700;color:#2b2410;box-shadow:0 10px 18px rgba(0,0,0,.2);word-break:break-word;line-height:1.2}
+    .mm-note-text{width:100%}
+    .mm-note-person{font-family:var(--font);font-size:11px;font-weight:800;color:#2b2410;opacity:.65;margin-top:8px;text-transform:uppercase;letter-spacing:.03em}
+    .mm-empty{text-align:center;padding:30px 16px;color:var(--text3);font-weight:700;grid-column:1/-1}
     .dhdr-avatar{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;font-weight:900}
     .dhdr-info{flex:1;min-width:0}
     .dhdr-name{font-size:18px;font-weight:900;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px}
@@ -1710,7 +1704,8 @@ function closePDF(){
 }
 
 // ===== TANKEKARTA (MINDMAP) =====
-// ===== TANKEKARTA (MINDMAP) =====
+const NOTE_COLORS = ['#FF9EC7','#FFF176','#AED581','#FF7043','#FFD54F','#F06292','#9CCC65','#FFAB91'];
+
 function getGroupDateLabel(tf){
   const now = new Date();
   const monthNames = ['Januari','Februari','Mars','April','Maj','Juni','Juli','Augusti','September','Oktober','November','December'];
@@ -1741,6 +1736,9 @@ function getGroupDateLabel(tf){
   return null;
 }
 
+/* Steg 1: en enkel lista med mappar/grupper (Idag, Imorgon, Denna vecka osv), med
+   antal uppgifter och datum för varje. Tryck på en rad för att öppna den som
+   klisterlappar. */
 function openMindmapSelector(){
   const mine = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
   const active = mine.filter(t=>!t.completed);
@@ -1752,93 +1750,46 @@ function openMindmapSelector(){
   active.forEach(t=>{ if(!grouped[t.timeFrame]) grouped[t.timeFrame]=[]; grouped[t.timeFrame].push(t); });
 
   const rootLabel = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
-  let html = '<div style="background:var(--primary-soft);border-radius:var(--rsm);padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--border);color:var(--text2);font-size:13px"><i class="fas fa-info-circle"></i> Välj vilka grupper (mappar) som ska vara med i tankekartan för <strong>'+esc(rootLabel)+'</strong>.</div>';
-  html += '<div id="mmSelectList">';
+  let html = '<div style="background:var(--primary-soft);border-radius:var(--rsm);padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--border);color:var(--text2);font-size:13px"><i class="fas fa-info-circle"></i> Välj en mapp för <strong>'+esc(rootLabel)+'</strong> för att se uppgifterna som klisterlappar.</div>';
+  html += '<div class="mm-cat-list">';
   TIME_ORDER.forEach(tf=>{
     if(grouped[tf] && grouped[tf].length){
       const dl = getGroupDateLabel(tf);
-      html += '<div class="mm-select-row" onclick="if(event.target.tagName!==\'INPUT\'){const cb=this.querySelector(\'input\');cb.checked=!cb.checked}"><input type="checkbox" class="mm-tf-check" value="'+tf+'" checked><label>'+TIME_LABELS[tf]+(dl?' <span style="color:var(--text3);font-weight:600">('+dl+')</span>':'')+'</label><span class="mm-count">'+grouped[tf].length+'</span></div>';
+      html += '<div class="mm-cat-row" onclick="renderStickyNotes(\''+tf+'\')"><div><div class="mm-cat-name">'+TIME_LABELS[tf]+'</div>'+(dl?'<div class="mm-cat-date">'+dl+'</div>':'')+'</div><div style="display:flex;align-items:center;gap:10px"><span class="mm-cat-count">'+grouped[tf].length+'</span><i class="fas fa-chevron-right" style="color:var(--text3)"></i></div></div>';
     }
   });
   html += '</div>';
 
   document.getElementById('mindmapBody').innerHTML = html;
-  document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="closeMindmap()">Avbryt</button><button class="modal-btn" style="background:var(--primary);color:#fff" onclick="renderMindmapFromSelector()"><i class="fas fa-diagram-project"></i> Skapa tankekarta</button>';
+  document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="closeMindmap()" style="flex:1">Stäng</button>';
   document.getElementById('mindmapModal').classList.remove('h');
 }
 
-function renderMindmapFromSelector(){
-  const checks = document.querySelectorAll('.mm-tf-check');
-  const selected = Array.from(checks).filter(c=>c.checked).map(c=>c.value);
-  if(!selected.length){ toast('Välj minst en grupp','error'); return; }
-  buildMindmapDiagram(selected);
-}
-
-function buildMindmapDiagram(selectedTimeframes){
+/* Steg 2: uppgifterna i den valda mappen visas som färgglada klisterlappar
+   med handstilsliknande typsnitt. */
+function renderStickyNotes(tf){
   const mine = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
-  const active = mine.filter(t=>!t.completed && selectedTimeframes.includes(t.timeFrame));
-  const grouped = {};
-  active.forEach(t=>{ if(!grouped[t.timeFrame]) grouped[t.timeFrame]=[]; grouped[t.timeFrame].push(t); });
-
+  const items = mine.filter(t=>!t.completed && t.timeFrame===tf);
   const rootLabel = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
-  let groupCount = 0;
-  let groupsHtml = '';
-  let i=0;
-  TIME_ORDER.forEach(tf=>{
-    if(grouped[tf] && grouped[tf].length){
-      const color = MM_GROUP_COLORS[tf] || '#999';
-      const align = (i%2===0) ? 'align-left' : 'align-right';
-      const dl = getGroupDateLabel(tf);
-      groupsHtml += '<div class="mm-group '+align+'" data-tf="'+tf+'"><div class="mm-group-header" style="background:'+color+'"><span>'+TIME_LABELS[tf]+(dl?'<span class="mm-group-date">'+dl+'</span>':'')+'</span><span>'+grouped[tf].length+'</span></div><div class="mm-group-body">';
-      grouped[tf].forEach(t=>{
-        const pLabel = currentPerson==='all' && t.person!=='all' ? (personLabels[t.person]||t.person) : null;
-        const dateLabel = t.reminder ? new Date(t.reminder).toLocaleDateString('sv-SE',{day:'numeric',month:'short',year:'numeric'}) : null;
-        groupsHtml += '<div class="mm-task-item">'+esc(t.text)+(dateLabel ? '<span class="mm-task-date"><i class="fas fa-clock"></i> '+dateLabel+'</span>' : '')+(pLabel ? '<span class="mm-task-person">'+esc(pLabel)+'</span>' : '')+'</div>';
-      });
-      groupsHtml += '</div></div>';
-      i++; groupCount++;
-    }
+  const dl = getGroupDateLabel(tf);
+
+  let notesHtml = '';
+  items.forEach((t,idx)=>{
+    const color = NOTE_COLORS[idx % NOTE_COLORS.length];
+    const rot = ((idx % 5) - 2) * 2.2;
+    const pLabel = currentPerson==='all' && t.person!=='all' ? (personLabels[t.person]||t.person) : null;
+    notesHtml += '<div class="mm-note" style="background:'+color+';transform:rotate('+rot+'deg)">'+
+      '<div class="mm-note-text">'+esc(t.text)+'</div>'+
+      (pLabel ? '<div class="mm-note-person">'+esc(pLabel)+'</div>' : '')+
+      '</div>';
   });
 
   const body = document.getElementById('mindmapBody');
-  if(groupCount===0){
-    body.innerHTML = '<div class="mm-empty"><i class="fas fa-diagram-project" style="font-size:28px;display:block;margin-bottom:10px"></i>Inga uppgifter i valda grupper.</div>';
-    document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="openMindmapSelector()"><i class="fas fa-arrow-left"></i> Tillbaka</button>';
-    return;
-  }
+  body.innerHTML =
+    '<div class="mm-sticky-header"><div class="mm-sticky-title">'+TIME_LABELS[tf]+'</div>'+(dl?'<div class="mm-sticky-date">'+dl+'</div>':'')+'<div class="mm-sticky-sub">'+esc(rootLabel)+' · '+items.length+' uppgifter</div></div>'+
+    '<div class="mm-note-grid" id="mmNoteGrid">'+(notesHtml || '<div class="mm-empty">Inga uppgifter här.</div>')+'</div>';
 
-  body.innerHTML = '<div class="mm-canvas" id="mmCanvas"><div class="mm-root">'+esc(rootLabel)+'</div><div class="mm-groups" id="mmGroups">'+groupsHtml+'</div><svg id="mmLines"></svg></div>';
-  document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="openMindmapSelector()"><i class="fas fa-arrow-left"></i> Tillbaka</button><button class="modal-btn" style="background:var(--rose);color:#fff" onclick="downloadMindmapPDF()"><i class="fas fa-download"></i> Ladda ner</button>';
-
-  requestAnimationFrame(()=>drawMindmapLines());
-}
-
-function drawMindmapLines(){
-  const canvas = document.getElementById('mmCanvas');
-  const root = canvas ? canvas.querySelector('.mm-root') : null;
-  const svg = document.getElementById('mmLines');
-  if(!canvas || !root || !svg) return;
-
-  const canvasRect = canvas.getBoundingClientRect();
-  svg.setAttribute('width', canvas.scrollWidth);
-  svg.setAttribute('height', canvas.scrollHeight);
-  svg.setAttribute('viewBox', '0 0 '+canvas.scrollWidth+' '+canvas.scrollHeight);
-
-  const rootRect = root.getBoundingClientRect();
-  const rootX = rootRect.left - canvasRect.left + rootRect.width/2;
-  const rootY = rootRect.bottom - canvasRect.top;
-
-  let linesHtml = '';
-  canvas.querySelectorAll('.mm-group').forEach(group=>{
-    const tf = group.dataset.tf;
-    const color = MM_GROUP_COLORS[tf] || '#999';
-    const gRect = group.getBoundingClientRect();
-    const gx = gRect.left - canvasRect.left + gRect.width/2;
-    const gy = gRect.top - canvasRect.top;
-    const midY = (rootY + gy)/2;
-    linesHtml += '<path d="M'+rootX+' '+rootY+' C '+rootX+' '+midY+', '+gx+' '+midY+', '+gx+' '+gy+'" stroke="'+color+'" stroke-width="2.5" fill="none" opacity="0.85"/>';
-  });
-  svg.innerHTML = linesHtml;
+  document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="openMindmapSelector()"><i class="fas fa-arrow-left"></i> Tillbaka</button><button class="modal-btn" style="background:var(--rose);color:#fff" onclick="downloadMindmapPDF(\''+TIME_LABELS[tf]+'\')"><i class="fas fa-download"></i> Ladda ner</button>';
 }
 
 function closeMindmap(){
@@ -1847,20 +1798,20 @@ function closeMindmap(){
   document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="closeMindmap()" style="flex:1">Stäng</button>';
 }
 
-function downloadMindmapPDF(){
-  const element = document.getElementById('mmCanvas');
+function downloadMindmapPDF(groupLabel){
+  const element = document.getElementById('mmNoteGrid');
   if(!element){ toast('Inget att ladda ner','error'); return; }
   const label = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
   const opt = {
     margin: [8, 8, 8, 8],
-    filename: ('Tankekarta - '+label).replace(/[^a-zA-Z0-9åäöÅÄÖ\- ]/g, '').trim()+'.pdf',
+    filename: ('Klisterlappar - '+label+' - '+(groupLabel||'')).replace(/[^a-zA-Z0-9åäöÅÄÖ\- ]/g, '').trim()+'.pdf',
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, letterRendering: true, useCORS: true, logging: false },
-    jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
   toast('Genererar PDF...');
   html2pdf().set(opt).from(element).save().then(() => {
-    toast('✅ Tankekarta sparad som PDF!');
+    toast('✅ Klisterlappar sparade som PDF!');
   }).catch(err => {
     console.error(err);
     toast('❌ Kunde inte generera PDF','error');
