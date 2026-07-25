@@ -834,8 +834,49 @@ let syncLogEntries = [];
 
 // ===== VERSION HISTORY STATE =====
 const VERSION_HISTORY_KEY = 'familyVersionHistory';
-const VERSION_HISTORY_MAX = 20;
+const VERSION_HISTORY_MAX = 8;
 let versionHistory = sl(VERSION_HISTORY_KEY, []);
+const MAX_SAVED_PDFS = 12;
+
+/* Skriver säkert till localStorage. Returnerar false om lagringen är full
+   (QuotaExceededError) istället för att krascha resten av funktionen som
+   anropade den - annars kan t.ex. addTask() avbrytas halvvägs och det ser ut
+   som att uppgiften "inte går att spara". */
+function safeLocalSet(key, value){
+  try{
+    localStorage.setItem(key, value);
+    return true;
+  }catch(e){
+    console.error('Lagringsfel för '+key+':', e);
+    return false;
+  }
+}
+
+/* Körs när lagringen är full. Rensar automatiskt bort äldre PDF-kopior och
+   äldre versioner (de tar mest plats eftersom de innehåller hela uppgiftslistan),
+   försöker sedan spara igen en gång. */
+function handleStorageFull(){
+  let freedSomething = false;
+  if(savedPDFs.length > 3){
+    savedPDFs = savedPDFs.slice(-3);
+    try{ localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs)); }catch(e){}
+    renderSavedPDFs();
+    freedSomething = true;
+  }
+  if(versionHistory.length > 3){
+    versionHistory = versionHistory.slice(-3);
+    try{ localStorage.setItem(VERSION_HISTORY_KEY, JSON.stringify(versionHistory)); }catch(e){}
+    freedSomething = true;
+  }
+  const retryOk = safeLocalSet('familyTasks', JSON.stringify(tasks)) && safeLocalSet('familyTrash', JSON.stringify(trash));
+  if(retryOk){
+    toast(freedSomething ? '⚠️ Lagringen var full – gamla PDF-kopior/versioner rensades automatiskt. Uppgiften sparades!' : '✅ Sparat!', freedSomething?'error':'success');
+    return true;
+  } else {
+    toast('❌ Lagringen är fortfarande full. Ta bort bilder från uppgifter, radera gamla PDF-kopior, eller exportera en backup och rensa i webbläsaren.','error');
+    return false;
+  }
+}
 
 function buildColorMap(){
   colorMap['all'] = PERSON_COLORS[0];
@@ -1632,7 +1673,7 @@ async function handleNewTaskImages(event){
   if(!files.length) return;
   for(const file of files){
     if(pendingTaskImages.length>=MAX_TASK_IMAGES){ toast('Max '+MAX_TASK_IMAGES+' bilder per uppgift','error'); break; }
-    try{ pendingTaskImages.push(await resizeImageFile(file, 1000, 0.72)); }catch(e){ console.error(e); }
+    try{ pendingTaskImages.push(await resizeImageFile(file, 800, 0.65)); }catch(e){ console.error(e); }
   }
   renderImagePreview('newTaskImagePreview', pendingTaskImages, 'new');
   event.target.value = '';
@@ -1647,7 +1688,7 @@ async function handleEditTaskImages(event){
   if(!files.length) return;
   for(const file of files){
     if(editPendingImages.length>=MAX_TASK_IMAGES){ toast('Max '+MAX_TASK_IMAGES+' bilder per uppgift','error'); break; }
-    try{ editPendingImages.push(await resizeImageFile(file, 1000, 0.72)); }catch(e){ console.error(e); }
+    try{ editPendingImages.push(await resizeImageFile(file, 800, 0.65)); }catch(e){ console.error(e); }
   }
   renderImagePreview('editTaskImagePreview', editPendingImages, 'edit');
   event.target.value = '';
@@ -1688,7 +1729,11 @@ function addTask(){
     images: pendingTaskImages.slice(),
     starred: false
   });
-  saveData();
+  const ok = saveData();
+  if(!ok){
+    tasks.pop();
+    return;
+  }
   inp.value='';
   document.getElementById('taskNoteInput').value='';
   resetLinkRows('newTaskLinksList');
@@ -1754,6 +1799,8 @@ function saveEditTask(id){
   const text = document.getElementById('editTaskText').value.trim();
   if(!text){ toast('Ange en uppgift','error'); return; }
 
+  const previousState = JSON.parse(JSON.stringify(t));
+
   t.text = text;
   t.type = document.getElementById('editTaskType').value;
   t.timeFrame = document.getElementById('editTaskTimeFrame').value;
@@ -1771,7 +1818,12 @@ function saveEditTask(id){
     t.reminded = false;
   }
 
-  saveData();
+  const ok = saveData();
+  if(!ok){
+    Object.keys(t).forEach(k=>delete t[k]);
+    Object.assign(t, previousState);
+    return;
+  }
   renderDetail();
   closeEditTask();
   toast('✅ Uppgift uppdaterad!');
@@ -1990,13 +2042,13 @@ function savePDFToApp(){
   if(!tempPDFData) return;
   const id = Date.now();
   const pdfEntry = {
-    id: id, title: tempPDFData.title, items: tempPDFData.items,
+    id: id, title: tempPDFData.title, items: JSON.parse(JSON.stringify(tempPDFData.items)),
     showPerson: tempPDFData.showPerson, savedAt: new Date().toISOString(),
-    html: tempPDFData.html,
     backupData: buildFullDataSnapshot()
   };
   savedPDFs.push(pdfEntry);
-  localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+  if(savedPDFs.length > MAX_SAVED_PDFS) savedPDFs = savedPDFs.slice(-MAX_SAVED_PDFS);
+  if(!safeLocalSet('savedPDFs', JSON.stringify(savedPDFs))) handleStorageFull();
   renderSavedPDFs();
   toast('✅ PDF sparad i appen!');
   closePDF();
@@ -2043,9 +2095,10 @@ function restoreSavedPDF(id){
 function printSavedPDF(id){
   const pdf = savedPDFs.find(p => p.id === id);
   if(!pdf) return;
+  const contentHtml = pdf.html || generatePDFHTML(pdf.title, pdf.items, pdf.showPerson);
   const win = window.open('', '_blank');
   if(win){
-    win.document.write('<html><head><title>'+pdf.title+'</title><style>body{font-family:\'Nunito\',sans-serif;padding:20px;background:#fff;color:#1E1535;max-width:800px;margin:0 auto}.pdf-header{padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px}.pdf-header h2{font-size:24px;color:#1E1535;margin:0}.pdf-header p{color:#7168A0;font-size:14px;margin:4px 0}.pdf-task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8}.pdf-check{font-size:18px;flex-shrink:0}.pdf-text{font-weight:700;color:#1E1535;flex:1}.pdf-text.done{text-decoration:line-through;color:#A89FCE}.pdf-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0}.pdf-person{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}.pdf-footer{text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px}@media print{body{padding:0}.pdf-header{background:#f5f3ff}}</style></head><body>'+pdf.html+'<script>window.onload=function(){window.print();}<\/script></body></html>');
+    win.document.write('<html><head><title>'+pdf.title+'</title><style>body{font-family:\'Nunito\',sans-serif;padding:20px;background:#fff;color:#1E1535;max-width:800px;margin:0 auto}.pdf-header{padding:20px;background:#f9f7ff;border-radius:10px;margin-bottom:20px}.pdf-header h2{font-size:24px;color:#1E1535;margin:0}.pdf-header p{color:#7168A0;font-size:14px;margin:4px 0}.pdf-task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #F0EDF8}.pdf-check{font-size:18px;flex-shrink:0}.pdf-text{font-weight:700;color:#1E1535;flex:1}.pdf-text.done{text-decoration:line-through;color:#A89FCE}.pdf-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#F7F5FC;color:#7168A0}.pdf-person{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}.pdf-footer{text-align:center;padding:20px 0;font-size:12px;color:#A89FCE;border-top:1px solid #E4DEFC;margin-top:20px}@media print{body{padding:0}.pdf-header{background:#f5f3ff}}</style></head><body>'+contentHtml+'<script>window.onload=function(){window.print();}<\/script></body></html>');
     win.document.close();
   }
 }
@@ -2105,9 +2158,13 @@ function toggleStar(id){
 }
 
 function saveData(){
-  localStorage.setItem('familyTasks',JSON.stringify(tasks));
-  localStorage.setItem('familyTrash',JSON.stringify(trash));
-  localStorage.setItem('familyScore',score);
+  const ok1 = safeLocalSet('familyTasks',JSON.stringify(tasks));
+  const ok2 = safeLocalSet('familyTrash',JSON.stringify(trash));
+  safeLocalSet('familyScore',score);
+  if(!ok1 || !ok2){
+    return handleStorageFull();
+  }
+  return true;
 }
 function savePersons(){
   localStorage.setItem('familyPersons',JSON.stringify(persons));
@@ -2128,21 +2185,22 @@ function saveAndConfirm(){
    den går att återställa igen senare via "Återställ"-knappen på kortet. */
 function saveAppPDFSnapshot(){
   const title = 'Alla - Familjens planering (Spara-knapp)';
-  const items = tasks;
-  const html = generatePDFHTML(title, items, true);
   const entry = {
     id: Date.now(),
     title: title,
-    items: items,
+    items: JSON.parse(JSON.stringify(tasks)),
     showPerson: true,
     savedAt: new Date().toISOString(),
-    html: html,
     backupData: buildFullDataSnapshot()
   };
   savedPDFs.push(entry);
-  localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+  if(savedPDFs.length > MAX_SAVED_PDFS) savedPDFs = savedPDFs.slice(-MAX_SAVED_PDFS);
+  if(!safeLocalSet('savedPDFs', JSON.stringify(savedPDFs))){
+    handleStorageFull();
+  } else {
+    addSyncLog('PDF-ögonblicksbild sparad i appen vid Spara', 'success');
+  }
   renderSavedPDFs();
-  addSyncLog('PDF-ögonblicksbild sparad i appen vid Spara', 'success');
 }
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
@@ -2559,13 +2617,16 @@ function saveVersionSnapshot(label){
         trash: JSON.parse(JSON.stringify(trash)),
         persons: JSON.parse(JSON.stringify(persons)),
         personLabels: JSON.parse(JSON.stringify(personLabels)),
-        score: score,
-        savedPDFs: JSON.parse(JSON.stringify(savedPDFs))
+        score: score
       }
     };
     versionHistory.push(snap);
     if(versionHistory.length > VERSION_HISTORY_MAX) versionHistory.shift();
-    localStorage.setItem(VERSION_HISTORY_KEY, JSON.stringify(versionHistory));
+    if(!safeLocalSet(VERSION_HISTORY_KEY, JSON.stringify(versionHistory))){
+      // Om det fortfarande är fullt: släng äldre versioner och försök igen.
+      versionHistory = versionHistory.slice(-3);
+      safeLocalSet(VERSION_HISTORY_KEY, JSON.stringify(versionHistory));
+    }
   }catch(e){
     console.error('Kunde inte spara versionshistorik:', e);
   }
@@ -2605,11 +2666,11 @@ function restoreVersionSnapshot(id){
   persons = JSON.parse(JSON.stringify(snap.data.persons));
   personLabels = JSON.parse(JSON.stringify(snap.data.personLabels));
   score = snap.data.score;
-  savedPDFs = JSON.parse(JSON.stringify(snap.data.savedPDFs));
+  if(snap.data.savedPDFs) savedPDFs = JSON.parse(JSON.stringify(snap.data.savedPDFs));
 
   saveData();
   savePersons();
-  localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
+  if(snap.data.savedPDFs) localStorage.setItem('savedPDFs', JSON.stringify(savedPDFs));
 
   buildColorMap();
   renderCards();
