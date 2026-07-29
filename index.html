@@ -1830,6 +1830,11 @@ function saveEditTask(id){
   renderDetail();
   closeEditTask();
   toast('✅ Uppgift uppdaterad!');
+
+  const mmModal = document.getElementById('mindmapModal');
+  if(mmModal && !mmModal.classList.contains('h') && mindmapOpenTf){
+    renderStickyNotes(mindmapOpenTf);
+  }
 }
 
 // ===== PDF EXPORT FUNCTIONS =====
@@ -1896,6 +1901,7 @@ function closePDF(){
 
 // ===== TANKEKARTA (MINDMAP) =====
 const NOTE_COLORS = ['#FF9EC7','#FFF176','#AED581','#FF7043','#FFD54F','#F06292','#9CCC65','#FFAB91'];
+let mindmapOpenTf = null;
 
 function getGroupDateLabel(tf){
   const now = new Date();
@@ -1931,6 +1937,7 @@ function getGroupDateLabel(tf){
    antal uppgifter och datum för varje. Tryck på en rad för att öppna den som
    klisterlappar. */
 function openMindmapSelector(){
+  mindmapOpenTf = null;
   const mine = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
   const active = mine.filter(t=>!t.completed);
   if(!active.length){
@@ -1959,6 +1966,7 @@ function openMindmapSelector(){
 /* Steg 2: uppgifterna i den valda mappen visas som färgglada klisterlappar
    med handstilsliknande typsnitt. */
 function renderStickyNotes(tf){
+  mindmapOpenTf = tf;
   const mine = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
   const items = mine.filter(t=>!t.completed && t.timeFrame===tf);
   const rootLabel = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
@@ -1971,13 +1979,12 @@ function renderStickyNotes(tf){
     const pLabel = currentPerson==='all' && t.person!=='all' ? (personLabels[t.person]||t.person) : null;
     const noteLinks = (t.links && t.links.length) ? t.links : (t.link ? [t.link] : []);
     const noteImages = t.images || [];
-    const hasExtra = (t.note && t.note.trim()) || noteLinks.length || noteImages.length || t.reminder;
     const badges = [];
     if(t.note && t.note.trim()) badges.push('<i class="fas fa-pencil-alt"></i>');
     if(noteLinks.length) badges.push('<i class="fas fa-link"></i>');
     if(noteImages.length) badges.push('<i class="fas fa-image"></i>');
     if(t.reminder) badges.push('<i class="fas fa-clock"></i>');
-    notesHtml += '<div class="mm-note" style="background:'+color+';transform:rotate('+rot+'deg)"'+(hasExtra?' onclick="openNoteDetail('+t.id+')"':'')+'>'+
+    notesHtml += '<div class="mm-note" style="background:'+color+';transform:rotate('+rot+'deg)" onclick="openNoteDetail('+t.id+')">'+
       '<div class="mm-note-text">'+esc(t.text)+'</div>'+
       (badges.length ? '<div class="mm-note-badges">'+badges.join(' ')+'</div>' : '')+
       (pLabel ? '<div class="mm-note-person">'+esc(pLabel)+'</div>' : '')+
@@ -2022,10 +2029,15 @@ function openNoteDetail(taskId){
     inner += '<div class="task-images" style="margin:0 4px 12px">'+images.map((img,i)=>'<img src="'+img+'" class="task-image-view-thumb" onclick="viewTaskImage('+t.id+','+i+')">').join('')+'</div>';
   }
   if(remDate) inner += '<div style="margin:0 4px 14px"><span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span></div>';
-  inner += '<button class="modal-btn mbtn-neutral" style="width:calc(100% - 8px);margin:4px" onclick="closeNoteDetail()">Stäng</button>';
+  if(!hasNote && !links.length && !images.length && !remDate) inner += '<div style="margin:0 4px 14px;color:var(--text3);font-size:13px;font-weight:600">Ingen anteckning, länk eller bild ännu — tryck på Redigera för att lägga till.</div>';
+  inner += '<div style="display:flex;gap:8px;margin:4px"><button class="modal-btn mbtn-neutral" style="flex:1" onclick="closeNoteDetail()">Stäng</button><button class="modal-btn" style="flex:1;background:var(--primary);color:#fff" onclick="editFromMindmap('+t.id+')"><i class="fas fa-pen"></i> Redigera</button></div>';
 
   overlay.innerHTML = '<div class="modal-sheet" style="padding:0 12px 12px" onclick="event.stopPropagation()">'+inner+'</div>';
   document.body.appendChild(overlay);
+}
+function editFromMindmap(taskId){
+  closeNoteDetail();
+  openEditTask(taskId);
 }
 function closeNoteDetail(){
   const overlay = document.getElementById('noteDetailOverlay');
@@ -2033,6 +2045,7 @@ function closeNoteDetail(){
 }
 
 function closeMindmap(){
+  mindmapOpenTf = null;
   document.getElementById('mindmapModal').classList.add('h');
   document.getElementById('mindmapBody').innerHTML = '';
   document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="closeMindmap()" style="flex:1">Stäng</button>';
