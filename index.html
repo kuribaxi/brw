@@ -2594,11 +2594,19 @@ async function pullFromSupabase(silent=false){
 
     const data = await response.json();
     if(data && data.length > 0){
-      // Spara en ögonblicksbild av DEN LOKALA datan innan den skrivs över av molnet.
-      // Detta är den vanligaste orsaken till att data "försvinner" vid synk:
-      // en annan enhet hann synka in en äldre/mindre version till molnet, och
-      // den här enheten hämtar och skriver över sin egen (nyare) lokala data.
+      // Säkerhetskopia: spara en ögonblicksbild av DEN LOKALA datan innan den skrivs
+      // över av molnet - detta är den vanligaste orsaken till att data "försvinner"
+      // vid synk (en annan enhet synkade in en äldre/mindre version, och den här
+      // enheten hämtar och skriver över sin egen nyare lokala data).
       saveVersionSnapshot('Innan hämtning från molnet skrev över lokal data');
+      const safetyEntry = {
+        id: Date.now(),
+        title: 'Säkerhetskopia innan hämtning från molnet',
+        items: JSON.parse(JSON.stringify(tasks)),
+        showPerson: true,
+        savedAt: new Date().toISOString(),
+        backupData: buildFullDataSnapshot()
+      };
 
       const remoteData = JSON.parse(data[0].data);
       if(remoteData.tasks) tasks = remoteData.tasks;
@@ -2606,7 +2614,14 @@ async function pullFromSupabase(silent=false){
       if(remoteData.persons) persons = remoteData.persons;
       if(remoteData.personLabels) personLabels = remoteData.personLabels;
       if(remoteData.score !== undefined) score = remoteData.score;
-      if(remoteData.savedPDFs) savedPDFs = remoteData.savedPDFs;
+
+      // Slå ihop molnets sparade PDF-kopior med vår nya säkerhetskopia (lägg till,
+      // skriv INTE över) - så säkerhetskopian av de lokala ändringarna finns kvar
+      // och går att öppna/återställa från alla enheter, inte bara den här.
+      let mergedSavedPDFs = remoteData.savedPDFs || [];
+      mergedSavedPDFs = mergedSavedPDFs.concat([safetyEntry]);
+      if(mergedSavedPDFs.length > MAX_SAVED_PDFS) mergedSavedPDFs = mergedSavedPDFs.slice(-MAX_SAVED_PDFS);
+      savedPDFs = mergedSavedPDFs;
 
       saveData();
       savePersons();
@@ -2617,8 +2632,30 @@ async function pullFromSupabase(silent=false){
       renderSavedPDFs();
       updateTrashBdg();
 
+      // Skicka tillbaka den sammanslagna listan (med säkerhetskopian) till molnet,
+      // så syns säkerhetskopian från vilken enhet som helst nästa gång den synkar.
+      try{
+        await fetch(supabaseUrl+'/rest/v1/family_planner?sync_key=eq.'+encodeURIComponent(syncKey), {
+          method: 'PATCH',
+          headers: {
+            'apikey': supabaseKey,
+            'Authorization': 'Bearer '+supabaseKey,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            data: JSON.stringify({tasks, trash, persons, personLabels, score, savedPDFs}),
+            updated_at: new Date().toISOString()
+          })
+        });
+        addSyncLog('Säkerhetskopia sparad i molnet (syns från andra enheter)', 'success');
+      }catch(e){
+        console.error('Kunde inte spara säkerhetskopian i molnet:', e);
+        addSyncLog('Kunde inte spara säkerhetskopian i molnet: '+e.message, 'error');
+      }
+
       if(!silent){
-        toast('✅ Data hämtad från molnet!');
+        toast('✅ Data hämtad från molnet! (Din tidigare version sparades som PDF)');
         addSyncLog('Data hämtad från molnet ('+tasks.length+' uppgifter)', 'success');
       }
       updateSyncStatus('online');
