@@ -2031,9 +2031,31 @@ function openNoteDetail(taskId){
   if(remDate) inner += '<div style="margin:0 4px 14px"><span class="tag rem-tag"><i class="fas fa-clock"></i> '+remDate+'</span></div>';
   if(!hasNote && !links.length && !images.length && !remDate) inner += '<div style="margin:0 4px 14px;color:var(--text3);font-size:13px;font-weight:600">Ingen anteckning, länk eller bild ännu — tryck på Redigera för att lägga till.</div>';
   inner += '<div style="display:flex;gap:8px;margin:4px"><button class="modal-btn mbtn-neutral" style="flex:1" onclick="closeNoteDetail()">Stäng</button><button class="modal-btn" style="flex:1;background:var(--primary);color:#fff" onclick="editFromMindmap('+t.id+')"><i class="fas fa-pen"></i> Redigera</button></div>';
+  inner += '<div style="display:flex;gap:8px;margin:8px 4px 4px"><button class="modal-btn" style="flex:1;background:var(--emerald);color:#fff" onclick="completeFromMindmap('+t.id+')"><i class="fas fa-check"></i> Klar</button><button class="modal-btn mbtn-danger" style="flex:1" onclick="deleteFromMindmap('+t.id+')"><i class="fas fa-trash-can"></i> Ta bort</button></div>';
 
   overlay.innerHTML = '<div class="modal-sheet" style="padding:0 12px 12px" onclick="event.stopPropagation()">'+inner+'</div>';
   document.body.appendChild(overlay);
+}
+function completeFromMindmap(taskId){
+  closeNoteDetail();
+  toggleComplete(taskId);
+  refreshMindmapAfterAction();
+}
+function deleteFromMindmap(taskId){
+  if(!confirm('Ta bort uppgiften? Den hamnar i papperskorgen och kan återställas därifrån.')) return;
+  closeNoteDetail();
+  moveToTrash(taskId);
+  toast('🗑️ Uppgift borttagen');
+  refreshMindmapAfterAction();
+}
+function refreshMindmapAfterAction(){
+  const mmModal = document.getElementById('mindmapModal');
+  if(!mmModal || mmModal.classList.contains('h')) return;
+  if(mindmapOpenTf){
+    renderStickyNotes(mindmapOpenTf);
+  } else {
+    openMindmapSelector();
+  }
 }
 function editFromMindmap(taskId){
   closeNoteDetail();
