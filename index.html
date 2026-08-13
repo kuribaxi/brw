@@ -88,12 +88,23 @@
     .mm-note-text{width:100%}
     .mm-note-person{font-family:var(--font);font-size:11px;font-weight:800;color:#2b2410;opacity:.65;margin-top:8px;text-transform:uppercase;letter-spacing:.03em}
     .mm-empty{text-align:center;padding:30px 16px;color:var(--text3);font-weight:700;grid-column:1/-1}
-    .mm-circle-wrap{position:relative;width:100%;max-width:520px;aspect-ratio:1/1;margin:0 auto 10px}
-    .mm-circle-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:1.5px dashed var(--border);border-radius:50%;pointer-events:none}
-    .mm-circle-center-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;font-weight:800;color:var(--primary);background:var(--surface);padding:3px 10px;border-radius:20px;z-index:5;pointer-events:none;white-space:nowrap;border:1.5px solid var(--primary-soft)}
-    .mm-circle-ring-label{position:absolute;font-size:10px;font-weight:800;color:var(--text3);background:var(--surface);padding:1px 7px;border-radius:10px;white-space:nowrap;z-index:6;pointer-events:none;border:1px solid var(--border)}
-    .mm-circle-note{position:absolute;transform:translate(-50%,-50%);width:74px;min-height:74px;border-radius:6px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-family:'Caveat',cursive;font-weight:700;font-size:14px;color:#2b2410;box-shadow:0 6px 14px rgba(0,0,0,.22);cursor:pointer;line-height:1.15;word-break:break-word;z-index:10;transition:transform .15s}
-    .mm-circle-note:active{transform:translate(-50%,-50%) scale(.92)}
+    /* ===== ALGORITM-KARTA (tech/rymd-tema för cirkelvyn) ===== */
+    .algo-map-wrap{position:relative;width:100%;max-width:560px;aspect-ratio:1/1;margin:0 auto 6px;border-radius:50%;background:radial-gradient(circle at 50% 50%,#132048 0%,#0a1330 45%,#04070f 78%,#020308 100%);border:1px solid rgba(120,190,255,.3);box-shadow:0 0 50px rgba(40,110,255,.28),inset 0 0 70px rgba(0,0,0,.65);overflow:hidden}
+    .algo-map-wrap::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.09) 1px,transparent 1.4px);background-size:24px 24px;opacity:.45;pointer-events:none}
+    .algo-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(130,195,255,.32);border-radius:50%;box-shadow:0 0 12px rgba(90,165,255,.22),inset 0 0 12px rgba(90,165,255,.12);pointer-events:none}
+    .algo-ring-label{position:absolute;transform:translate(-50%,-50%);font-family:var(--font);font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#9fd8ff;background:rgba(6,14,32,.88);padding:2px 9px;border-radius:10px;border:1px solid rgba(130,195,255,.35);white-space:nowrap;z-index:6;pointer-events:none}
+    .algo-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#fffbe8 0%,#ffe19a 30%,#ffb547 60%,#e2760a 100%);box-shadow:0 0 22px rgba(255,180,60,.8),0 0 55px rgba(255,150,40,.4);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:900;font-size:11px;letter-spacing:.03em;color:#4a2400;text-align:center;text-transform:uppercase;z-index:8;animation:algoPulse 3.2s ease-in-out infinite;padding:4px}
+    @keyframes algoPulse{0%,100%{box-shadow:0 0 22px rgba(255,180,60,.8),0 0 55px rgba(255,150,40,.4)}50%{box-shadow:0 0 32px rgba(255,205,100,.95),0 0 76px rgba(255,160,50,.55)}}
+    .algo-node{position:absolute;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;padding:5px;font-family:var(--font);font-weight:800;font-size:9.5px;line-height:1.15;color:#0c1424;cursor:pointer;z-index:9;transition:transform .15s;word-break:break-word;border:1.5px solid rgba(255,255,255,.35)}
+    .algo-node:active{transform:translate(-50%,-50%) scale(.9)}
+    .algo-node.algo-node-fav{box-shadow:0 0 0 3px #ff3b52,0 0 14px rgba(255,59,82,.9),0 0 30px rgba(255,59,82,.5);animation:algoFavPulse 1.6s ease-in-out infinite}
+    @keyframes algoFavPulse{0%,100%{box-shadow:0 0 0 3px #ff3b52,0 0 14px rgba(255,59,82,.9),0 0 30px rgba(255,59,82,.5)}50%{box-shadow:0 0 0 4px #ff6478,0 0 20px rgba(255,59,82,1),0 0 42px rgba(255,59,82,.7)}}
+    .algo-node-star{position:absolute;top:-7px;right:-7px;width:18px;height:18px;border-radius:50%;background:#ff3b52;color:#fff;font-size:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 8px rgba(255,59,82,.9);z-index:11;border:2px solid #0a1330}
+    .algo-node-person{position:absolute;bottom:-6px;right:-6px;width:18px;height:18px;border-radius:50%;color:#fff;font-size:8px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #0a1330;z-index:11}
+    .algo-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 14px;padding:12px 4px 2px}
+    .algo-legend span{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--text2)}
+    .algo-legend .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+    .algo-legend .dot.fav-dot{background:#ff3b52;box-shadow:0 0 6px rgba(255,59,82,.8)}
     .dhdr-avatar{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0;font-weight:900}
     .dhdr-info{flex:1;min-width:0}
     .dhdr-name{font-size:18px;font-weight:900;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px}
@@ -1972,9 +1983,9 @@ function openMindmapSelector(){
   active.forEach(t=>{ if(!grouped[t.timeFrame]) grouped[t.timeFrame]=[]; grouped[t.timeFrame].push(t); });
 
   const rootLabel = currentPerson==='all' ? 'Alla' : (personLabels[currentPerson]||currentPerson);
-  let html = '<div style="background:var(--primary-soft);border-radius:var(--rsm);padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--border);color:var(--text2);font-size:13px"><i class="fas fa-info-circle"></i> Välj en mapp för <strong>'+esc(rootLabel)+'</strong> för att se uppgifterna som klisterlappar, eller öppna cirkelvyn för att se allt på en gång.</div>';
+  let html = '<div style="background:var(--primary-soft);border-radius:var(--rsm);padding:12px 14px;margin-bottom:14px;border:1.5px solid var(--border);color:var(--text2);font-size:13px"><i class="fas fa-info-circle"></i> Välj en mapp för <strong>'+esc(rootLabel)+'</strong> för att se uppgifterna som klisterlappar, eller öppna algoritm-kartan för att se allt samlat i en glödande cirkel.</div>';
   html += '<div class="mm-cat-list">';
-  html += '<div class="mm-cat-row" onclick="renderCircularMindmap()" style="border-color:var(--primary);background:var(--primary-soft)"><div><div class="mm-cat-name"><i class="fas fa-circle-notch" style="color:var(--primary)"></i> Cirkelvy – alla uppgifter</div><div class="mm-cat-date">Idag i mitten, senare uppgifter längre ut</div></div><div style="display:flex;align-items:center;gap:10px"><span class="mm-cat-count">'+active.length+'</span><i class="fas fa-chevron-right" style="color:var(--text3)"></i></div></div>';
+  html += '<div class="mm-cat-row" onclick="renderCircularMindmap()" style="border-color:var(--primary);background:var(--primary-soft)"><div><div class="mm-cat-name"><i class="fas fa-circle-notch" style="color:var(--primary)"></i> Algoritm-karta – alla uppgifter</div><div class="mm-cat-date">Idag i mitten · favoriter får röd kant · vem den tillhör syns på noden</div></div><div style="display:flex;align-items:center;gap:10px"><span class="mm-cat-count">'+active.length+'</span><i class="fas fa-chevron-right" style="color:var(--text3)"></i></div></div>';
   TIME_ORDER.forEach(tf=>{
     if(grouped[tf] && grouped[tf].length){
       const dl = getGroupDateLabel(tf);
@@ -2024,9 +2035,16 @@ function renderStickyNotes(tf){
   document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="openMindmapSelector()"><i class="fas fa-arrow-left"></i> Tillbaka</button><button class="modal-btn" style="background:var(--rose);color:#fff" onclick="downloadMindmapPDF(\''+TIME_LABELS[tf]+'\')"><i class="fas fa-download"></i> Ladda ner</button>';
 }
 
-/* Cirkelvy: ALLA aktiva uppgifter (för vald person/alla) samlade i en enda ring-karta.
-   "Idag" hamnar i mitten och varje senare tidsram får en egen ring längre ut,
-   ju längre fram i tiden desto längre avstånd från centrum. */
+/* Cirkelvy ("Algoritm-karta"): ALLA aktiva uppgifter (för vald person/alla)
+   samlade i en enda glödande ring-karta i tech/rymd-stil.
+   - "Idag" ligger som en glödande kärna i mitten.
+   - Varje senare tidsram får en egen ring längre ut - ju längre fram i tiden,
+     desto längre avstånd från centrum.
+   - Favorit-markerade uppgifter (stjärnmarkerade, dvs de som ska göras snabbt)
+     får en pulserande RÖD cirkelkant runt sin nod.
+   - Om man tittar på "Alla" visas en liten färgad initial-badge på varje nod
+     som visar vem uppgiften tillhör; tittar man på en enskild person visas
+     ingen badge (uppgifterna är redan bara den personens). */
 function renderCircularMindmap(){
   mindmapOpenTf = 'circle';
   const mine = currentPerson==='all' ? tasks : tasks.filter(t=>t.person===currentPerson);
@@ -2042,36 +2060,47 @@ function renderCircularMindmap(){
   const ringsPresent = TIME_ORDER.filter(tf=>grouped[tf] && grouped[tf].length);
   const ringCount = ringsPresent.length;
   const maxRadius = 44;
-  const minRadius = ringCount<=1 ? 0 : 13;
+  const minRadius = 17; // avstånd för första ringen, så noderna inte täcker "Idag"-kärnan
 
-  let guidesHtml = '<div class="mm-circle-center-label"><i class="fas fa-star"></i> Idag</div>';
+  let guidesHtml = '<div class="algo-center"><span><i class="fas fa-bullseye" style="display:block;font-size:13px;margin-bottom:2px"></i>IDAG</span></div>';
   let notesHtml = '';
 
   ringsPresent.forEach((tf,i)=>{
-    const radiusPct = ringCount===1 ? 0 : minRadius + (i*(maxRadius-minRadius)/(ringCount-1));
-    if(radiusPct>0){
-      guidesHtml += '<div class="mm-circle-ring" style="width:'+(radiusPct*2)+'%;height:'+(radiusPct*2)+'%"></div>';
-      guidesHtml += '<div class="mm-circle-ring-label" style="top:'+(50-radiusPct)+'%;left:50%">'+TIME_LABELS[tf]+'</div>';
-    }
+    const radiusPct = ringCount===1 ? minRadius : minRadius + (i*(maxRadius-minRadius)/(ringCount-1));
+    guidesHtml += '<div class="algo-ring" style="width:'+(radiusPct*2)+'%;height:'+(radiusPct*2)+'%"></div>';
+    guidesHtml += '<div class="algo-ring-label" style="top:'+(50-radiusPct)+'%;left:50%">'+TIME_LABELS[tf]+'</div>';
+
     const groupItems = grouped[tf];
     const angleStep = 360/groupItems.length;
     const angleOffset = i*27 + 15;
+    const base = MM_GROUP_COLORS[tf] || '#64748B';
     groupItems.forEach((t,idx)=>{
       const angleDeg = angleOffset + idx*angleStep;
       const angleRad = angleDeg*Math.PI/180;
       const leftPct = 50 + radiusPct*Math.cos(angleRad);
       const topPct = 50 + radiusPct*Math.sin(angleRad);
-      const color = NOTE_COLORS[(i+idx)%NOTE_COLORS.length];
       const pLabel = currentPerson==='all' && t.person!=='all' ? (personLabels[t.person]||t.person) : null;
-      const shortText = t.text.length>28 ? t.text.slice(0,26)+'…' : t.text;
-      notesHtml += '<div class="mm-circle-note" style="left:'+leftPct+'%;top:'+topPct+'%;background:'+color+'" onclick="openNoteDetail('+t.id+')" title="'+esc(t.text)+'"><div>'+esc(shortText)+'</div>'+(pLabel?'<div style="font-family:var(--font);font-size:9px;font-weight:800;opacity:.65;margin-top:4px;text-transform:uppercase">'+esc(pLabel)+'</div>':'')+'</div>';
+      const pColor = currentPerson==='all' ? (colorMap[t.person]||'#999') : null;
+      const pInitial = pLabel ? pLabel.charAt(0).toUpperCase() : '';
+      const shortText = t.text.length>26 ? t.text.slice(0,24)+'…' : t.text;
+      const favClass = t.starred ? ' algo-node-fav' : '';
+      const glow = t.starred ? '' : 'box-shadow:0 0 10px '+base+'CC,0 0 22px '+base+'55;';
+      notesHtml += '<div class="algo-node'+favClass+'" style="left:'+leftPct+'%;top:'+topPct+'%;background:radial-gradient(circle at 35% 30%,#ffffffcc 0%,'+base+' 55%,'+base+' 100%);'+glow+'" onclick="openNoteDetail('+t.id+')" title="'+esc(t.text)+'">'+
+        '<div>'+esc(shortText)+'</div>'+
+        (t.starred ? '<span class="algo-node-star" title="Favorit – gör snart"><i class="fas fa-star"></i></span>' : '')+
+        (pLabel ? '<span class="algo-node-person" style="background:'+pColor+'" title="'+esc(pLabel)+'">'+esc(pInitial)+'</span>' : '')+
+        '</div>';
     });
   });
 
+  const legendHtml = ringsPresent.map(tf=>'<span><span class="dot" style="background:'+(MM_GROUP_COLORS[tf]||'#64748B')+'"></span>'+esc(TIME_LABELS[tf])+'</span>').join('')+
+    '<span><span class="dot fav-dot"></span>Favorit – gör snart</span>';
+
   const body = document.getElementById('mindmapBody');
   body.innerHTML =
-    '<div class="mm-sticky-header"><div class="mm-sticky-title"><i class="fas fa-circle-notch"></i> Cirkelvy</div><div class="mm-sticky-sub">'+esc(rootLabel)+' · '+items.length+' aktiva uppgifter · Idag i mitten, senare längre ut</div></div>'+
-    '<div class="mm-circle-wrap" id="mmCircleWrap">'+guidesHtml+notesHtml+'</div>';
+    '<div class="mm-sticky-header"><div class="mm-sticky-title"><i class="fas fa-circle-notch"></i> Algoritm-karta</div><div class="mm-sticky-sub">'+esc(rootLabel)+' · '+items.length+' aktiva uppgifter · Idag i mitten, senare längre ut</div></div>'+
+    '<div class="algo-map-wrap" id="mmCircleWrap">'+guidesHtml+notesHtml+'</div>'+
+    '<div class="algo-legend">'+legendHtml+'</div>';
 
   document.getElementById('mindmapFtr').innerHTML = '<button class="modal-btn mbtn-neutral" onclick="openMindmapSelector()"><i class="fas fa-arrow-left"></i> Tillbaka</button><button class="modal-btn" style="background:var(--rose);color:#fff" onclick="downloadCircleMindmapPDF()"><i class="fas fa-download"></i> Ladda ner</button>';
 }
