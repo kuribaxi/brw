@@ -2,327 +2,283 @@
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Familjens Planerare - QR Offline</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
-<script>
-// Fallback LZString if CDN fails - minimal implementation
-if(typeof LZString==='undefined'){
-  window.LZString={compressToEncodedURIComponent:function(s){try{return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'')}catch(e){return s}},decompressFromEncodedURIComponent:function(s){try{let t=s.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return decodeURIComponent(escape(atob(t)))}catch(e){return s}}};
-}
-</script>
-<script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Familjens Planerare - FINAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
-:root{--bg:#F0EDF8;--surface:#fff;--surface2:#F7F5FC;--border:#E4DEFC;--primary:#6C47E8;--primary-soft:#EDE8FC;--emerald:#22C08A;--emerald-soft:#DCFDF2;--rose:#F05E7A;--rose-soft:#FDEDF0;--amber:#F59E0B;--text:#1E1535;--text2:#7168A0;--text3:#A89FCE;--r:20px;--rsm:14px;--font:'Nunito',sans-serif}
-body.night{--bg:#211D42;--surface:#2C2761;--surface2:#373072;--border:#4B4392;--primary-soft:#3E3680;--emerald-soft:#123B2C;--rose-soft:#3D1826;--text:#F4F1FC;--text2:#BDB6E0;--text3:#8A82BE}
-*{box-sizing:border-box;margin:0;padding:0}.h{display:none!important}body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
-.page{position:fixed;inset:0;overflow-y:auto;background:var(--bg)}.page.hidden{display:none}#pageDetail{transform:translateX(100%);transition:transform .3s}#pageDetail.open{transform:translateX(0)}
-.hdr{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px;position:sticky;top:0;z-index:40;display:flex;flex-direction:column;gap:10px}
-.hdr-toprow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.hdr-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--primary),#9B59E8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
-.hdr-info{flex:1}.hdr-title{font-size:18px;font-weight:900}.hdr-sub{font-size:12px;color:var(--text3);font-weight:600}
-.hdr-actions{display:flex;gap:6px;flex-wrap:wrap}.icon-btn{width:44px;height:44px;border-radius:13px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;position:relative;flex-shrink:0}
-.bdg{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:50%;background:var(--rose);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}.bdg.h{display:none}
-.date-row{display:flex;gap:8px}.date-block{background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:10px 14px;flex:1}.date-clock{font-size:22px;font-weight:900}.date-text{font-size:13px;color:var(--text2);font-weight:700}.cal-btn{width:44px;height:44px;border-radius:13px;border:1.5px solid var(--border);background:var(--primary);color:#fff;font-size:20px;cursor:pointer;flex-shrink:0}
-.dhdr{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px;position:sticky;top:0;z-index:40;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.back-btn,.save-btn,.pdf-btn,.mindmap-btn{height:44px;padding:0 14px;border-radius:13px;border:1.5px solid var(--border);cursor:pointer;font-family:var(--font);font-weight:800;display:flex;align-items:center;gap:6px;white-space:nowrap}
-.save-btn{background:var(--emerald);color:#fff;border:none}.pdf-btn{background:var(--rose);color:#fff;border:none}.mindmap-btn{background:var(--primary);color:#fff;border:none}.back-btn{background:var(--surface2);color:var(--text2)}
-.home-body,.detail-body{max-width:600px;margin:0 auto;padding-bottom:100px}.add-person-section{padding:16px}.add-person-row{display:flex;gap:8px}.add-person-row input{flex:1;height:52px;border-radius:14px;border:2px solid var(--border);background:var(--surface);padding:0 16px;font-family:var(--font);font-size:16px;font-weight:700;outline:none}
-.btn-add-person{height:52px;padding:0 20px;border-radius:14px;border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer}
-.cards-section{padding:0 18px}.person-card{background:var(--surface);border-radius:20px;border:2px solid var(--border);padding:16px;cursor:pointer;margin-bottom:12px;position:relative}.card-avatar{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:22px;margin-bottom:8px}.card-name{font-weight:900;font-size:16px}.card-stats{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}.stat-pill{font-size:12px;font-weight:800;padding:5px 10px;border-radius:50px;background:var(--primary-soft);color:var(--primary)}.card-chevron{position:absolute;right:14px;bottom:14px;color:var(--text3)}
-.login-ov{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto}.login-ov.h{display:none!important}.login-ov.h{display:none}.login-card{width:100%;max-width:360px;background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:32px 24px;text-align:center}
-.login-profile-row{display:flex;gap:8px;align-items:center;margin-bottom:10px}.login-profile-btn{flex:1;display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;border:2px solid var(--border);background:var(--surface2);cursor:pointer;font-family:var(--font);font-weight:800;text-align:left}.login-profile-del{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;font-size:18px;flex-shrink:0}.login-input{width:100%;height:52px;border-radius:14px;border:2px solid var(--border);background:var(--surface2);padding:0 16px;font-size:16px;font-weight:700;text-align:center;outline:none;margin-top:10px}.login-btn{width:100%;height:52px;border-radius:14px;border:none;margin-top:14px;background:var(--primary);color:#fff;font-weight:800;cursor:pointer}
-.sync-section{padding:16px 18px 0}.sync-card{background:var(--surface);border-radius:20px;border:1.5px solid var(--border);padding:16px}.sync-header{display:flex;gap:10px;align-items:center;margin-bottom:8px}.sync-title{font-weight:900}.sync-sub{font-size:13px;color:var(--text2)}.sync-status{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;margin-top:8px}.sync-status-dot{width:8px;height:8px;border-radius:50%;background:var(--emerald)}.sync-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.sync-actions button{height:40px;padding:0 14px;border-radius:10px;border:none;font-family:var(--font);font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}.sync-btn-primary{background:var(--primary);color:#fff}.sync-btn-secondary{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border)}.sync-log{background:var(--surface2);border-radius:14px;padding:10px 12px;margin-top:10px;max-height:120px;overflow-y:auto;font-size:12px;font-family:monospace}
-.add-form{margin:16px 18px 0;background:var(--surface);border-radius:20px;padding:16px;border:1.5px solid var(--border)}.form-lbl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;display:block}.form-input{width:100%;height:52px;border-radius:14px;border:2px solid var(--border);background:var(--surface2);padding:0 16px;font-family:var(--font);font-size:16px;font-weight:700;outline:none}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.form-select{width:100%;height:52px;border-radius:14px;border:2px solid var(--border);background:var(--surface2);padding:0 14px;font-size:15px;font-weight:700;outline:none}.btn-add-task{width:100%;height:56px;border-radius:14px;border:none;margin-top:12px;background:linear-gradient(135deg,var(--primary) 0%,#9B59E8 100%);color:#fff;font-size:17px;font-weight:800;cursor:pointer}
-.section-tabs{display:flex;gap:10px;padding:16px 18px 0}.sec-tab{flex:1;height:46px;border-radius:14px;border:2px solid var(--border);background:var(--surface);font-weight:800;color:var(--text2);cursor:pointer}.sec-tab.active{background:var(--primary);border-color:var(--primary);color:#fff}
-.list-section{padding:12px 18px 0}.list-card{background:var(--surface);border-radius:20px;border:1.5px solid var(--border);overflow:hidden}.list-body{padding:8px}.task-item{display:flex;gap:10px;padding:11px 10px;border-radius:14px;border:1.5px solid transparent}.check-btn{width:36px;height:36px;border-radius:11px;border:2.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}.check-btn.done-style{background:var(--emerald);border-color:var(--emerald);color:#fff}.task-content{flex:1}.task-text{font-size:15px;font-weight:700;word-break:break-word}.task-text.struck{text-decoration:line-through;color:var(--text3)}.task-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}.tag{font-size:12px;font-weight:700;padding:3px 10px;border-radius:50px;background:var(--surface2);border:1.5px solid var(--border)}.del-btn{width:40px;height:40px;border-radius:11px;border:none;background:transparent;cursor:pointer;font-size:18px;color:var(--text3)}.star-btn{width:32px;height:32px;border:none;background:transparent;cursor:pointer;font-size:18px}
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:flex-end;justify-content:center}.modal-ov.h{display:none}.modal-sheet{background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:85vh;display:flex;flex-direction:column}.modal-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1.5px solid var(--border)}.modal-ttl{font-weight:900;display:flex;gap:8px;align-items:center}.modal-x{width:36px;height:36px;border-radius:10px;border:none;background:var(--surface2);cursor:pointer}.modal-body{flex:1;overflow-y:auto;padding:12px 16px}.modal-ftr{padding:12px 16px;border-top:1.5px solid var(--border);display:flex;gap:10px}.modal-btn{flex:1;height:52px;border-radius:14px;border:none;font-weight:800;cursor:pointer}
-.toast{position:fixed;bottom:20px;left:18px;right:18px;background:var(--text);color:#fff;border-radius:14px;padding:14px 18px;display:flex;gap:12px;font-weight:700;z-index:200;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}.toast.show{transform:translateY(0);opacity:1}
-.bot-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1.5px solid var(--border);padding:8px 16px 12px;display:flex;justify-content:space-around;z-index:50}.nav-btn{flex:1;height:52px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text3);font-size:11px;font-weight:700;border-radius:14px}.nav-btn.active{color:var(--primary);background:var(--primary-soft)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:#F0EDF8;color:#1E1535;min-height:100vh}
+.h{display:none!important}
+.login-ov{position:fixed;inset:0;background:#F0EDF8;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.login-card{background:#fff;border:2px solid #E4DEFC;border-radius:20px;padding:28px 20px;width:100%;max-width:380px}
+.input{width:100%;height:56px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535;margin-bottom:10px;font-family:Nunito,sans-serif}
+.input:focus{border-color:#6C47E8;background:#fff}
+.btn{width:100%;height:56px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;font-size:16px;cursor:pointer;font-family:Nunito,sans-serif}
+.btn:active{transform:scale(0.98)}
+.btn-sec{width:100%;height:46px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:700;cursor:pointer;margin-top:8px;font-family:Nunito,sans-serif}
+.profile-row{display:flex;gap:8px;margin-bottom:10px}
+.profile-btn{flex:1;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-weight:800;text-align:left;color:#1E1535;font-family:Nunito,sans-serif}
+.profile-del{width:46px;height:46px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-size:20px}
+.page{position:fixed;inset:0;overflow-y:auto;background:#F0EDF8}
+.hdr{background:#fff;border-bottom:1.5px solid #E4DEFC;padding:12px;position:sticky;top:0;z-index:40;display:flex;flex-direction:column;gap:10px}
+.hdr-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#6C47E8,#9B59E8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0}
+.hdr-actions{display:flex;gap:6px;flex-wrap:wrap}
+.icon-btn{width:44px;height:44px;border-radius:13px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.save-btn{height:44px;padding:0 14px;border-radius:13px;border:none;background:#22C08A;color:#fff;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px}
+.date-row{display:flex;gap:8px}
+.date-block{background:#F7F5FC;border:1.5px solid #E4DEFC;border-radius:14px;padding:10px 14px;flex:1}
+.sync-card{background:#fff;border-radius:20px;border:1.5px solid #E4DEFC;padding:16px;margin:16px}
+.sync-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sync-actions button{height:40px;padding:0 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:Nunito,sans-serif}
+.primary{background:#6C47E8;color:#fff}
+.secondary{background:#F7F5FC;color:#7168A0;border:1.5px solid #E4DEFC}
+.cards{padding:0 16px}
+.pcard{background:#fff;border-radius:20px;border:2px solid #E4DEFC;padding:16px;margin-bottom:12px;cursor:pointer}
+.avatar{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:22px;margin-bottom:8px}
+.task-item{display:flex;gap:10px;padding:11px 10px;border-radius:14px;background:#fff;border:1.5px solid #E4DEFC;margin-bottom:8px}
+.check{width:36px;height:36px;border-radius:11px;border:2.5px solid #E4DEFC;background:#F7F5FC;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:85vh;display:flex;flex-direction:column}
+.modal-hdr{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1.5px solid #E4DEFC}
+.toast{position:fixed;bottom:20px;left:16px;right:16px;background:#1E1535;color:#fff;border-radius:14px;padding:14px 18px;font-weight:700;z-index:9999;transform:translateY(100px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
 </style>
 </head>
 <body>
 
-
-<div class="login-ov" id="loginOv" style="display:flex;background:#F0EDF8">
-<div class="login-card" id="loginContent" style="background:#fff!important;color:#1E1535!important;border:2px solid #E4DEFC;max-width:400px;width:100%">
-  <div style="text-align:center">
-    <div style="font-size:48px">👥</div>
-    <div style="font-weight:900;font-size:22px;margin-top:10px;color:#1E1535">Familjens Planerare</div>
-    <div style="font-size:13px;color:#7168A0;margin-top:6px">Välj profil eller skapa ny</div>
-  </div>
-  
-  <div id="profileListArea" style="margin-top:18px">
-    <!-- fylls av JS, men har fallback -->
-    <div id="fallbackProfiles" style="text-align:center;color:#7168A0;font-size:13px;padding:10px">Laddar profiler...</div>
-  </div>
-
-  <div style="margin-top:20px;border-top:1.5px solid #E4DEFC;padding-top:16px">
-    <div style="font-weight:800;font-size:14px;color:#1E1535;margin-bottom:10px">➕ Skapa ny profil</div>
-    <input type="text" id="newProfileName" placeholder="Namn t.ex. Mamma" maxlength="20" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535;margin-bottom:10px">
-    <input type="password" id="newProfilePw" placeholder="Lösenord" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535;margin-bottom:10px">
-    <input type="password" id="newProfilePw2" placeholder="Bekräfta lösenord" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535">
-    <div id="createErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-top:10px;text-align:center"></div>
-    <button id="createBtn" onclick="doCreateProfile()" style="width:100%;height:54px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer;margin-top:12px;font-size:16px">Skapa profil</button>
-  </div>
-
-  <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
-    <button onclick="if(confirm('Rensa ALL data?')){localStorage.clear();location.reload()}" style="height:44px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:700;cursor:pointer">🧹 Rensa allt och börja om</button>
+<div class="login-ov" id="loginOv">
+  <div class="login-card">
+    <div style="text-align:center">
+      <div style="font-size:48px">👥</div>
+      <div style="font-weight:900;font-size:22px;margin-top:8px">Familjens Planerare</div>
+      <div style="font-size:13px;color:#7168A0;margin-top:6px">Välj profil eller skapa ny</div>
+    </div>
+    <div id="profileList" style="margin-top:18px"></div>
+    <div style="margin-top:18px;border-top:1.5px solid #E4DEFC;padding-top:16px">
+      <div style="font-weight:800;font-size:14px;margin-bottom:10px">➕ Skapa ny profil</div>
+      <input type="text" id="pName" class="input" placeholder="Namn t.ex. Mamma" maxlength="20">
+      <input type="password" id="pPw" class="input" placeholder="Lösenord">
+      <input type="password" id="pPw2" class="input" placeholder="Bekräfta lösenord">
+      <div id="pErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-bottom:10px;text-align:center"></div>
+      <button class="btn" onclick="createProfile()">Skapa profil</button>
+    </div>
+    <button class="btn-sec" onclick="clearAll()">🧹 Rensa allt (om fel)</button>
   </div>
 </div>
-</div>
-
 
 <div class="page" id="pageHome">
-<header class="hdr">
-<div class="hdr-toprow">
-<div class="hdr-logo">📋</div><div class="hdr-info"><div class="hdr-title">Familjens Planerare</div><div class="hdr-sub" id="profileBadge"></div></div>
-<div class="hdr-actions">
-<button class="save-btn" onclick="saveAndConfirm()">💾 Spara</button>
-<button class="icon-btn" onclick="togglePcMode()">🖥️</button>
-<button class="icon-btn" onclick="toggleNight()"><span id="nightIcon">🌙</span></button>
-<button class="icon-btn" onclick="logoutApp()">🚪</button>
-<button class="icon-btn" onclick="openNotif()">🔔<span class="bdg h" id="notifBdg">0</span></button>
-<button class="icon-btn" onclick="openTrash()">🗑️<span class="bdg h" id="trashBdg">0</span></button>
-</div></div>
-<div class="date-row"><div class="date-block"><span class="date-clock" id="clockDisplay">00:00</span><div class="date-text" id="dateText"></div></div><button class="cal-btn" onclick="toast('Kalender')">📅</button></div>
-</header>
-<div class="home-body">
-<div class="add-person-section"><div class="add-person-row"><input id="newPersonInput" placeholder="Lägg till person…" maxlength="20" onkeydown="if(event.key==='Enter')addPerson()"><button class="btn-add-person" onclick="addPerson()">➕ Lägg till</button></div></div>
-<div class="cards-section"><div id="cardsGrid"></div></div>
-<div class="sync-section"><div class="sync-card">
-<div class="sync-header"><span style="font-size:20px">🔗</span><div><div class="sync-title">QR-synk – 100% offline (Alt B)</div><div class="sync-sub">Ingen molntjänst, fixade knappar – inga blanka ikoner</div></div></div>
-<div class="sync-status"><span class="sync-status-dot"></span><span>Offline redo – dela via QR</span></div>
-<div style="background:var(--primary-soft);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13px;color:var(--text2);border:1.5px solid var(--border)">📱 Enhet 1: Visa QR → visa skärmen<br>📷 Enhet 2: Scanna QR → klar! Samma notes.</div>
-<div class="sync-actions"><button class="sync-btn-primary" onclick="showMyQR()">📤 Visa min QR</button><button class="sync-btn-secondary" onclick="startQRScan()">📷 Scanna QR</button><button class="sync-btn-secondary" onclick="exportLocalBackup()">💾 Fil</button><button class="sync-btn-secondary" onclick="importLocalBackup()">📂 Import</button><button class="sync-btn-secondary" onclick="openVersionHistory()">🕘 Historik</button></div>
-<div class="sync-log" id="syncLog"></div></div></div>
+  <header class="hdr">
+    <div class="hdr-top">
+      <div class="logo">📋</div>
+      <div style="flex:1"><div style="font-weight:900;font-size:18px">Familjens Planerare</div><div id="who" style="font-size:12px;color:#A89FCE"></div></div>
+      <div class="hdr-actions">
+        <button class="save-btn" onclick="saveAll()">💾 Spara</button>
+        <button class="icon-btn" onclick="toggleNight()">🌙</button>
+        <button class="icon-btn" onclick="logout()">🚪</button>
+      </div>
+    </div>
+    <div class="date-row">
+      <div class="date-block"><span id="clock" style="font-size:22px;font-weight:900">00:00</span><div id="date" style="font-size:13px;color:#7168A0;font-weight:700"></div></div>
+    </div>
+  </header>
+
+  <div style="max-width:600px;margin:0 auto;padding-bottom:100px">
+    <div style="padding:16px"><div style="display:flex;gap:8px"><input id="newPerson" placeholder="Lägg till person…" maxlength="20" style="flex:1;height:52px;border-radius:14px;border:2px solid #E4DEFC;padding:0 16px;font-size:16px;font-weight:700;outline:none"><button onclick="addPerson()" style="height:52px;padding:0 20px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer">➕</button></div></div>
+    <div class="cards" id="cards"></div>
+
+    <div class="sync-card">
+      <div style="display:flex;gap:10px;align-items:center"><span style="font-size:20px">🔗</span><div><div style="font-weight:900">QR-synk – 100% offline</div><div style="font-size:13px;color:#7168A0">Ingen molntjänst</div></div></div>
+      <div style="background:#EDE8FC;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13px;color:#7168A0;border:1.5px solid #E4DEFC">📱 Visa QR på enhet 1 → Scanna på enhet 2</div>
+      <div class="sync-actions">
+        <button class="primary" onclick="showQR()">📤 Visa min QR</button>
+        <button class="secondary" onclick="scanQR()">📷 Scanna QR</button>
+        <button class="secondary" onclick="exportFile()">💾 Fil</button>
+        <button class="secondary" onclick="importFile()">📂 Import</button>
+      </div>
+      <div id="syncLog" style="font-size:12px;margin-top:10px;font-family:monospace;color:#7168A0"></div>
+    </div>
+  </div>
 </div>
-<nav class="bot-nav"><button class="nav-btn active">🏠 Hem</button><button class="nav-btn" onclick="openTrash()">🗑️ Papperskorg</button></nav>
-</div>
 
-<div class="page hidden" id="pageDetail">
-<header class="dhdr"><button class="back-btn" onclick="goHome()">◀ Tillbaka</button><div id="detailAvatar" style="width:44px;height:44px;border-radius:14px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900"></div><div style="flex:1"><div id="detailName" style="font-weight:900;font-size:18px"></div><div id="detailSub" style="font-size:12px;color:var(--text3)"></div></div><button class="save-btn" onclick="saveAndConfirm()">💾</button></header>
-<div class="detail-body">
-<div class="add-form"><label class="form-lbl">Ny uppgift</label><input class="form-input" id="taskInput" placeholder="Vad ska göras?" onkeydown="if(event.key==='Enter')addTask()"><div class="form-row"><select class="form-select" id="taskType"><option value="todo">📋 Uppgift</option><option value="shopping">🛒 Inköp</option></select><select class="form-select" id="timeFrame"><option value="today">Idag</option><option value="tomorrow">Imorgon</option><option value="week">Denna vecka</option><option value="month">Denna månad</option><option value="thisyear">Pågående år</option><option value="nextyear">Nästa år</option><option value="future">Framtiden</option><option value="sometime">Någon gång</option></select></div><button class="btn-add-task" onclick="addTask()">➕ Lägg till</button></div>
-<div class="section-tabs"><button class="sec-tab active" id="tabTodo" onclick="switchTab('todo')">Att göra <span id="todoBadge">0</span></button><button class="sec-tab" id="tabAktuell" onclick="switchTab('aktuell')">⭐ Aktuell <span id="aktuellBadge">0</span></button><button class="sec-tab" id="tabDone" onclick="switchTab('done')">✅ Klara <span id="doneBadge">0</span></button></div>
-<div class="list-section" id="todoSection"><div class="list-card"><div class="list-body" id="todoContainer"></div></div></div>
-<div class="list-section h" id="aktuellSection"><div class="list-card"><div class="list-body" id="aktuellContainer"></div></div></div>
-<div class="list-section h" id="doneSection"><div class="list-card"><div class="list-body" id="doneContainer"></div></div></div>
-</div></div>
+<div class="modal-ov h" id="qrModal" onclick="if(event.target===this)closeQR()"><div class="modal-sheet"><div class="modal-hdr"><div style="font-weight:900">🔗 QR-synk</div><button onclick="closeQR()" style="width:36px;height:36px;border-radius:10px;border:none;background:#F7F5FC;cursor:pointer">✕</button></div><div style="padding:16px;text-align:center"><div id="qrBox" style="display:flex;justify-content:center;margin-bottom:12px"></div><div id="qrInfo" style="font-size:13px;color:#7168A0;font-weight:700"></div><div id="qrScan" style="width:100%;max-width:360px;margin:0 auto"></div><div id="qrRes" style="margin-top:12px"></div></div><div style="padding:12px;border-top:1.5px solid #E4DEFC"><button onclick="closeQR()" style="width:100%;height:52px;border-radius:14px;border:none;background:#F7F5FC;font-weight:800;cursor:pointer">Stäng</button></div></div></div>
 
-<div class="modal-ov h" id="trashModal" onclick="if(event.target===this)closeTrash()"><div class="modal-sheet"><div class="modal-hdr"><div class="modal-ttl">🗑️ Papperskorg</div><button class="modal-x" onclick="closeTrash()">✕</button></div><div class="modal-body" id="trashBody"></div><div class="modal-ftr"><button class="modal-btn" style="background:var(--rose-soft);color:var(--rose)" onclick="emptyTrash()">Töm allt</button><button class="modal-btn" onclick="closeTrash()">Stäng</button></div></div></div>
-<div class="modal-ov h" id="notifModal" onclick="if(event.target===this)closeNotif()"><div class="modal-sheet"><div class="modal-hdr"><div class="modal-ttl">🔔 Påminnelser</div><button class="modal-x" onclick="closeNotif()">✕</button></div><div class="modal-body" id="notifBody"></div><div class="modal-ftr"><button class="modal-btn" onclick="closeNotif()">Stäng</button></div></div></div>
-<div class="modal-ov h" id="versionModal" onclick="if(event.target===this)closeVersionHistory()"><div class="modal-sheet"><div class="modal-hdr"><div class="modal-ttl">🕘 Historik</div><button class="modal-x" onclick="closeVersionHistory()">✕</button></div><div class="modal-body" id="versionList"></div><div class="modal-ftr"><button class="modal-btn" onclick="closeVersionHistory()">Stäng</button></div></div></div>
-<div class="modal-ov h" id="qrModal" onclick="if(event.target===this)closeQR()"><div class="modal-sheet"><div class="modal-hdr"><div class="modal-ttl">🔗 QR-synk</div><button class="modal-x" onclick="closeQR()">✕</button></div><div class="modal-body" style="text-align:center"><div id="qrContainer" style="display:flex;justify-content:center;margin-bottom:12px"></div><div id="qrInfo" style="font-size:13px;color:var(--text2);font-weight:700"></div><div id="qrScanner" style="width:100%;max-width:360px;margin:0 auto"></div><div id="qrScanResult" style="margin-top:12px"></div></div><div class="modal-ftr"><button class="modal-btn" onclick="closeQR()">Stäng</button></div></div></div>
-
-<div class="toast" id="toast"><span id="toastIcon">✅</span><span id="toastMsg">OK</span></div>
+<div class="toast" id="toast"></div>
 
 <script>
-const PERSON_COLORS=['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#EC4899','#8B5CF6','#14B8A6'];
-const TIME_LABELS={today:'Idag',tomorrow:'Imorgon',week:'Denna vecka',month:'Denna månad',thisyear:'Pågående år',nextyear:'Nästa år',future:'Framtiden',sometime:'Någon gång'};
-const TIME_ORDER=['today','tomorrow','week','month','thisyear','nextyear','future','sometime'];
-function sl(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
-let tasks=sl('familyTasks',[]),trash=sl('familyTrash',[]),persons=sl('familyPersons',['person1','person2','person3']),personLabels=sl('familyPersonLabels',{person1:'Person 1',person2:'Person 2',person3:'Person 3'}),score=parseInt(localStorage.getItem('familyScore')||'0'),night=localStorage.getItem('nightMode')==='true',currentPerson='all',currentTab='todo',colorMap={},versionHistory=sl('familyVersionHistory',[]),syncLogEntries=[],notifications=[];
-function buildColorMap(){colorMap['all']=PERSON_COLORS[0];persons.forEach((p,i)=>colorMap[p]=PERSON_COLORS[(i+1)%PERSON_COLORS.length])}
-function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function saveData(){localStorage.setItem('familyTasks',JSON.stringify(tasks));localStorage.setItem('familyTrash',JSON.stringify(trash));localStorage.setItem('familyScore',score)}
-function savePersons(){localStorage.setItem('familyPersons',JSON.stringify(persons));localStorage.setItem('familyPersonLabels',JSON.stringify(personLabels))}
-
-function loadProfiles(){try{const v=localStorage.getItem('familyProfiles');if(!v) return [];const p=JSON.parse(v);return Array.isArray(p)?p:[];}catch(e){return []}}
+const COLORS=['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#EC4899'];
+function get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}}
+let tasks=get('familyTasks',[]);
+let persons=get('familyPersons',['person1','person2','person3']);
+let labels=get('familyPersonLabels',{person1:'Person 1',person2:'Person 2',person3:'Person 3'});
+let trash=get('familyTrash',[]);
+function saveAllData(){localStorage.setItem('familyTasks',JSON.stringify(tasks));localStorage.setItem('familyPersons',JSON.stringify(persons));localStorage.setItem('familyPersonLabels',JSON.stringify(labels));localStorage.setItem('familyTrash',JSON.stringify(trash));}
+function profiles(){try{const v=localStorage.getItem('familyProfiles');return v?JSON.parse(v).filter(p=>p&&p.id&&p.name):[];}catch{return []}}
 function saveProfiles(p){localStorage.setItem('familyProfiles',JSON.stringify(p))}
-const CURRENT_PROFILE_KEY='familyCurrentProfileId';let currentProfileId=null;
-function checkLoginState(){
-  try{
-    const profiles=loadProfiles();
-    if(profiles.length===0){showCreateForm();return}
-    const saved=localStorage.getItem(CURRENT_PROFILE_KEY);
-    const found=profiles.find(x=>x && x.id===saved);
-    if(saved && found){unlockApp(saved);return}
-    showProfileList();
-  }catch(e){
-    console.error(e);
-    showCreateForm();
+let currentId=localStorage.getItem('familyCurrentProfileId');
+let tt;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),3000);}
+function renderProfiles(){
+  const list=document.getElementById('profileList');
+  if(!list) return;
+  const ps=profiles();
+  if(ps.length===0){
+    list.innerHTML='<div style="text-align:center;padding:12px;background:#F7F5FC;border-radius:12px;border:1.5px dashed #E4DEFC;color:#7168A0;font-size:13px;font-weight:700">Inga profiler – skapa en nedan 👇</div>';
+    return;
+  }
+  if(currentId && ps.find(p=>p.id===currentId)){
+    document.getElementById('loginOv').style.display='none';
+    const who=document.getElementById('who');
+    if(who) who.textContent='Inloggad som '+ps.find(p=>p.id===currentId).name;
+    return;
+  }
+  list.innerHTML='<div style="font-weight:800;font-size:13px;margin-bottom:10px">Välj profil:</div>'+ps.map(p=>'<div class="profile-row"><button class="profile-btn" onclick="login(\''+p.id+'\')"><span style="width:36px;height:36px;border-radius:12px;background:#6C47E8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900">'+p.name.charAt(0).toUpperCase()+'</span><span>'+p.name+'</span><span style="margin-left:auto">➡️</span></button><button class="profile-del" onclick="delProf(\''+p.id+'\')">🗑️</button></div>').join('');
+}
+function login(id){
+  const p=profiles().find(x=>x.id===id);
+  if(!p) return;
+  const pw=prompt('Lösenord för '+p.name+':');
+  if(pw===null) return;
+  if(pw===p.password){
+    currentId=id;
+    localStorage.setItem('familyCurrentProfileId',id);
+    document.getElementById('loginOv').style.display='none';
+    document.getElementById('who').textContent='Inloggad som '+p.name;
+    toast('Välkommen '+p.name+'!');
+    renderCards();
+  }else{alert('Fel lösenord');}
+}
+function createProfile(){
+  const nameEl=document.getElementById('pName');
+  const pwEl=document.getElementById('pPw');
+  const pw2El=document.getElementById('pPw2');
+  const err=document.getElementById('pErr');
+  const name=(nameEl.value||'').trim();
+  const pw=pwEl.value||'';
+  const pw2=pw2El.value||'';
+  if(err) err.style.display='none';
+  if(!name){if(err){err.textContent='Skriv ett namn';err.style.display='block'}return}
+  if(name.length<2){if(err){err.textContent='Minst 2 bokstäver';err.style.display='block'}return}
+  if(!pw){if(err){err.textContent='Skriv ett lösenord';err.style.display='block'}return}
+  if(pw!==pw2){if(err){err.textContent='Lösenorden matchar inte';err.style.display='block'}return}
+  const ps=profiles();
+  const np={id:'p_'+Date.now(),name:name,password:pw};
+  ps.push(np);
+  saveProfiles(ps);
+  currentId=np.id;
+  localStorage.setItem('familyCurrentProfileId',np.id);
+  document.getElementById('loginOv').style.display='none';
+  const who=document.getElementById('who');
+  if(who) who.textContent='Inloggad som '+name;
+  toast('Profil skapad! Välkommen '+name);
+  renderCards();
+  nameEl.value='';pwEl.value='';pw2El.value='';
+}
+function delProf(id){
+  if(!confirm('Ta bort profilen?')) return;
+  let ps=profiles().filter(p=>p.id!==id);
+  saveProfiles(ps);
+  if(currentId===id){currentId=null;localStorage.removeItem('familyCurrentProfileId');}
+  renderProfiles();
+  toast('Borttagen');
+}
+function logout(){if(confirm('Logga ut?')){localStorage.removeItem('familyCurrentProfileId');location.reload();}}
+function clearAll(){if(confirm('Rensa ALL data?')){localStorage.clear();location.reload();}}
+function renderCards(){
+  const el=document.getElementById('cards');
+  if(!el) return;
+  function count(pid){const m=pid==='all'?tasks:tasks.filter(t=>t.person===pid);return {a:m.filter(t=>!t.done).length,d:m.filter(t=>t.done).length}}
+  let h='';
+  const all=count('all');
+  h+='<div class="pcard" onclick="openPerson(\'all\')"><div class="avatar" style="background:'+COLORS[0]+'">👥</div><div style="font-weight:900">Alla</div><div style="font-size:12px;color:#7168A0;margin-top:6px">📋 '+all.a+' att göra · ✅ '+all.d+' klara</div></div>';
+  persons.forEach((pid,i)=>{
+    const c=count(pid);
+    const col=COLORS[(i+1)%COLORS.length];
+    const label=labels[pid]||pid;
+    h+='<div class="pcard" onclick="openPerson(\''+pid+'\')"><div class="avatar" style="background:'+col+'">'+label.charAt(0).toUpperCase()+'</div><div style="font-weight:900">'+label+'</div><div style="font-size:12px;color:#7168A0;margin-top:6px">📋 '+c.a+' · ✅ '+c.d+'</div></div>';
+  });
+  el.innerHTML=h;
+}
+function addPerson(){
+  const inp=document.getElementById('newPerson');
+  const name=(inp.value||'').trim();
+  if(!name){toast('Skriv ett namn');return}
+  const id='person'+Date.now();
+  persons.push(id);
+  labels[id]=name;
+  saveAllData();
+  renderCards();
+  inp.value='';
+  toast('Tillagd!');
+}
+function openPerson(id){
+  const label=id==='all'?'Alla':(labels[id]||id);
+  const mine=id==='all'?tasks:tasks.filter(t=>t.person===id);
+  const text=mine.map(t=>(t.done?'✅':'☐')+' '+t.text).join('\\n')||'Inga uppgifter';
+  const newTask=prompt(label+'\\n\\nUppgifter:\\n'+text+'\\n\\nSkriv ny uppgift (eller avbryt):');
+  if(newTask && newTask.trim()){
+    tasks.push({id:Date.now(),text:newTask.trim(),time:'idag',person:id,done:false});
+    saveAllData();
+    renderCards();
+    toast('Tillagd!');
   }
 }
-function showProfileList(){
-  const profiles=loadProfiles().filter(p=>p&&p.id&&p.name);
-  const area=document.getElementById('profileListArea');
-  const createArea=document.getElementById('createArea');
-  if(!area) return;
-  if(profiles.length===0){showCreateForm();return}
-  area.innerHTML=profiles.map(p=>`
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-      <button onclick="showPasswordForm('${p.id}')" style="flex:1;display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;text-align:left;color:#1E1535">
-        <span style="width:36px;height:36px;border-radius:12px;background:#6C47E8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900">${(p.name||'?').charAt(0).toUpperCase()}</span>
-        <span>${p.name}</span>
-        <span style="margin-left:auto">➡️</span>
-      </button>
-      <button onclick="deleteProfile('${p.id}')" style="width:44px;height:44px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-size:18px;flex-shrink:0" title="Ta bort">🗑️</button>
-    </div>
-  `).join('');
-  createArea.innerHTML=`<button onclick="showCreateForm()" style="width:100%;height:52px;border-radius:14px;border:2px dashed #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:800;cursor:pointer;margin-top:4px">➕ Ny profil</button>`;
+function saveAll(){saveAllData();toast('✅ Sparat!')}
+function updateClock(){
+  const now=new Date();
+  const c=document.getElementById('clock');
+  const d=document.getElementById('date');
+  if(c) c.textContent=now.toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'});
+  if(d) d.textContent=now.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'});
 }
-function showPasswordForm(id){
-  const p=loadProfiles().find(x=>x.id===id);
-  if(!p) return;
-  const area=document.getElementById('profileListArea');
-  const createArea=document.getElementById('createArea');
-  area.innerHTML=`
-    <button onclick="showProfileList()" style="background:none;border:none;color:#7168A0;font-weight:700;cursor:pointer;display:flex;gap:6px;margin-bottom:12px;color:#1E1535">◀ Tillbaka</button>
-    <div style="text-align:center"><div style="font-size:40px">🔒</div><div style="font-weight:900;font-size:18px;margin-top:8px;color:#1E1535">${p.name}</div><div style="font-size:13px;color:#7168A0;margin-top:4px">Ange lösenord</div></div>
-    <input type="password" id="loginInput" placeholder="Lösenord" style="width:100%;height:54px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;margin-top:16px;text-align:center;color:#1E1535">
-    <div id="loginErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-top:10px;text-align:center">Fel lösenord</div>
-  `;
-  createArea.innerHTML=`<button onclick="submitLogin('${p.id}')" style="width:100%;height:54px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer;margin-top:10px">Logga in</button>`;
-  setTimeout(()=>{const i=document.getElementById('loginInput');if(i){i.focus(); i.addEventListener('keydown',e=>{if(e.key==='Enter') submitLogin('${p.id}')})}},100);
-}
-function submitLogin(id){
-  const val=document.getElementById('loginInput')?.value||'';
-  const p=loadProfiles().find(x=>x.id===id);
-  if(!p) return;
-  if(val===p.password){unlockApp(id)}else{const err=document.getElementById('loginErr');if(err)err.style.display='block';const inp=document.getElementById('loginInput');if(inp)inp.value='';}
-}
-function showCreateForm(){
-  const area=document.getElementById('profileListArea');
-  const createArea=document.getElementById('createArea');
-  const hasProfiles=loadProfiles().length>0;
-  area.innerHTML=`
-    <div style="text-align:center"><div style="font-size:40px">👤</div><div style="font-weight:900;font-size:18px;margin-top:8px;color:#1E1535">${hasProfiles?'Ny profil':'Skapa din första profil'}</div><div style="font-size:13px;color:#7168A0;margin-top:6px">Namn + lösenord skyddar appen</div></div>
-    <input type="text" id="newProfileName" placeholder="Namn t.ex. Mamma" maxlength="20" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;margin-top:16px;text-align:left;color:#1E1535">
-    <input type="password" id="newProfilePw" placeholder="Lösenord" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;margin-top:10px;text-align:center;color:#1E1535">
-    <input type="password" id="newProfilePw2" placeholder="Bekräfta lösenord" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;margin-top:10px;text-align:center;color:#1E1535">
-    <div id="loginErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-top:10px;text-align:center"></div>
-  `;
-  createArea.innerHTML=`
-    <button onclick="doCreateProfile()" style="width:100%;height:54px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer;margin-top:12px">Skapa profil</button>
-    ${hasProfiles?`<button onclick="showProfileList()" style="width:100%;height:44px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:700;cursor:pointer;margin-top:8px">◀ Tillbaka till profiler</button>`:''}
-  `;
-}
-function doCreateProfile(){
-  const nameEl=document.getElementById('newProfileName');
-  const pwEl=document.getElementById('newProfilePw');
-  const pw2El=document.getElementById('newProfilePw2');
-  const errEl=document.getElementById('loginErr');
-  const name=nameEl?.value.trim()||'';
-  const pw=pwEl?.value||'';
-  const pw2=pw2El?.value||'';
-  if(!name){errEl.textContent='Skriv ett namn';errEl.style.display='block';return}
-  if(!pw){errEl.textContent='Skriv ett lösenord';errEl.style.display='block';return}
-  if(pw!==pw2){errEl.textContent='Lösenorden matchar inte';errEl.style.display='block';return}
-  const profiles=loadProfiles();
-  const np={id:'p_'+Date.now(),name:name,password:pw};
-  profiles.push(np);
-  saveProfiles(profiles);
-  unlockApp(np.id);
-  toast('Profil skapad! 🎉');
-}
-function unlockApp(pid){currentProfileId=pid;localStorage.setItem(CURRENT_PROFILE_KEY,pid);document.getElementById('loginOv').style.display='none';const prof=loadProfiles().find(p=>p.id===pid);const badge=document.getElementById('profileBadge');if(badge)badge.textContent=prof?'Inloggad som '+prof.name:'';}
-function logoutApp(){if(confirm('Logga ut?')){localStorage.removeItem(CURRENT_PROFILE_KEY);location.reload()}}
-function deleteProfile(id){const profiles=loadProfiles();const p=profiles.find(x=>x.id===id);if(!p)return;if(!confirm('Ta bort profilen "'+p.name+'"?'))return;const newProfiles=profiles.filter(x=>x.id!==id);saveProfiles(newProfiles);if(newProfiles.length===0){localStorage.removeItem(CURRENT_PROFILE_KEY);showCreateForm();toast('🗑️ Borttagen')}else{if(localStorage.getItem(CURRENT_PROFILE_KEY)===id)localStorage.removeItem(CURRENT_PROFILE_KEY);showProfileList();toast('🗑️ Borttagen')}}
-
-function toggleNight(){night=!night;localStorage.setItem('nightMode',night);applyNight()}function applyNight(){document.body.classList.toggle('night',night);document.getElementById('nightIcon').textContent=night?'☀️':'🌙'}
-function togglePcMode(){const on=!document.body.classList.contains('pc-mode');document.body.classList.toggle('pc-mode',on);localStorage.setItem('pcMode',on);toast(on?'🖥️ PC-vy':'📱 Mobilvy')}
-function updateClock(){const now=new Date();const el=document.getElementById('clockDisplay');if(el)el.textContent=now.toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit',second:'2-digit'});const d=document.getElementById('dateText');if(d)d.textContent=now.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'})}
-function renderCards(){buildColorMap();const grid=document.getElementById('cardsGrid');function counts(pid){const mine=pid==='all'?tasks:tasks.filter(t=>t.person===pid);return{active:mine.filter(t=>!t.completed).length,done:mine.filter(t=>t.completed).length}}let html='';const allC=counts('all');html+='<div class="person-card" onclick="openDetail(\\'all\\')" style="border-color:'+PERSON_COLORS[0]+'33"><div class="card-avatar" style="background:'+PERSON_COLORS[0]+'">👥</div><div class="card-name">Alla</div><div class="card-stats"><div class="stat-pill">📋 '+allC.active+'</div><div class="stat-pill">✅ '+allC.done+'</div></div><span class="card-chevron">➡️</span></div>';persons.forEach((pid,i)=>{const color=PERSON_COLORS[(i+1)%PERSON_COLORS.length];const label=personLabels[pid]||pid;const c=counts(pid);html+='<div class="person-card" onclick="openDetail(\\''+pid+'\\')" style="border-color:'+color+'33"><div class="card-avatar" style="background:'+color+'">'+esc(label.charAt(0).toUpperCase())+'</div><div class="card-name">'+esc(label)+'</div><div class="card-stats"><div class="stat-pill">📋 '+c.active+'</div><div class="stat-pill">✅ '+c.done+'</div></div><span class="card-chevron">➡️</span></div>'});grid.innerHTML=html}
-function addPerson(){const inp=document.getElementById('newPersonInput');const name=inp.value.trim();if(!name){toast('Ange namn','error');return}let nid='person'+(persons.length+1);let c=1;while(persons.includes(nid)){c++;nid='person'+c}persons.push(nid);personLabels[nid]=name;savePersons();buildColorMap();renderCards();inp.value='';toast('Tillagd!')}
-function openDetail(pid){currentPerson=pid;const color=colorMap[pid]||PERSON_COLORS[0];const label=pid==='all'?'Alla':(personLabels[pid]||pid);document.getElementById('detailAvatar').textContent=pid==='all'?'👥':label.charAt(0).toUpperCase();document.getElementById('detailAvatar').style.background=color;document.getElementById('detailName').textContent=label;const mine=pid==='all'?tasks:tasks.filter(t=>t.person===pid);document.getElementById('detailSub').textContent=mine.filter(t=>!t.completed).length+' att göra';document.getElementById('pageHome').classList.add('hidden');const d=document.getElementById('pageDetail');d.classList.remove('hidden');setTimeout(()=>d.classList.add('open'),10);switchTab('todo');renderDetail()}
-function goHome(){const d=document.getElementById('pageDetail');d.classList.remove('open');setTimeout(()=>{d.classList.add('hidden');document.getElementById('pageHome').classList.remove('hidden');renderCards()},300)}
-function switchTab(tab){currentTab=tab;document.getElementById('tabTodo').classList.toggle('active',tab==='todo');document.getElementById('tabAktuell').classList.toggle('active',tab==='aktuell');document.getElementById('tabDone').classList.toggle('active',tab==='done');document.getElementById('todoSection').classList.toggle('h',tab!=='todo');document.getElementById('aktuellSection').classList.toggle('h',tab!=='aktuell');document.getElementById('doneSection').classList.toggle('h',tab!=='done');renderDetail()}
-function renderDetail(){const mine=currentPerson==='all'?tasks:tasks.filter(t=>t.person===currentPerson);document.getElementById('todoBadge').textContent=mine.filter(t=>!t.completed).length;document.getElementById('aktuellBadge').textContent=mine.filter(t=>!t.completed&&t.starred).length;document.getElementById('doneBadge').textContent=mine.filter(t=>t.completed).length;if(currentTab==='todo')renderList('todoContainer',mine.filter(t=>!t.completed),false);else if(currentTab==='aktuell')renderList('aktuellContainer',mine.filter(t=>!t.completed&&t.starred),false);else renderList('doneContainer',mine.filter(t=>t.completed),true)}
-function renderList(cid,items,isDone){const c=document.getElementById(cid);if(!items.length){c.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);font-weight:700">Tomt här!</div>';return}const grouped={};items.forEach(it=>{if(!grouped[it.timeFrame])grouped[it.timeFrame]=[];grouped[it.timeFrame].push(it)});c.innerHTML=TIME_ORDER.filter(k=>grouped[k]).map(tf=>'<div><div style="font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;padding:8px 8px 4px;display:flex;gap:8px;align-items:center">'+TIME_LABELS[tf]+'<hr style="flex:1;border:none;border-top:1.5px solid var(--border)"> '+grouped[tf].length+'</div>'+grouped[tf].map(item=>'<div class="task-item"><button class="star-btn" onclick="toggleStar('+item.id+')">'+(item.starred?'⭐':'☆')+'</button><div class="check-btn '+(isDone?'done-style':'')+'" onclick="toggleComplete('+item.id+')">✓</div><div class="task-content"><div class="task-text '+(isDone?'struck':'')+'">'+esc(item.text)+'</div><div class="task-meta"><span class="tag">'+TIME_LABELS[item.timeFrame]+'</span>'+(item.person!=='all'&&currentPerson==='all'?'<span class="tag" style="background:'+colorMap[item.person]+';color:#fff">'+esc(personLabels[item.person]||item.person)+'</span>':'')+'</div></div><button class="del-btn" onclick="moveToTrash('+item.id+')">🗑️</button></div>').join('')+'</div>').join('');}
-function addTask(){const inp=document.getElementById('taskInput');const text=inp.value.trim();if(!text){toast('Ange uppgift','error');return}tasks.push({id:Date.now(),text,type:document.getElementById('taskType').value,timeFrame:document.getElementById('timeFrame').value,person:currentPerson,completed:false,starred:false,createdAt:new Date().toISOString()});saveData();inp.value='';toast('Tillagd!');renderDetail()}
-function toggleComplete(id){const t=tasks.find(x=>x.id===id);if(!t)return;if(!t.completed){t.completed=true;score+=10;localStorage.setItem('familyScore',score);toast('+10 poäng!')}else t.completed=false;saveData();if(t.completed)moveToTrash(id);renderDetail()}
-function moveToTrash(id){const idx=tasks.findIndex(t=>t.id===id);if(idx>-1){const tt=tasks.splice(idx,1)[0];tt.deletedAt=new Date().toISOString();trash.push(tt);saveData();updateTrashBdg();renderDetail()}}
-function toggleStar(id){const t=tasks.find(x=>x.id===id);if(!t)return;t.starred=!t.starred;saveData();renderDetail();toast(t.starred?'⭐ Aktuell':'Borttagen')}
-function openTrash(){renderTrashModal();document.getElementById('trashModal').classList.remove('h')}function closeTrash(){document.getElementById('trashModal').classList.add('h')}
-function renderTrashModal(){const b=document.getElementById('trashBody');if(!trash.length){b.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Tom papperskorg</div>';return}b.innerHTML=trash.slice().reverse().map(item=>'<div style="display:flex;gap:10px;padding:12px;background:var(--surface2);border-radius:14px;margin-bottom:8px;border:1.5px solid var(--border)"><div style="flex:1;text-decoration:line-through;color:var(--text3);font-weight:700">'+esc(item.text)+'</div><button onclick="restoreFromTrash('+item.id+')" style="width:40px;height:40px;border:none;border-radius:10px;cursor:pointer">↩️</button><button onclick="delPerm('+item.id+')" style="width:40px;height:40px;border:none;border-radius:10px;cursor:pointer">🗑️</button></div>').join('')}
-function updateTrashBdg(){const b=document.getElementById('trashBdg');if(!b)return;b.textContent=trash.length;b.classList.toggle('h',trash.length===0)}
-function restoreFromTrash(id){const idx=trash.findIndex(t=>t.id===id);if(idx>-1){const t=trash.splice(idx,1)[0];delete t.deletedAt;t.completed=false;tasks.push(t);saveData();renderTrashModal();renderDetail();renderCards();toast('Återställd!')}}function delPerm(id){trash=trash.filter(t=>t.id!==id);saveData();renderTrashModal();}function emptyTrash(){if(confirm('Töm?')){trash=[];saveData();renderTrashModal();toast('Tömd')}}
-function openNotif(){const b=document.getElementById('notifBody');b.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Inga påminnelser</div>';document.getElementById('notifModal').classList.remove('h')}function closeNotif(){document.getElementById('notifModal').classList.add('h')}
-function exportLocalBackup(){const backup={tasks,trash,persons,personLabels,score,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='familj-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('✅ Fil sparad!')}
-function importLocalBackup(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const b=JSON.parse(ev.target.result);if(!b.tasks){toast('Ogiltig fil','error');return}if(!confirm('Ersätta all data?'))return;saveVersionSnapshot('Innan import');tasks=b.tasks||[];trash=b.trash||[];persons=b.persons||persons;personLabels=b.personLabels||personLabels;score=b.score||0;saveData();savePersons();buildColorMap();renderCards();renderDetail();toast('✅ Import klar!')}catch(err){toast('❌ Kunde inte läsa','error')}};r.readAsText(f)};inp.click()}
-function saveVersionSnapshot(label){try{const snap={id:Date.now()+Math.random(),time:new Date().toISOString(),label:label||'Snapshot',data:{tasks:JSON.parse(JSON.stringify(tasks)),trash:JSON.parse(JSON.stringify(trash)),persons:JSON.parse(JSON.stringify(persons)),personLabels:JSON.parse(JSON.stringify(personLabels)),score}};versionHistory.push(snap);if(versionHistory.length>8)versionHistory.shift();localStorage.setItem('familyVersionHistory',JSON.stringify(versionHistory))}catch(e){}}
-function openVersionHistory(){const c=document.getElementById('versionList');if(!versionHistory.length){c.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Inga versioner än</div>'}else{c.innerHTML=versionHistory.slice().reverse().map(s=>'<div style="display:flex;gap:10px;padding:12px;background:var(--surface2);border-radius:14px;margin-bottom:8px;border:1.5px solid var(--border)"><div style="flex:1"><div style="font-weight:800">'+esc(s.label)+'</div><div style="font-size:12px;color:var(--text3)">'+new Date(s.time).toLocaleString('sv-SE')+' · '+s.data.tasks.length+' uppgifter</div></div><button onclick="restoreVersion(\\''+s.id+'\\')" style="width:40px;height:40px;border:none;border-radius:10px;cursor:pointer">↩️</button></div>').join('')}document.getElementById('versionModal').classList.remove('h')}
-function closeVersionHistory(){document.getElementById('versionModal').classList.add('h')}
-function restoreVersion(id){const snap=versionHistory.find(s=>String(s.id)===String(id));if(!snap)return;if(!confirm('Återställa?'))return;saveVersionSnapshot('Innan återställning');tasks=JSON.parse(JSON.stringify(snap.data.tasks));trash=JSON.parse(JSON.stringify(snap.data.trash));persons=JSON.parse(JSON.stringify(snap.data.persons));personLabels=JSON.parse(JSON.stringify(snap.data.personLabels));score=snap.data.score;saveData();savePersons();buildColorMap();renderCards();renderDetail();closeVersionHistory();toast('✅ Återställd!')}
-function saveAndConfirm(){saveData();savePersons();saveVersionSnapshot('Spara');toast('✅ Sparat!')}
-let toastT;function toast(msg){const el=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000)}
-let qrObj=null,html5QrCode=null;
-function showMyQR(){
+let html5Qr=null;
+function showQR(){
   try{
-    const payload={tasks,trash,persons,personLabels,score,v:2,t:Date.now()};
+    const payload={tasks,persons,labels,trash,v:1,t:Date.now()};
     const json=JSON.stringify(payload);
-    const compressed=LZString.compressToEncodedURIComponent(json);
-    const qc=document.getElementById('qrContainer');const qi=document.getElementById('qrInfo');
-    document.getElementById('qrScanner').innerHTML='';document.getElementById('qrScanResult').innerHTML='';qc.innerHTML='';
-    if(compressed.length>2500){qi.innerHTML='⚠️ För stor för QR ('+compressed.length+' tecken). Ta bort bilder eller använd Fil.<br><button onclick="exportLocalBackup()" style="margin-top:10px;height:36px;padding:0 12px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:700;cursor:pointer">💾 Spara fil istället</button>';document.getElementById('qrModal').classList.remove('h');return}
-    qi.textContent='Visar '+tasks.length+' uppgifter – låt andra enheten scanna';
+    let comp;
+    if(typeof LZString!=='undefined' && LZString.compressToEncodedURIComponent){comp=LZString.compressToEncodedURIComponent(json);}else{comp=btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+    const box=document.getElementById('qrBox');
+    const info=document.getElementById('qrInfo');
+    document.getElementById('qrScan').innerHTML='';document.getElementById('qrRes').innerHTML='';box.innerHTML='';
+    if(comp.length>2500){info.innerHTML='⚠️ För stor för QR ('+comp.length+'). Använd Fil.';document.getElementById('qrModal').classList.remove('h');return}
+    info.textContent='Visar '+tasks.length+' uppgifter – låt andra scanna';
     document.getElementById('qrModal').classList.remove('h');
-    setTimeout(()=>{new QRCode(qc,{text:compressed,width:280,height:280,correctLevel:QRCode.CorrectLevel.M})},100);
+    setTimeout(()=>{if(typeof QRCode==='undefined'){info.textContent='Laddar QR... försök igen om 2 sek';return}new QRCode(box,{text:comp,width:280,height:280,correctLevel:QRCode.CorrectLevel.M});},200);
   }catch(e){toast('QR-fel: '+e.message)}
 }
-function startQRScan(){
-  document.getElementById('qrContainer').innerHTML='';document.getElementById('qrInfo').textContent='Peka kameran mot QR-koden';document.getElementById('qrScanResult').innerHTML='';document.getElementById('qrModal').classList.remove('h');
+function scanQR(){
+  document.getElementById('qrBox').innerHTML='';document.getElementById('qrInfo').textContent='Peka kameran mot QR-koden';document.getElementById('qrRes').innerHTML='';document.getElementById('qrModal').classList.remove('h');
   setTimeout(()=>{
     try{
-      html5QrCode=new Html5Qrcode("qrScanner");
-      html5QrCode.start({facingMode:"environment"},{fps:10,qrbox:250},(decoded)=>{
-        html5QrCode.stop().then(()=>{
+      const qr=new Html5Qrcode("qrScan");html5Qr=qr;
+      qr.start({facingMode:"environment"},{fps:10,qrbox:250},(decoded)=>{
+        qr.stop().then(()=>{
           try{
-            const dec=LZString.decompressFromEncodedURIComponent(decoded);
-            if(!dec)throw new Error('Kunde inte packa upp');
+            let dec;
+            if(typeof LZString!=='undefined' && LZString.decompressFromEncodedURIComponent){dec=LZString.decompressFromEncodedURIComponent(decoded);}else{let t=decoded.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';dec=decodeURIComponent(escape(atob(t)));}
+            if(!dec) throw new Error('Kunde inte packa upp');
             const remote=JSON.parse(dec);
-            if(!remote.tasks)throw new Error('Ogiltig data');
-            if(!confirm('Hämta '+remote.tasks.length+' uppgifter? Nuvarande sparas som backup.'))return;
-            saveVersionSnapshot('Innan QR-import');
-            tasks=remote.tasks||[];trash=remote.trash||[];persons=remote.persons||persons;personLabels=remote.personLabels||personLabels;score=remote.score||0;
-            saveData();savePersons();buildColorMap();renderCards();renderDetail();
-            document.getElementById('qrScanResult').innerHTML='<div style="background:var(--emerald-soft);color:var(--emerald);padding:10px;border-radius:10px;font-weight:800">✅ Hämtat '+tasks.length+'!</div>';
+            if(!remote.tasks) throw new Error('Ogiltig data');
+            if(!confirm('Hämta '+remote.tasks.length+' uppgifter?')) return;
+            tasks=remote.tasks||[];persons=remote.persons||persons;labels=remote.labels||labels;trash=remote.trash||[];
+            saveAllData();renderCards();
+            document.getElementById('qrRes').innerHTML='<div style="background:#DCFDF2;color:#22C08A;padding:10px;border-radius:10px;font-weight:800">✅ Hämtat '+tasks.length+'!</div>';
             toast('✅ Hämtat via QR!');setTimeout(closeQR,1500);
-          }catch(e){document.getElementById('qrScanResult').innerHTML='<div style="background:var(--rose-soft);color:var(--rose);padding:10px;border-radius:10px">❌ '+e.message+'</div>'}
+          }catch(e){document.getElementById('qrRes').innerHTML='<div style="background:#FDEDF0;color:#F05E7A;padding:10px;border-radius:10px">❌ '+e.message+'</div>'}
         });
-      },()=>{}).catch(e=>{document.getElementById('qrScanResult').innerHTML='Kamera-fel: '+e});
-    }catch(e){}
+      },()=>{}).catch(e=>{document.getElementById('qrRes').innerHTML='Kamera-fel: '+e});
+    }catch(e){document.getElementById('qrRes').innerHTML='Fel: '+e.message}
   },200);
 }
-function closeQR(){if(html5QrCode){try{html5QrCode.stop()}catch(e){}html5QrCode=null}document.getElementById('qrModal').classList.add('h');document.getElementById('qrScanner').innerHTML='';document.getElementById('qrContainer').innerHTML=''}
-
-function initApp_ORIG(){
-  try{
-    if(night)applyNight();
-    checkLoginState();
-    updateClock();
-    setInterval(updateClock,1000);
-    buildColorMap();
-    renderCards();
-    updateTrashBdg();
-    // If still blank, force show create form
-    setTimeout(()=>{
-      const lc=document.getElementById('loginContent');
-      if(lc && !lc.innerHTML.trim()){
-        console.log('Login content blank, forcing create form');
-        renderCreateProfileForm(true);
-      }
-    },500);
-  }catch(e){
-    console.error('Init error',e);
-    const lc=document.getElementById('loginContent');
-    if(lc){
-      lc.innerHTML='<div style="color:var(--rose);font-weight:800">Fel vid start: '+e.message+'</div><button class="login-btn" onclick="localStorage.clear();location.reload()">🔄 Rensa och börja om</button>';
-    }
-  }
-}
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',initApp);
-}else{
-  initApp();
-}
-// Extra safety: call again after 1s
-setTimeout(()=>{ try{ if(document.getElementById('loginContent') && !document.getElementById('loginContent').innerHTML.trim()) checkLoginState(); }catch(e){} },1000);
-
+function closeQR(){if(html5Qr){try{html5Qr.stop()}catch(e){}html5Qr=null}document.getElementById('qrModal').classList.add('h');document.getElementById('qrScan').innerHTML='';document.getElementById('qrBox').innerHTML='';}
+function exportFile(){const backup={tasks,persons,labels,trash,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='familj-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('✅ Fil sparad!');}
+function importFile(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const b=JSON.parse(ev.target.result);if(!b.tasks){toast('Ogiltig fil');return}if(!confirm('Ersätta all data med filen ('+b.tasks.length+' uppgifter)?'))return;tasks=b.tasks||[];persons=b.persons||persons;labels=b.labels||labels;trash=b.trash||[];saveAllData();renderCards();toast('✅ Import klar!');}catch(err){toast('❌ Kunde inte läsa')}};r.readAsText(f);};inp.click();}
+function init(){renderProfiles();updateClock();setInterval(updateClock,1000);renderCards();}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
 </script>
 </body>
 </html>
