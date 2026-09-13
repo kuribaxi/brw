@@ -235,21 +235,65 @@ function updateClock(){
   if(d) d.textContent=now.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long'});
 }
 let html5Qr=null;
+
 function showQR(){
   try{
-    const payload={tasks,persons,labels,trash,v:1,t:Date.now()};
-    const json=JSON.stringify(payload);
+    const log=document.getElementById('syncLog');
+    // Create light payload without images for QR
+    function makePayload(includeImages){
+      return {
+        tasks: tasks.map(t=>{
+          const nt={...t};
+          if(!includeImages){
+            delete nt.image;
+            delete nt.images;
+            delete nt.attachment;
+            delete nt.file;
+            // also strip large notes
+            if(nt.notes && nt.notes.length>200) nt.notes=nt.notes.slice(0,200)+'...';
+          }
+          return nt;
+        }),
+        persons,labels,trash: [], // no trash for QR to save space
+        v:2,t:Date.now(),light:!includeImages
+      };
+    }
+
+    let payload = makePayload(false);
+    let json=JSON.stringify(payload);
     let comp;
     if(typeof LZString!=='undefined' && LZString.compressToEncodedURIComponent){comp=LZString.compressToEncodedURIComponent(json);}else{comp=btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+
+    // If still too big, try even lighter (only tasks text)
+    if(comp.length>2500){
+      payload={tasks: tasks.map(t=>({id:t.id,text:t.text,time:t.time,person:t.person,done:t.done})), persons, labels, v:2, t:Date.now(), light:true, minimal:true};
+      json=JSON.stringify(payload);
+      if(typeof LZString!=='undefined'){comp=LZString.compressToEncodedURIComponent(json);}else{comp=btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');}
+    }
+
     const box=document.getElementById('qrBox');
     const info=document.getElementById('qrInfo');
     document.getElementById('qrScan').innerHTML='';document.getElementById('qrRes').innerHTML='';box.innerHTML='';
-    if(comp.length>2500){info.innerHTML='⚠️ För stor för QR ('+comp.length+'). Använd Fil.';document.getElementById('qrModal').classList.remove('h');return}
-    info.textContent='Visar '+tasks.length+' uppgifter – låt andra scanna';
+    
+    if(comp.length>2500){
+      // Still too big - use file fallback but offer chunked QR
+      const chunks=Math.ceil(comp.length/2000);
+      info.innerHTML='⚠️ Du har '+tasks.length+' uppgifter ('+comp.length+' tecken) – för stort för 1 QR.<br><br>💡 <b>Lösning:</b> Använd Fil-knappen – den funkar alltid!<br><br>📤 Filen innehåller ALLT inklusive bilder.<br>QR:en kan bara skicka text-uppgifter utan bilder.<br><br><button onclick="exportFile()" style="height:44px;padding:0 16px;border-radius:12px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer">💾 Spara fil och skicka via AirDrop/Mail</button>';
+      document.getElementById('qrModal').classList.remove('h');
+      if(log) log.textContent='QR för stor ('+comp.length+'), använd Fil istället - '+tasks.length+' uppgifter';
+      return;
+    }
+
+    info.innerHTML='📤 Visar '+tasks.length+' uppgifter (utan bilder för att få plats i QR)<br><span style="font-size:11px;color:#A89FCE">Bilder måste skickas via Fil. Låt andra enheten scanna.</span>';
     document.getElementById('qrModal').classList.remove('h');
-    setTimeout(()=>{if(typeof QRCode==='undefined'){info.textContent='Laddar QR... försök igen om 2 sek';return}new QRCode(box,{text:comp,width:280,height:280,correctLevel:QRCode.CorrectLevel.M});},200);
+    setTimeout(()=>{
+      if(typeof QRCode==='undefined'){info.textContent='QR-bibliotek laddar... vänta 2 sek och försök igen';return}
+      new QRCode(box,{text:comp,width:280,height:280,correctLevel:QRCode.CorrectLevel.M});
+      if(log) log.textContent='QR genererad: '+comp.length+' tecken, '+tasks.length+' uppgifter';
+    },200);
   }catch(e){toast('QR-fel: '+e.message)}
 }
+
 function scanQR(){
   document.getElementById('qrBox').innerHTML='';document.getElementById('qrInfo').textContent='Peka kameran mot QR-koden';document.getElementById('qrRes').innerHTML='';document.getElementById('qrModal').classList.remove('h');
   setTimeout(()=>{
@@ -275,7 +319,8 @@ function scanQR(){
   },200);
 }
 function closeQR(){if(html5Qr){try{html5Qr.stop()}catch(e){}html5Qr=null}document.getElementById('qrModal').classList.add('h');document.getElementById('qrScan').innerHTML='';document.getElementById('qrBox').innerHTML='';}
-function exportFile(){const backup={tasks,persons,labels,trash,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='familj-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('✅ Fil sparad!');}
+function exportFile(){ // Always works even for large data
+const backup={tasks,persons,labels,trash,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='familj-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('✅ Fil sparad!');}
 function importFile(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const b=JSON.parse(ev.target.result);if(!b.tasks){toast('Ogiltig fil');return}if(!confirm('Ersätta all data med filen ('+b.tasks.length+' uppgifter)?'))return;tasks=b.tasks||[];persons=b.persons||persons;labels=b.labels||labels;trash=b.trash||[];saveAllData();renderCards();toast('✅ Import klar!');}catch(err){toast('❌ Kunde inte läsa')}};r.readAsText(f);};inp.click();}
 function init(){renderProfiles();updateClock();setInterval(updateClock,1000);renderCards();}
 if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
