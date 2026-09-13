@@ -46,18 +46,35 @@ body.night{--bg:#211D42;--surface:#2C2761;--surface2:#373072;--border:#4B4392;--
 </head>
 <body>
 
-<div class="login-ov" id="loginOv" style="display:flex">
-<div class="login-card" id="loginContent" style="background:#fff!important;color:#1E1535!important;border:2px solid #E4DEFC">
-  <div style="font-size:48px">👥</div>
-  <div style="font-weight:900;font-size:20px;margin-top:10px;color:#1E1535">Familjens Planerare</div>
-  <div style="font-size:13px;color:#7168A0;margin-top:6px">Välj profil eller skapa ny</div>
-  <div id="profileListArea" style="margin-top:18px;text-align:left"></div>
-  <div id="createArea" style="margin-top:16px"></div>
-  <div style="margin-top:20px;display:flex;flex-direction:column;gap:8px">
-    <button onclick="localStorage.clear();location.reload()" style="height:44px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:700;cursor:pointer">🧹 Rensa allt och börja om (om blank)</button>
+
+<div class="login-ov" id="loginOv" style="display:flex;background:#F0EDF8">
+<div class="login-card" id="loginContent" style="background:#fff!important;color:#1E1535!important;border:2px solid #E4DEFC;max-width:400px;width:100%">
+  <div style="text-align:center">
+    <div style="font-size:48px">👥</div>
+    <div style="font-weight:900;font-size:22px;margin-top:10px;color:#1E1535">Familjens Planerare</div>
+    <div style="font-size:13px;color:#7168A0;margin-top:6px">Välj profil eller skapa ny</div>
+  </div>
+  
+  <div id="profileListArea" style="margin-top:18px">
+    <!-- fylls av JS, men har fallback -->
+    <div id="fallbackProfiles" style="text-align:center;color:#7168A0;font-size:13px;padding:10px">Laddar profiler...</div>
+  </div>
+
+  <div style="margin-top:20px;border-top:1.5px solid #E4DEFC;padding-top:16px">
+    <div style="font-weight:800;font-size:14px;color:#1E1535;margin-bottom:10px">➕ Skapa ny profil</div>
+    <input type="text" id="newProfileName" placeholder="Namn t.ex. Mamma" maxlength="20" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535;margin-bottom:10px">
+    <input type="password" id="newProfilePw" placeholder="Lösenord" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535;margin-bottom:10px">
+    <input type="password" id="newProfilePw2" placeholder="Bekräfta lösenord" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535">
+    <div id="createErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-top:10px;text-align:center"></div>
+    <button id="createBtn" onclick="doCreateProfile()" style="width:100%;height:54px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer;margin-top:12px;font-size:16px">Skapa profil</button>
+  </div>
+
+  <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+    <button onclick="if(confirm('Rensa ALL data?')){localStorage.clear();location.reload()}" style="height:44px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:700;cursor:pointer">🧹 Rensa allt och börja om</button>
   </div>
 </div>
 </div>
+
 
 <div class="page" id="pageHome">
 <header class="hdr">
