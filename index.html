@@ -103,9 +103,14 @@ function saveData(){localStorage.setItem('familyTasks',JSON.stringify(tasks));lo
 function savePersons(){localStorage.setItem('familyPersons',JSON.stringify(persons));localStorage.setItem('familyPersonLabels',JSON.stringify(personLabels))}
 
 function loadProfiles(){try{const v=localStorage.getItem('familyProfiles');if(!v)return[];const p=JSON.parse(v);return Array.isArray(p)?p.filter(x=>x&&x.id&&x.name):[];}catch(e){return []}}
-function saveProfiles(p){localStorage.setItem('familyProfiles',JSON.stringify(p))}
+function saveProfiles(p){
+  try{ localStorage.setItem('familyProfiles',JSON.stringify(p)); }
+  catch(e){
+    try{ localStorage.removeItem('familyTrash'); localStorage.removeItem('familyVersionHistory'); localStorage.setItem('familyProfiles',JSON.stringify(p)); }
+    catch(e2){ alert('Lagring full! Rensa med 🧹 knappen. Du har '+(localStorage.getItem('familyTasks')?.length||0)+' tecken data.'); throw e2; }
+  }
+}
 let currentId=localStorage.getItem('familyCurrentProfileId');
-
 function renderProfiles(){
   const list=document.getElementById('profileList');
   if(!list) return;
@@ -115,83 +120,52 @@ function renderProfiles(){
     return;
   }
   if(currentId && ps.find(p=>p.id===currentId)){
-    const ov=document.getElementById('loginOv');
-    if(ov) ov.style.display='none';
-    const who=document.getElementById('who')||document.getElementById('profileBadge');
-    if(who) who.textContent='Inloggad som '+ps.find(p=>p.id===currentId).name;
+    const ov=document.getElementById('loginOv'); if(ov) ov.style.display='none';
+    const who=document.getElementById('who')||document.getElementById('profileBadge'); if(who) who.textContent='Inloggad som '+ps.find(p=>p.id===currentId).name;
     return;
   }
   list.innerHTML='<div style="font-weight:800;font-size:13px;margin-bottom:10px;color:#1E1535">Välj profil (🗑️ för att ta bort):</div>'+ps.map(p=>'<div style="display:flex;gap:8px;margin-bottom:10px"><button type="button" onclick="loginProfile(\''+p.id+'\')" style="flex:1;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-weight:800;text-align:left;color:#1E1535;font-family:Nunito,sans-serif"><span style="width:36px;height:36px;border-radius:12px;background:#6C47E8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900">'+p.name.charAt(0).toUpperCase()+'</span><span>'+p.name+'</span><span style="margin-left:auto">➡️</span></button><button type="button" onclick="deleteProfile(\''+p.id+'\')" style="width:46px;height:46px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-size:20px;flex-shrink:0">🗑️</button></div>').join('');
 }
-
 function loginProfile(id){
-  const p=loadProfiles().find(x=>x.id===id);
-  if(!p) return;
-  const pw=prompt('Lösenord för '+p.name+':');
-  if(pw===null) return;
+  const p=loadProfiles().find(x=>x.id===id); if(!p) return;
+  const pw=prompt('Lösenord för '+p.name+':'); if(pw===null) return;
   if(pw===p.password){
-    currentId=id;
-    localStorage.setItem('familyCurrentProfileId',id);
-    const ov=document.getElementById('loginOv');
-    if(ov) ov.style.display='none';
-    const who=document.getElementById('who')||document.getElementById('profileBadge');
-    if(who) who.textContent='Inloggad som '+p.name;
-    if(typeof toast==='function') toast('Välkommen '+p.name+'!');
-    if(typeof renderCards==='function') renderCards();
+    currentId=id; try{localStorage.setItem('familyCurrentProfileId',id);}catch(e){}
+    const ov=document.getElementById('loginOv'); if(ov) ov.style.display='none';
+    const who=document.getElementById('who')||document.getElementById('profileBadge'); if(who) who.textContent='Inloggad som '+p.name;
+    if(typeof toast==='function') toast('Välkommen '+p.name+'!'); if(typeof renderCards==='function') renderCards();
   }else{ alert('Fel lösenord'); }
 }
-
 function createProfile(){
-  console.log('createProfile clicked');
-  const nameEl=document.getElementById('pName');
-  const pwEl=document.getElementById('pPw');
-  const pw2El=document.getElementById('pPw2');
-  const err=document.getElementById('pErr');
-  const name=(nameEl? nameEl.value : '').trim();
-  const pw=pwEl? pwEl.value : '';
-  const pw2=pw2El? pw2El.value : '';
-  if(err) err.style.display='none';
+  console.log('createProfile clicked FIXED V4');
+  const nameEl=document.getElementById('pName'); const pwEl=document.getElementById('pPw'); const pw2El=document.getElementById('pPw2'); const err=document.getElementById('pErr');
+  const name=(nameEl? nameEl.value : '').trim(); const pw=pwEl? pwEl.value : ''; const pw2=pw2El? pw2El.value : '';
+  if(err){ err.style.display='none'; err.textContent=''; }
   if(!name){ if(err){err.textContent='Skriv ett namn'; err.style.display='block';} return; }
   if(name.length<2){ if(err){err.textContent='Minst 2 bokstäver'; err.style.display='block';} return; }
   if(!pw){ if(err){err.textContent='Skriv ett lösenord'; err.style.display='block';} return; }
   if(pw!==pw2){ if(err){err.textContent='Lösenorden matchar inte'; err.style.display='block';} return; }
   try{
-    const ps=loadProfiles();
-    const np={id:'p_'+Date.now(),name:name,password:pw};
-    ps.push(np);
-    saveProfiles(ps);
-    currentId=np.id;
-    localStorage.setItem('familyCurrentProfileId',np.id);
-    const ov=document.getElementById('loginOv');
-    if(ov) ov.style.display='none';
-    const who=document.getElementById('who')||document.getElementById('profileBadge');
-    if(who) who.textContent='Inloggad som '+name;
-    if(typeof toast==='function') toast('Profil skapad! Välkommen '+name);
+    const ps=loadProfiles(); const np={id:'p_'+Date.now(),name:name,password:pw}; ps.push(np); saveProfiles(ps);
+    currentId=np.id; try{localStorage.setItem('familyCurrentProfileId',np.id);}catch(e){}
+    const ov=document.getElementById('loginOv'); if(ov) ov.style.display='none';
+    const who=document.getElementById('who')||document.getElementById('profileBadge'); if(who) who.textContent='Inloggad som '+name;
+    if(typeof toast==='function') toast('Profil skapad! Välkommen '+name); else alert('Profil skapad! '+name);
     if(typeof renderCards==='function') renderCards();
     if(nameEl) nameEl.value=''; if(pwEl) pwEl.value=''; if(pw2El) pw2El.value='';
-  }catch(e){
-    console.error(e);
-    if(err){err.textContent='Fel: '+e.message; err.style.display='block';}
-  }
+    setTimeout(()=>location.reload(), 600);
+  }catch(e){ console.error(e); if(err){err.textContent='Fel: '+e.message+' – Prova 🧹 Rensa allt'; err.style.display='block';} }
 }
-
 function deleteProfile(id){
   if(!confirm('Ta bort profilen?')) return;
-  let ps=loadProfiles().filter(p=>p.id!==id);
-  saveProfiles(ps);
-  if(currentId===id){currentId=null; localStorage.removeItem('familyCurrentProfileId');}
-  renderProfiles();
-  if(typeof toast==='function') toast('🗑️ Borttagen');
+  let ps=loadProfiles().filter(p=>p.id!==id); try{saveProfiles(ps);}catch(e){}
+  if(currentId===id){currentId=null; try{localStorage.removeItem('familyCurrentProfileId');}catch(e){}}
+  renderProfiles(); if(typeof toast==='function') toast('🗑️ Borttagen');
 }
-
-function logout(){ if(confirm('Logga ut?')){ localStorage.removeItem('familyCurrentProfileId'); location.reload(); } }
+function logout(){ if(confirm('Logga ut?')){ try{localStorage.removeItem('familyCurrentProfileId');}catch(e){} location.reload(); } }
 function logoutApp(){ logout(); }
-
-// Compatibility wrappers for old code
 function checkLoginState(){ renderProfiles(); }
 function renderProfileList(){ renderProfiles(); }
-function selectProfile(id){ loginProfile(id); }
-function renderCreateProfileForm(){ renderProfiles(); }
 
 
 function toggleNight(){night=!night;localStorage.setItem('nightMode',night);applyNight()}function applyNight(){document.body.classList.toggle('night',night);document.getElementById('nightIcon').textContent=night?'☀️':'🌙'}
@@ -227,7 +201,7 @@ function showMyQR(){ showQR(); }
 function showQR(){
   try{
     const payload={
-      tasks: tasks.map(t=>({id:t.id,text:t.text,timeFrame:t.timeFrame||t.time||'today',person:t.person,completed:!!t.completed,starred:!!t.starred})),
+      tasks: tasks.map(t=>({id:t.id,text:t.text,timeFrame:t.timeFrame||'today',person:t.person,completed:!!t.completed,starred:!!t.starred})),
       persons, personLabels, trash: [], v:3, t:Date.now()
     };
     let json=JSON.stringify(payload);
