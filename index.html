@@ -435,7 +435,295 @@
     body.pc-mode .modal-btn{height:58px;font-size:17px}
   </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body class="locked">
 
-<!-- ═══════ DIN BEFINTLIGA KOD FORTSÄTTER HÄRIFRÅN (oförändrad) ═══════ -->
+<!-- LOGIN -->
+<div class="login-ov" id="loginOv">
+  <div class="login-card" id="loginCard"></div>
+</div>
+
+<!-- HEMSIDA -->
+<div class="page" id="pageHome">
+  <div class="hdr">
+    <div class="hdr-toprow">
+      <div class="hdr-logo"><i class="fa-solid fa-list-check"></i></div>
+      <div class="hdr-info">
+        <div class="hdr-title">Familjens Planerare</div>
+        <div class="hdr-sub" id="hdrSub"></div>
+      </div>
+      <div class="hdr-actions">
+        <button class="icon-btn" id="themeBtn" title="Mörkt tema"><i class="fa-solid fa-moon"></i></button>
+        <button class="icon-btn" id="bellBtn" title="Notiser"><i class="fa-solid fa-bell"></i></button>
+      </div>
+    </div>
+    <div class="date-row">
+      <div class="date-block">
+        <div class="date-toprow">
+          <span class="date-cal-label"><i class="fa-solid fa-calendar-day"></i> <span id="calLabel"></span></span>
+          <span class="date-clock" id="clock">--:--</span>
+        </div>
+        <div class="date-main-row"><span class="date-text" id="dateText"></span></div>
+      </div>
+      <button class="cal-btn" id="calBtn" title="Kalender"><i class="fa-solid fa-calendar"></i></button>
+    </div>
+  </div>
+  <div class="home-body">
+    <div class="add-person-section">
+      <div class="add-person-row">
+        <input id="newPersonName" placeholder="Namn på familjemedlem..." maxlength="30">
+        <button class="btn-add-person" id="addPersonBtn"><i class="fa-solid fa-plus"></i> Lägg till</button>
+      </div>
+    </div>
+    <div class="cards-section"><div class="cards-grid" id="cardsGrid"></div></div>
+  </div>
+</div>
+
+<!-- DETALJSIDA -->
+<div class="page hidden" id="pageDetail">
+  <div class="dhdr">
+    <div class="dhdr-toprow">
+      <button class="back-btn" id="backBtn"><i class="fa-solid fa-arrow-left"></i> <span class="btn-label">Tillbaka</span></button>
+      <div class="dhdr-avatar" id="dAvatar">?</div>
+      <div class="dhdr-info">
+        <div class="dhdr-name" id="dName">Namn</div>
+        <div class="dhdr-sub" id="dSub"></div>
+      </div>
+      <button class="save-btn" id="saveBtn"><i class="fa-solid fa-check"></i> <span class="btn-label">Spara</span></button>
+    </div>
+  </div>
+  <div class="detail-body">
+    <div class="add-form">
+      <span class="form-lbl">Ny uppgift</span>
+      <input class="form-input" id="taskText" placeholder="Vad ska göras?" maxlength="120">
+      <div class="form-row">
+        <select class="form-select" id="taskWhen">
+          <option value="today">Idag</option><option value="tomorrow">Imorgon</option>
+          <option value="week">Denna vecka</option><option value="month">Denna månad</option>
+          <option value="sometime">Någon gång</option>
+        </select>
+        <input type="datetime-local" class="reminder-input" id="taskRem" style="margin-top:0">
+      </div>
+      <button class="btn-add-task" id="addTaskBtn"><i class="fa-solid fa-plus"></i> Lägg till uppgift</button>
+    </div>
+    <div class="section-tabs">
+      <button class="sec-tab active" id="tabActive">Att göra <span class="stab-badge" id="badgeActive">0</span></button>
+      <button class="sec-tab" id="tabDone">Klara <span class="stab-badge" id="badgeDone">0</span></button>
+    </div>
+    <div class="list-section"><div class="list-card"><div class="list-body" id="taskList"></div></div></div>
+  </div>
+</div>
+
+<!-- BOTTNAVIGATION -->
+<div class="bot-nav hidden" id="botNav">
+  <button class="nav-btn active" data-nav="home"><i class="fa-solid fa-house"></i>Hem</button>
+  <button class="nav-btn" data-nav="cal"><i class="fa-solid fa-calendar"></i>Kalender</button>
+  <button class="nav-btn" data-nav="trash"><i class="fa-solid fa-trash"></i>Papperskorg</button>
+  <button class="nav-btn" data-nav="lock"><i class="fa-solid fa-lock"></i>Lås</button>
+</div>
+
+<div class="toast" id="toast"><i class="fa-solid fa-circle-info"></i><span id="toastMsg"></span></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const store={
+  get(k,d){try{const v=localStorage.getItem('fp_'+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){localStorage.setItem('fp_'+k,JSON.stringify(v))}
+};
+let people=store.get('people',[]);
+let current=null, showDone=false;
+
+const COLORS=['#6C47E8','#22C08A','#F05E7A','#F59E0B','#0EA5E9','#8B5CF6'];
+const AV=['🦊','🐼','🦉','🐸','🐯','🦄','🐙','🦁'];
+const TAGS={today:['Idag','today'],tomorrow:['Imorgon','tomorrow'],week:['Vecka','week'],month:['Månad','month'],sometime:['Någon gång','sometime']};
+
+function toast(m){$('toastMsg').textContent=m;$('toast').classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function save(){store.set('people',people)}
+function esc(t){return t.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+/* ── Klocka & datum ── */
+function tickClock(){
+  const n=new Date();
+  $('clock').textContent=n.toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'});
+}
+function setDate(){
+  const n=new Date();
+  $('dateText').textContent=n.toLocaleDateString('sv-SE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  $('calLabel').textContent=n.toLocaleDateString('sv-SE',{month:'long',year:'numeric'});
+  const week=Math.ceil((((n-new Date(n.getFullYear(),0,1))/864e5)+1)/7);
+  $('hdrSub').textContent='Vecka '+week+' · '+n.toLocaleDateString('sv-SE',{year:'numeric'});
+}
+
+/* ── Låsskärm ── */
+function renderLogin(){
+  const card=$('loginCard');
+  if(people.length){
+    card.innerHTML=`<div class="login-logo"><i class="fa-solid fa-list-check"></i></div>
+      <div class="login-title">Vem är du?</div>
+      <div class="login-sub">Välj profil för att öppna planeraren</div>
+      <div class="login-profile-list">${people.map((p,i)=>`
+        <button class="login-profile-btn" data-i="${i}">
+          <span class="login-profile-avatar" style="background:${p.color}">${esc(p.name[0]||'?')}</span>${esc(p.name)}
+        </button>`).join('')}</div>
+      <button class="login-add-btn" id="loginAdd"><i class="fa-solid fa-plus"></i> Ny profil</button>`;
+    card.querySelectorAll('.login-profile-btn').forEach(b=>b.onclick=()=>unlock());
+    $('loginAdd').onclick=()=>{renderLoginNew()};
+  } else renderLoginNew();
+}
+function renderLoginNew(){
+  $('loginCard').innerHTML=`<div class="login-logo"><i class="fa-solid fa-list-check"></i></div>
+    <div class="login-title">Familjens Planerare</div>
+    <div class="login-sub">Skapa din första profil för att komma igång</div>
+    <input class="login-input login-name-input" id="loginName" placeholder="Ditt namn" maxlength="30">
+    <div class="login-err h" id="loginErr">Ange ett namn</div>
+    <button class="login-btn" id="loginGo">Kom igång</button>`;
+  $('loginGo').onclick=()=>{
+    const n=$('loginName').value.trim();
+    if(!n){$('loginErr').classList.remove('h');return}
+    addPerson(n);unlock();
+  };
+}
+function unlock(){
+  document.body.classList.remove('locked');
+  $('botNav').classList.remove('hidden');
+  renderCards();
+}
+
+/* ── Personer ── */
+function addPerson(name){
+  people.push({name,color:COLORS[people.length%COLORS.length],avatar:AV[people.length%AV.length],tasks:[]});
+  save();renderCards();
+}
+function renderCards(){
+  const g=$('cardsGrid');
+  const totalA=people.reduce((a,p)=>a+p.tasks.filter(t=>!t.done).length,0);
+  const totalD=people.reduce((a,p)=>a+p.tasks.filter(t=>t.done).length,0);
+  let html=`<div class="person-card all-card" data-all="1">
+    <div class="card-avatar" style="background:linear-gradient(135deg,var(--primary),#9B59E8)"><i class="fa-solid fa-users"></i></div>
+    <div class="all-info"><div class="card-name">Hela familjen</div>
+    <div class="card-stats">
+      <span class="stat-pill active"><i class="fa-solid fa-list"></i>${totalA} att göra</span>
+      <span class="stat-pill done"><i class="fa-solid fa-check"></i>${totalD} klara</span>
+    </div></div><i class="fa-solid fa-chevron-right card-chevron"></i></div>`;
+  html+=people.map((p,i)=>{
+    const a=p.tasks.filter(t=>!t.done).length,d=p.tasks.length-a;
+    return `<div class="person-card" data-i="${i}">
+      <div class="card-accent" style="background:${p.color}"></div>
+      <div class="card-avatar" style="background:${p.color}">${esc(p.avatar)}</div>
+      <div class="card-name">${esc(p.name)}</div>
+      <div class="card-stats">
+        <span class="stat-pill active"><i class="fa-solid fa-list"></i>${a} att göra</span>
+        <span class="stat-pill done"><i class="fa-solid fa-check"></i>${d} klara</span>
+      </div>
+      <button class="card-delete-btn" data-del="${i}" title="Ta bort"><i class="fa-solid fa-trash"></i></button>
+      <i class="fa-solid fa-chevron-right card-chevron" style="bottom:14px"></i>
+    </div>`;
+  }).join('');
+  g.innerHTML=html;
+  g.querySelectorAll('.card-delete-btn').forEach(b=>b.onclick=e=>{
+    e.stopPropagation();
+    if(confirm('Ta bort '+people[b.dataset.del].name+' och alla uppgifter?')){people.splice(b.dataset.del,1);save();renderCards()}
+  });
+  g.querySelectorAll('.person-card').forEach(c=>c.onclick=()=>openDetail(c.dataset.i==null?null:+c.dataset.i));
+}
+
+/* ── Detaljsida ── */
+function openDetail(i){
+  current=i;showDone=false;
+  $('tabActive').classList.add('active');$('tabDone').classList.remove('active');
+  if(i==null){
+    $('dAvatar').style.background='linear-gradient(135deg,var(--primary),#9B59E8)';
+    $('dAvatar').innerHTML='<i class="fa-solid fa-users"></i>';
+    $('dName').textContent='Hela familjen';
+  } else {
+    const p=people[i];
+    $('dAvatar').style.background=p.color;$('dAvatar').textContent=p.avatar;
+    $('dName').textContent=p.name;
+  }
+  $('pageDetail').classList.remove('hidden');
+  requestAnimationFrame(()=>$('pageDetail').classList.add('open'));
+  renderTasks();
+}
+function closeDetail(){
+  $('pageDetail').classList.remove('open');
+  setTimeout(()=>{$('pageDetail').classList.add('hidden');renderCards()},350);
+}
+function allTasks(){
+  return current==null?people.flatMap(p=>p.tasks.map(t=>({...t,person:p}))):people[current].tasks.map(t=>({...t,person:people[current]}));
+}
+function renderTasks(){
+  const list=current==null?people.flatMap((p,pi)=>p.tasks.map((t,ti)=>({t,pi,ti}))):people[current].tasks.map((t,ti)=>({t,pi:current,ti}));
+  const act=list.filter(x=>!x.t.done),dn=list.filter(x=>x.t.done);
+  $('badgeActive').textContent=act.length;$('badgeDone').textContent=dn.length;
+  $('dSub').textContent=act.length+' att göra · '+dn.length+' klara';
+  const show=showDone?dn:act;
+  if(!show.length){
+    $('taskList').innerHTML=`<div class="empty-state"><div class="empty-icon"><i class="fa-solid ${showDone?'fa-check':'fa-clipboard-list'}"></i></div>
+      <div class="empty-text">${showDone?'Inga klara uppgifter än':'Inga uppgifter här — lägg till en nedan!'}</div></div>`;
+    return;
+  }
+  $('taskList').innerHTML=show.map(x=>{
+    const[label,cls]=TAGS[x.t.when]||TAGS.sometime;
+    return `<div class="task-item">
+      <button class="check-btn ${x.t.done?'done-style':''}" data-done="${x.pi}:${x.ti}"><i class="fa-solid fa-check"></i></button>
+      <div class="task-content">
+        <div class="task-text ${x.t.done?'struck':''}">${esc(x.t.text)}</div>
+        <div class="task-meta">
+          <span class="tag ${cls}">${label}</span>
+          ${current==null?`<span class="tag person-tag" style="background:${x.t.person?people[x.pi].color:'#999'}">${esc(people[x.pi].name)}</span>`:''}
+          ${x.t.rem?`<span class="tag rem-tag"><i class="fa-solid fa-bell"></i> ${new Date(x.t.rem).toLocaleString('sv-SE',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</span>`:''}
+        </div>
+      </div>
+      <button class="del-btn" data-del="${x.pi}:${x.ti}"><i class="fa-solid fa-xmark"></i></button>
+    </div>`;
+  }).join('');
+  $('taskList').querySelectorAll('[data-done]').forEach(b=>b.onclick=()=>{
+    const[pi,ti]=b.dataset.done.split(':').map(Number);
+    people[pi].tasks[ti].done=!people[pi].tasks[ti].done;save();renderTasks();
+  });
+  $('taskList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    const[pi,ti]=b.dataset.del.split(':').map(Number);
+    people[pi].tasks.splice(ti,1);save();renderTasks();
+  });
+}
+
+/* ── Händelser ── */
+$('addPersonBtn').onclick=()=>{
+  const n=$('newPersonName').value.trim();
+  if(!n){toast('Ange ett namn');return}
+  $('newPersonName').value='';addPerson(n);toast('Familjemedlem tillagd');
+};
+$('newPersonName').addEventListener('keydown',e=>{if(e.key==='Enter')$('addPersonBtn').click()});
+$('backBtn').onclick=closeDetail;
+$('saveBtn').onclick=()=>{save();toast('Sparat!')};
+$('tabActive').onclick=()=>{showDone=false;$('tabActive').classList.add('active');$('tabDone').classList.remove('active');renderTasks()};
+$('tabDone').onclick=()=>{showDone=true;$('tabDone').classList.add('active');$('tabActive').classList.remove('active');renderTasks()};
+$('addTaskBtn').onclick=()=>{
+  const text=$('taskText').value.trim();
+  if(!text){toast('Skriv en uppgift först');return}
+  const targets=current==null?(people.length?[{p:people[0]}]:[]):[{p:people[current]}];
+  if(!targets.length){toast('Lägg till en familjemedlem först');return}
+  targets[0].p.tasks.push({text,when:$('taskWhen').value,rem:$('taskRem').value||null,done:false});
+  $('taskText').value='';$('taskRem').value='';
+  save();renderTasks();toast('Uppgift tillagd');
+};
+$('themeBtn').onclick=()=>{
+  document.body.classList.toggle('night');
+  $('themeBtn').innerHTML=document.body.classList.contains('night')?'<i class="fa-solid fa-sun"></i>':'<i class="fa-solid fa-moon"></i>';
+};
+$('bellBtn').onclick=()=>toast('Inga nya notiser');
+$('calBtn').onclick=()=>toast('Kalendern kommer snart');
+document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  if(b.dataset.nav==='lock'){document.body.classList.add('locked');renderLogin()}
+  else if(b.dataset.nav==='home'){if(!$('pageDetail').classList.contains('hidden'))closeDetail()}
+  else toast('Kommer snart');
+});
+
+/* ── Start ── */
+renderLogin();setDate();tickClock();setInterval(tickClock,1000);setInterval(setDate,60000);
+</script>
+</body>
+</html>
