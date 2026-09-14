@@ -147,8 +147,14 @@ function showDebug(msg){
 
 function loadProfiles(){
   try{
-    const v=localStorage.getItem('familyProfiles');
-    console.log('loadProfiles raw:', v?.slice(0,100));
+    // First try localStorage
+    let v=localStorage.getItem('familyProfiles');
+    // If not in localStorage, try sessionStorage (fallback when full)
+    if(!v){
+      v=sessionStorage.getItem('familyProfiles');
+      if(v) console.log('Using sessionStorage for profiles');
+    }
+    console.log('loadProfiles raw len:', v?.length||0, 'preview:', v?.slice(0,100));
     if(!v) return [];
     const p=JSON.parse(v);
     const filtered = Array.isArray(p)?p.filter(x=>x&&x.id&&x.name):[];
@@ -156,7 +162,13 @@ function loadProfiles(){
     return filtered;
   }catch(e){
     console.error('loadProfiles error', e);
-    showDebug('Fel i profiler: '+e.message+' - Tryck 🧹 Rensa');
+    const dbg=document.getElementById('debug');
+    if(dbg){ dbg.style.display='block'; dbg.textContent='Fel i profiler: '+e.message+' - Tryck 🧹 Rensa'; }
+    // Try sessionStorage as last resort
+    try{
+      const vs=sessionStorage.getItem('familyProfiles');
+      if(vs) return JSON.parse(vs).filter(x=>x&&x.id&&x.name);
+    }catch(e2){}
     return [];
   }
 }
@@ -164,17 +176,68 @@ function saveProfiles(p){
   try{
     localStorage.setItem('familyProfiles',JSON.stringify(p));
     console.log('saveProfiles ok', p.length);
+    return true;
   }catch(e){
     console.error('saveProfiles quota error', e);
+    showDebug('Lagring full! Försöker rensa... ('+e.message+')');
+    // Step 1: Remove trash and history
     try{
       localStorage.removeItem('familyTrash');
       localStorage.removeItem('familyVersionHistory');
       localStorage.removeItem('savedPDFs');
+      localStorage.removeItem('familyScore');
+      console.log('Removed trash/history, retrying');
+    }catch(e){};
+    
+    try{
       localStorage.setItem('familyProfiles',JSON.stringify(p));
-      toast('⚠️ Rensade utrymme, försöker igen...');
+      toast('⚠️ Rensade papperskorg, försöker igen...');
+      return true;
     }catch(e2){
-      alert('Lagring full! '+e2.message+'\nTryck 🧹 Rensa allt och börja om');
-      throw e2;
+      console.error('Still full after trash removal', e2);
+      // Step 2: Try to strip images from tasks to free huge space
+      try{
+        let tasksRaw = localStorage.getItem('familyTasks');
+        if(tasksRaw && tasksRaw.length > 50000){
+          showDebug('Försöker ta bort bilder från uppgifter för att frigöra plats...');
+          let t = JSON.parse(tasksRaw);
+          let before = tasksRaw.length;
+          // Remove images and notes with base64
+          t = t.map(task=>{
+            if(task.images && task.images.length>0){
+              // Keep task but remove images
+              return {...task, images:[], _hadImages:true};
+            }
+            if(task.note && task.note.length>5000){
+              return {...task, note: task.note.slice(0,200)+'... (borttagen för plats)', _hadLongNote:true};
+            }
+            return task;
+          });
+          localStorage.setItem('familyTasks', JSON.stringify(t));
+          let after = localStorage.getItem('familyTasks').length;
+          toast('🗑️ Tog bort bilder från uppgifter ('+before+' -> '+after+' tecken) för att frigöra plats');
+          showDebug('Tog bort bilder: '+before+' -> '+after+' tecken');
+        }
+      }catch(e3){ console.error('Failed to strip images', e3); }
+      
+      try{
+        localStorage.setItem('familyProfiles',JSON.stringify(p));
+        toast('✅ Lyckades efter att ha tagit bort bilder!');
+        return true;
+      }catch(e3){
+        console.error('Still full after stripping', e3);
+        // Last resort: use sessionStorage for profile (works for current session)
+        try{
+          sessionStorage.setItem('familyProfiles', JSON.stringify(p));
+          sessionStorage.setItem('familyCurrentProfileId', p[p.length-1].id);
+          showDebug('⚠️ localStorage FULL! Använder temporär session-lagring. Exportera dina uppgifter via Fil nu!');
+          alert('⚠️ DIN LAGRING ÄR FULL (5MB gräns)!\n\nJag har sparat din profil temporärt så du kan logga in NU, men du måste:\n1. Exportera dina uppgifter via 💾 Spara fil\n2. Trycka 🧹 Rensa allt\n3. Importera filen igen utan bilder\n\nDin profil funkar denna session.');
+          return true;
+        }catch(e4){
+          alert('Lagring FULL även efter rensning!\n\nDu har '+(localStorage.getItem('familyTasks')?.length||0)+' tecken i uppgifter (bilder).\n\nLÖSNING:\n1. Tryck 🧹 Rensa allt nedan\n2. Skapa profil\n3. Importera din backup-fil (jag tar automatiskt bort bilder)\n\nEller öppna i INKOGNITO-fönster (Ctrl+Shift+N) och skapa profil där.');
+          throw e4;
+        }
+      }
     }
   }
 }
@@ -225,8 +288,10 @@ function loginProfile(id){
 }
 
 function createProfile(){
-  console.log('createProfile CLICKED!');
-  showDebug('Klick registrerat! Försöker skapa...');
+  console.log('createProfile CLICKED! V8');
+  const debugEl=document.getElementById('debug');
+  if(debugEl){ debugEl.style.display='block'; debugEl.textContent='Klick registrerat! Försöker skapa...'; }
+  
   const nameEl=document.getElementById('pName');
   const pwEl=document.getElementById('pPw');
   const pw2El=document.getElementById('pPw2');
@@ -235,10 +300,12 @@ function createProfile(){
   const pw=pwEl? pwEl.value : '';
   const pw2=pw2El? pw2El.value : '';
   
+  console.log('Name:', name, 'pw len:', pw.length);
+  
   if(err){ err.style.display='none'; err.textContent=''; }
   if(!name){ 
     if(err){err.textContent='Skriv ett namn'; err.style.display='block';} 
-    showDebug('Inget namn ifyllt');
+    if(debugEl) debugEl.textContent='Inget namn ifyllt';
     return; 
   }
   if(name.length<2){ if(err){err.textContent='Minst 2 bokstäver'; err.style.display='block';} return; }
@@ -246,24 +313,66 @@ function createProfile(){
   if(pw!==pw2){ if(err){err.textContent='Lösenorden matchar inte'; err.style.display='block';} return; }
   
   try{
-    const ps=loadProfiles();
+    let ps=[];
+    try{ ps=loadProfiles(); }catch(e){ ps=[]; }
+    console.log('Existing profiles:', ps.length);
+    
     const np={id:'p_'+Date.now(),name:name,password:pw};
     ps.push(np);
-    saveProfiles(ps);
+    console.log('Trying to save', ps.length, 'profiles');
+    
+    const saved = saveProfiles(ps);
+    console.log('saveProfiles returned', saved);
+    
     currentId=np.id;
-    try{ localStorage.setItem('familyCurrentProfileId',np.id); }catch(e){}
-    document.getElementById('loginOv').style.display='none';
-    document.getElementById('pageHome').style.display='block';
-    document.getElementById('who').textContent='Inloggad som '+name;
-    toast('Profil skapad! Välkommen '+name+' 🎉');
-    renderCards();
+    try{ 
+      localStorage.setItem('familyCurrentProfileId',np.id); 
+    }catch(e){
+      try{ sessionStorage.setItem('familyCurrentProfileId',np.id); }catch(e2){}
+    }
+    
+    // Check if we used sessionStorage fallback
+    const usingSession = sessionStorage.getItem('familyProfiles');
+    if(usingSession){
+      document.getElementById('loginOv').style.display='none';
+      document.getElementById('pageHome').style.display='block';
+      document.getElementById('who').textContent='Inloggad som '+name+' (temporär)';
+      toast('Profil skapad temporärt! Exportera nu! 🎉');
+    }else{
+      document.getElementById('loginOv').style.display='none';
+      document.getElementById('pageHome').style.display='block';
+      document.getElementById('who').textContent='Inloggad som '+name;
+      toast('Profil skapad! Välkommen '+name+' 🎉');
+      renderCards();
+    }
+    
     if(nameEl) nameEl.value=''; if(pwEl) pwEl.value=''; if(pw2El) pw2El.value='';
-    showDebug('Profil skapad: '+name);
+    if(debugEl) debugEl.textContent='Profil skapad: '+name+' ✅ - Laddar app...';
+    
+    // Force show app after 500ms even if something failed
+    setTimeout(()=>{
+      document.getElementById('loginOv').style.display='none';
+      document.getElementById('pageHome').style.display='block';
+      renderCards();
+    },500);
+    
   }catch(e){
     console.error('createProfile error', e);
     if(err){err.textContent='Fel: '+e.message+' - Prova 🧹 Rensa allt'; err.style.display='block';}
-    showDebug('Fel: '+e.message);
-    alert('Fel: '+e.message+'\nProva 🧹 Rensa allt knappen');
+    if(debugEl) debugEl.textContent='Fel: '+e.message+' - Tryck 🧹 Rensa';
+    // Even on error, try to show app with session storage
+    try{
+      let ps=[{id:'p_'+Date.now(),name:name,password:pw}];
+      sessionStorage.setItem('familyProfiles', JSON.stringify(ps));
+      sessionStorage.setItem('familyCurrentProfileId', ps[0].id);
+      currentId=ps[0].id;
+      document.getElementById('loginOv').style.display='none';
+      document.getElementById('pageHome').style.display='block';
+      document.getElementById('who').textContent='Inloggad som '+name+' (temporär)';
+      toast('Profil skapad temporärt trots fel!');
+    }catch(e2){
+      alert('Fel: '+e.message+'\n\nProva:\n1. Tryck 🧹 Rensa allt\n2. Öppna i INKOGNITO (Ctrl+Shift+N)\n3. Skapa profil där');
+    }
   }
 }
 
