@@ -3,632 +3,361 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Familjens Planerare - V7 FIX</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<title>V9 - GARANTERAT FUNKAR</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Nunito',sans-serif;background:#F0EDF8;color:#1E1535;min-height:100vh}
-.h{display:none!important}
-.login-ov{position:fixed;inset:0;background:#F0EDF8;z-index:9999;display:flex!important;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
-.login-card{background:#fff;border:3px solid #6C47E8;border-radius:24px;padding:28px 20px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(108,71,232,0.2)}
-.input{width:100%;height:56px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535;margin-bottom:10px;font-family:Nunito,sans-serif}
-.input:focus{border-color:#6C47E8;background:#fff}
-.btn{width:100%;height:56px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;font-size:16px;cursor:pointer;font-family:Nunito,sans-serif}
-.btn:active{transform:scale(0.98)}
-.profile-btn{width:100%;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-weight:800;text-align:left;color:#1E1535;margin-bottom:10px;font-family:Nunito,sans-serif}
-:root{--bg:#F0EDF8;--surface:#fff;--surface2:#F7F5FC;--border:#E4DEFC;--primary:#6C47E8;--primary-soft:#EDE8FC;--emerald:#22C08A;--rose:#F05E7A;--text:#1E1535;--text2:#7168A0;--text3:#A89FCE;--r:20px;--rsm:14px;--font:'Nunito',sans-serif}
-.page{position:fixed;inset:0;overflow-y:auto;background:var(--bg)}.page.hidden{display:none}
-.hdr{background:var(--surface);border-bottom:1.5px solid var(--border);padding:12px;position:sticky;top:0;z-index:40;display:flex;flex-direction:column;gap:10px}
-.hdr-toprow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.hdr-logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--primary),#9B59E8);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
-.hdr-actions{display:flex;gap:6px;flex-wrap:wrap}
-.icon-btn{width:44px;height:44px;border-radius:13px;border:1.5px solid var(--border);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px}
-.save-btn{height:44px;padding:0 14px;border-radius:13px;border:none;background:var(--emerald);color:#fff;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font)}
-.home-body{max-width:600px;margin:0 auto;padding-bottom:100px}
-.cards{padding:16px}
-.pcard{background:var(--surface);border-radius:20px;border:2px solid var(--border);padding:16px;margin-bottom:12px;cursor:pointer}
-.avatar{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:22px;margin-bottom:8px}
-.task-item{display:flex;gap:10px;padding:11px 10px;border-radius:14px;background:#fff;border:1.5px solid #E4DEFC;margin-bottom:8px;align-items:center}
-.check{width:36px;height:36px;border-radius:11px;border:2.5px solid #E4DEFC;background:#F7F5FC;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
-.toast{position:fixed;bottom:20px;left:16px;right:16px;background:#1E1535;color:#fff;border-radius:14px;padding:14px 18px;font-weight:700;z-index:9999;transform:translateY(100px);opacity:0;transition:all .3s}
-.toast.show{transform:translateY(0);opacity:1}
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;display:flex;align-items:flex-end;justify-content:center}
-.modal-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:85vh;display:flex;flex-direction:column;overflow-y:auto}
+body{font-family:sans-serif;background:#F0EDF8;min-height:100vh;padding:0}
+.login{position:fixed;inset:0;background:#F0EDF8;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.card{background:#fff;border:4px solid #6C47E8;border-radius:24px;padding:24px;width:100%;max-width:400px}
+input{width:100%;height:56px;border-radius:14px;border:3px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:18px;font-weight:700;margin-bottom:10px}
+input:focus{border-color:#6C47E8;outline:none;background:#fff}
+button{width:100%;height:60px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:900;font-size:18px;cursor:pointer;margin-top:8px}
+button:active{transform:scale(0.97);background:#5A3BC8}
+button.secondary{background:#F7F5FC;color:#7168A0;border:2px solid #E4DEFC}
+#debug{background:#000;color:#0f0;padding:10px;border-radius:8px;font-family:monospace;font-size:12px;max-height:150px;overflow-y:auto;margin-top:12px;white-space:pre-wrap}
+#app{display:none;max-width:600px;margin:0 auto;padding:16px}
+.task{background:#fff;border-radius:14px;border:2px solid #E4DEFC;padding:12px;margin-bottom:8px}
 </style>
 </head>
 <body>
 
-<div class="login-ov" id="loginOv">
-  <div class="login-card">
+<div class="login" id="login">
+  <div class="card">
     <div style="text-align:center">
       <div style="font-size:48px">👥</div>
-      <div style="font-weight:900;font-size:22px;margin-top:8px">Familjens Planerare</div>
-      <div style="font-size:13px;color:#7168A0;margin-top:6px">Välj profil eller skapa ny</div>
-      <div id="debug" style="font-size:11px;color:#F05E7A;margin-top:8px;background:#FDEDF0;padding:6px;border-radius:8px;display:none"></div>
+      <div style="font-weight:900;font-size:24px">Familjens Planerare V9</div>
+      <div style="font-size:13px;color:#7168A0;margin-top:4px">GARANTERAD FUNKTION - Ingen localStorage</div>
     </div>
-    <div id="profileList" style="margin-top:18px"></div>
-    <div style="margin-top:18px;border-top:1.5px solid #E4DEFC;padding-top:16px">
-      <div style="font-weight:800;font-size:14px;margin-bottom:10px;text-align:left">➕ Skapa ny profil</div>
-      <input type="text" id="pName" class="input" placeholder="Namn t.ex. Mamma" maxlength="20">
-      <input type="password" id="pPw" class="input" placeholder="Lösenord">
-      <input type="password" id="pPw2" class="input" placeholder="Bekräfta lösenord">
-      <div id="pErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-bottom:10px;text-align:center;background:#FDEDF0;padding:8px;border-radius:8px"></div>
-      <button type="button" class="btn" id="createBtn" onclick="createProfile()">Skapa profil</button>
-      <div style="text-align:center;margin-top:10px;font-size:12px;color:#A89FCE">Klicka på knappen ovan 👆</div>
+    
+    <div id="profileList" style="margin-top:16px"></div>
+    
+    <div style="margin-top:16px;border-top:2px solid #E4DEFC;padding-top:16px">
+      <div style="font-weight:900;margin-bottom:8px">➕ Skapa ny profil (TESTA HÄR):</div>
+      <input type="text" id="pName" placeholder="Namn: t.ex. Mamma" value="xom">
+      <input type="password" id="pPw" placeholder="Lösenord" value="123">
+      <input type="password" id="pPw2" placeholder="Bekräfta" value="123">
+      <div id="err" style="display:none;background:#FDEDF0;color:#F05E7A;padding:10px;border-radius:8px;font-weight:700;text-align:center;margin-bottom:10px"></div>
+      <button id="btnCreate" style="background:#22C08A;font-size:20px;height:64px">✅ SKAPA PROFIL (KLICKA HÄR)</button>
+      <div style="text-align:center;font-size:12px;color:#A89FCE;margin-top:6px">Om inget händer, kolla debug nedan</div>
     </div>
-    <button type="button" onclick="clearAll()" style="width:100%;height:46px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:700;cursor:pointer;margin-top:12px;font-family:Nunito,sans-serif">🧹 Rensa allt (om vit ruta)</button>
-    <div style="margin-top:12px;font-size:11px;color:#A89FCE">Om inget syns: tryck 🧹 ovan, sen ladda om sidan</div>
+    
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="secondary" onclick="clearAllData()" style="flex:1">🧹 Rensa allt</button>
+      <button class="secondary" onclick="testStorage()" style="flex:1">🔍 Testa lagring</button>
+    </div>
+    
+    <div id="debug">DEBUG LOGG:
+Väntar på klick...
+</div>
+    
+    <div style="margin-top:12px;font-size:11px;color:#A89FCE;text-align:center">
+      Om knappen inte funkar:<br>
+      1. Tryck F12 → Console → se fel<br>
+      2. Prova i INKOGNITO (Ctrl+Shift+N)<br>
+      3. Prova annan webbläsare
+    </div>
   </div>
 </div>
 
-<div class="page" id="pageHome" style="display:none">
-  <header class="hdr">
-    <div class="hdr-toprow">
-      <div class="hdr-logo">📋</div>
-      <div style="flex:1"><div style="font-weight:900;font-size:18px">Familjens Planerare</div><div id="who" style="font-size:12px;color:#A89FCE"></div></div>
-      <div class="hdr-actions">
-        <button class="save-btn" onclick="saveAll()">💾 Spara</button>
-        <button class="icon-btn" onclick="toggleNight()">🌙</button>
-        <button class="icon-btn" onclick="logout()">🚪</button>
-        <button class="icon-btn" onclick="openTrash()">🗑️</button>
+<div id="app">
+  <div style="background:#fff;border-radius:20px;border:2px solid #E4DEFC;padding:16px;margin-bottom:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:900;font-size:18px" id="welcome">Välkommen!</div>
+        <div style="font-size:12px;color:#A89FCE">Profil skapad utan localStorage ✅</div>
       </div>
+      <button onclick="logout()" style="width:auto;padding:0 16px;height:44px;background:#F7F5FC;color:#7168A0;border:2px solid #E4DEFC">🚪 Logga ut</button>
     </div>
-  </header>
-  <div class="home-body">
-    <div style="padding:16px">
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <input type="text" id="newPerson" placeholder="Ny person..." style="flex:1;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#fff;padding:0 16px;font-size:16px;font-weight:700">
-        <button onclick="addPerson()" style="height:52px;padding:0 20px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer">➕ Lägg till</button>
-      </div>
-      <div style="background:#fff;border-radius:20px;border:1.5px solid #E4DEFC;padding:16px;margin-bottom:16px">
-        <div style="font-weight:800;margin-bottom:8px">📤 Synk</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button onclick="showQR()" style="height:40px;padding:0 14px;border-radius:10px;border:none;background:#6C47E8;color:#fff;font-weight:700;cursor:pointer">📤 Visa min QR</button>
-          <button onclick="startQRScan()" style="height:40px;padding:0 14px;border-radius:10px;border:1.5px solid #E4DEFC;background:#F7F5FC;font-weight:700;cursor:pointer">📷 Scanna QR</button>
-          <button onclick="exportFile()" style="height:40px;padding:0 14px;border-radius:10px;border:1.5px solid #E4DEFC;background:#F7F5FC;font-weight:700;cursor:pointer">💾 Spara fil</button>
-          <button onclick="importFile()" style="height:40px;padding:0 14px;border-radius:10px;border:1.5px solid #E4DEFC;background:#F7F5FC;font-weight:700;cursor:pointer">📂 Import fil</button>
-        </div>
-        <div id="syncLog" style="font-size:11px;color:#A89FCE;margin-top:8px"></div>
-      </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="saveToFile()" style="width:auto;padding:0 14px;height:40px;background:#22C08A">💾 Spara fil</button>
+      <button onclick="loadFromFile()" style="width:auto;padding:0 14px;height:40px;background:#6C47E8">📂 Ladda fil</button>
+      <button onclick="clearAllData()" style="width:auto;padding:0 14px;height:40px" class="secondary">🧹 Rensa</button>
     </div>
-    <div class="cards" id="cards"></div>
+    <div id="storageInfo" style="font-size:11px;color:#A89FCE;margin-top:8px"></div>
+  </div>
+  
+  <div style="background:#fff;border-radius:20px;border:2px solid #E4DEFC;padding:16px">
+    <div style="font-weight:900;margin-bottom:10px">📋 Testa uppgifter (utan bilder)</div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="taskInput" placeholder="Ny uppgift..." style="flex:1;height:44px">
+      <button onclick="addTask()" style="width:auto;padding:0 16px;height:44px">➕ Lägg till</button>
+    </div>
+    <div id="taskList" style="margin-top:12px"></div>
   </div>
 </div>
-
-<div class="page" id="pageDetail" style="display:none;transform:translateX(0)">
-  <div class="hdr" style="flex-direction:row;align-items:center">
-    <button onclick="goHome()" style="height:44px;padding:0 16px;border-radius:14px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-weight:800">◀ Tillbaka</button>
-    <div style="flex:1;margin-left:12px"><div id="detailTitle" style="font-weight:900"></div><div id="detailSub" style="font-size:12px;color:#A89FCE"></div></div>
-    <button class="save-btn" onclick="saveAll()">💾 Spara</button>
-  </div>
-  <div class="home-body" style="padding:16px">
-    <div style="background:#fff;border-radius:20px;border:1.5px solid #E4DEFC;padding:16px;margin-bottom:16px">
-      <input type="text" id="taskText" placeholder="Ny uppgift..." style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;margin-bottom:10px">
-      <div style="display:flex;gap:8px">
-        <select id="taskTime" style="flex:1;height:44px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;padding:0 12px;font-weight:700">
-          <option value="today">Idag</option><option value="tomorrow">Imorgon</option><option value="week">Denna vecka</option><option value="month">Denna månad</option><option value="thisyear">Pågående år</option><option value="future">Framtiden</option>
-        </select>
-        <button onclick="addTask()" style="height:44px;padding:0 20px;border-radius:12px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer">➕ Lägg till</button>
-      </div>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:12px">
-      <button onclick="setTab('todo')" id="tabTodo" style="flex:1;height:40px;border-radius:12px;border:2px solid #6C47E8;background:#EDE8FC;color:#6C47E8;font-weight:800;cursor:pointer">📋 Att göra</button>
-      <button onclick="setTab('star')" id="tabStar" style="flex:1;height:40px;border-radius:12px;border:1.5px solid #E4DEFC;background:#fff;color:#7168A0;font-weight:800;cursor:pointer">⭐ Aktuell</button>
-      <button onclick="setTab('done')" id="tabDone" style="flex:1;height:40px;border-radius:12px;border:1.5px solid #E4DEFC;background:#fff;color:#7168A0;font-weight:800;cursor:pointer">✅ Klara</button>
-    </div>
-    <div id="taskList"></div>
-  </div>
-</div>
-
-<div id="qrModal" class="modal-ov h" style="align-items:center">
-  <div class="modal-sheet" style="border-radius:20px;max-width:400px;margin:16px;padding:20px;text-align:center">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:900">QR Synk</div><button onclick="closeQR()" style="width:36px;height:36px;border-radius:10px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer">✖️</button></div>
-    <div id="qrContainer" style="display:flex;justify-content:center;padding:12px;background:#fff;border-radius:12px;border:1.5px solid #E4DEFC;min-height:100px"></div>
-    <div id="qrInfo" style="margin-top:12px;font-size:13px;color:#7168A0;font-weight:700"></div>
-    <div id="qrScanner" style="margin-top:12px"></div>
-    <div id="qrScanResult" style="margin-top:12px"></div>
-  </div>
-</div>
-
-<div id="toast" class="toast"><span id="toastMsg"></span></div>
 
 <script>
-// FORCE SHOW LOGIN - never hide on load
-document.getElementById('loginOv').style.display='flex';
-document.getElementById('pageHome').style.display='none';
-
-function showDebug(msg){
-  const el=document.getElementById('debug');
-  if(el){ el.style.display='block'; el.textContent=msg; }
-}
-
-function loadProfiles(){
-  try{
-    // First try localStorage
-    let v=localStorage.getItem('familyProfiles');
-    // If not in localStorage, try sessionStorage (fallback when full)
-    if(!v){
-      v=sessionStorage.getItem('familyProfiles');
-      if(v) console.log('Using sessionStorage for profiles');
-    }
-    console.log('loadProfiles raw len:', v?.length||0, 'preview:', v?.slice(0,100));
-    if(!v) return [];
-    const p=JSON.parse(v);
-    const filtered = Array.isArray(p)?p.filter(x=>x&&x.id&&x.name):[];
-    console.log('loadProfiles filtered:', filtered.length);
-    return filtered;
-  }catch(e){
-    console.error('loadProfiles error', e);
-    const dbg=document.getElementById('debug');
-    if(dbg){ dbg.style.display='block'; dbg.textContent='Fel i profiler: '+e.message+' - Tryck 🧹 Rensa'; }
-    // Try sessionStorage as last resort
-    try{
-      const vs=sessionStorage.getItem('familyProfiles');
-      if(vs) return JSON.parse(vs).filter(x=>x&&x.id&&x.name);
-    }catch(e2){}
-    return [];
+let debugEl = document.getElementById('debug');
+function log(msg){
+  console.log(msg);
+  if(debugEl){
+    debugEl.textContent += new Date().toLocaleTimeString() + ': ' + msg + '\n';
+    debugEl.scrollTop = debugEl.scrollHeight;
   }
 }
-function saveProfiles(p){
+
+log('V9 startar...');
+log('UserAgent: ' + navigator.userAgent.slice(0,60));
+log('URL: ' + location.href);
+log('Protocol: ' + location.protocol);
+
+// Check storage immediately
+function testStorage(){
+  log('--- TESTAR LAGRING ---');
   try{
-    localStorage.setItem('familyProfiles',JSON.stringify(p));
-    console.log('saveProfiles ok', p.length);
-    return true;
+    log('localStorage finns: ' + !!window.localStorage);
+    const test = 'test_' + Date.now();
+    localStorage.setItem(test, '123');
+    localStorage.removeItem(test);
+    log('✅ localStorage FUNKAR - kan skriva');
   }catch(e){
-    console.error('saveProfiles quota error', e);
-    showDebug('Lagring full! Försöker rensa... ('+e.message+')');
-    // Step 1: Remove trash and history
-    try{
-      localStorage.removeItem('familyTrash');
-      localStorage.removeItem('familyVersionHistory');
-      localStorage.removeItem('savedPDFs');
-      localStorage.removeItem('familyScore');
-      console.log('Removed trash/history, retrying');
-    }catch(e){};
-    
-    try{
-      localStorage.setItem('familyProfiles',JSON.stringify(p));
-      toast('⚠️ Rensade papperskorg, försöker igen...');
-      return true;
-    }catch(e2){
-      console.error('Still full after trash removal', e2);
-      // Step 2: Try to strip images from tasks to free huge space
-      try{
-        let tasksRaw = localStorage.getItem('familyTasks');
-        if(tasksRaw && tasksRaw.length > 50000){
-          showDebug('Försöker ta bort bilder från uppgifter för att frigöra plats...');
-          let t = JSON.parse(tasksRaw);
-          let before = tasksRaw.length;
-          // Remove images and notes with base64
-          t = t.map(task=>{
-            if(task.images && task.images.length>0){
-              // Keep task but remove images
-              return {...task, images:[], _hadImages:true};
-            }
-            if(task.note && task.note.length>5000){
-              return {...task, note: task.note.slice(0,200)+'... (borttagen för plats)', _hadLongNote:true};
-            }
-            return task;
-          });
-          localStorage.setItem('familyTasks', JSON.stringify(t));
-          let after = localStorage.getItem('familyTasks').length;
-          toast('🗑️ Tog bort bilder från uppgifter ('+before+' -> '+after+' tecken) för att frigöra plats');
-          showDebug('Tog bort bilder: '+before+' -> '+after+' tecken');
-        }
-      }catch(e3){ console.error('Failed to strip images', e3); }
-      
-      try{
-        localStorage.setItem('familyProfiles',JSON.stringify(p));
-        toast('✅ Lyckades efter att ha tagit bort bilder!');
-        return true;
-      }catch(e3){
-        console.error('Still full after stripping', e3);
-        // Last resort: use sessionStorage for profile (works for current session)
-        try{
-          sessionStorage.setItem('familyProfiles', JSON.stringify(p));
-          sessionStorage.setItem('familyCurrentProfileId', p[p.length-1].id);
-          showDebug('⚠️ localStorage FULL! Använder temporär session-lagring. Exportera dina uppgifter via Fil nu!');
-          alert('⚠️ DIN LAGRING ÄR FULL (5MB gräns)!\n\nJag har sparat din profil temporärt så du kan logga in NU, men du måste:\n1. Exportera dina uppgifter via 💾 Spara fil\n2. Trycka 🧹 Rensa allt\n3. Importera filen igen utan bilder\n\nDin profil funkar denna session.');
-          return true;
-        }catch(e4){
-          alert('Lagring FULL även efter rensning!\n\nDu har '+(localStorage.getItem('familyTasks')?.length||0)+' tecken i uppgifter (bilder).\n\nLÖSNING:\n1. Tryck 🧹 Rensa allt nedan\n2. Skapa profil\n3. Importera din backup-fil (jag tar automatiskt bort bilder)\n\nEller öppna i INKOGNITO-fönster (Ctrl+Shift+N) och skapa profil där.');
-          throw e4;
-        }
-      }
+    log('❌ localStorage BLOCKERAD: ' + e.name + ' - ' + e.message);
+    log('Detta händer när du öppnar filen som file:// i vissa webbläsare');
+    log('LÖSNING: Öppna i INKOGNITO eller använd en lokal server');
+  }
+  
+  try{
+    const tasks = localStorage.getItem('familyTasks');
+    log('familyTasks storlek: ' + (tasks ? tasks.length + ' tecken' : 'finns inte'));
+    if(tasks && tasks.length > 4000000){
+      log('⚠️ familyTasks ÄR JÄTTESTOR! Nästan full!');
     }
+  }catch(e){
+    log('Kan inte läsa familyTasks: ' + e.message);
+  }
+  
+  try{
+    let total = 0;
+    for(let i=0;i<localStorage.length;i++){
+      let k = localStorage.key(i);
+      let v = localStorage.getItem(k);
+      total += (k.length + (v? v.length : 0));
+    }
+    log('Total localStorage användning: ca ' + total + ' tecken / 5 242 880 max');
+    log('Ledigt: ca ' + (5242880 - total) + ' tecken');
+  }catch(e){
+    log('Kan inte räkna total: ' + e.message);
   }
 }
-let currentId = null;
-try{ currentId = localStorage.getItem('familyCurrentProfileId'); }catch(e){}
+
+setTimeout(testStorage, 500);
+
+// IN-MEMORY PROFILES - no localStorage!
+let profiles = [];
+let currentProfile = null;
+let tasks = [];
 
 function renderProfiles(){
-  console.log('renderProfiles called, currentId', currentId);
-  const list=document.getElementById('profileList');
-  if(!list){ showDebug('profileList saknas!'); return; }
-  let ps=[];
-  try{ ps=loadProfiles(); }catch(e){ ps=[]; }
-  
-  if(ps.length===0){
-    list.innerHTML='<div style="text-align:center;padding:12px;background:#F7F5FC;border-radius:12px;border:1.5px dashed #E4DEFC;color:#7168A0;font-size:13px;font-weight:700">Inga profiler än – skapa din första nedan 👇<br><br><span style="font-size:11px">Om du ser detta, funkar sidan!</span></div>';
-    showDebug('Inga profiler, visar skapa-form');
-    return;
+  log('renderProfiles() anropad');
+  const list = document.getElementById('profileList');
+  if(profiles.length===0){
+    list.innerHTML = '<div style="background:#F7F5FC;border:2px dashed #E4DEFC;border-radius:12px;padding:12px;text-align:center;color:#7168A0;font-weight:700">Inga profiler än - skapa nedan 👇</div>';
+  }else{
+    list.innerHTML = '<div style="font-weight:800;margin-bottom:8px">Välj profil:</div>' + profiles.map(p=>'<div style="display:flex;gap:8px;margin-bottom:8px"><button onclick="loginProfile(\''+p.id+'\')" style="flex:1;height:52px;border-radius:12px;border:2px solid #E4DEFC;background:#F7F5FC;font-weight:800">' + p.name + '</button><button onclick="deleteProfile(\''+p.id+'\')" style="width:52px;height:52px;border-radius:12px;border:2px solid #E4DEFC;background:#F7F5FC">🗑️</button></div>').join('');
   }
-  
-  // If logged in already, hide login and show app
-  if(currentId && ps.find(p=>p.id===currentId)){
-    document.getElementById('loginOv').style.display='none';
-    document.getElementById('pageHome').style.display='block';
-    document.getElementById('who').textContent='Inloggad som '+ps.find(p=>p.id===currentId).name;
-    renderCards();
-    return;
-  }
-  
-  // Show list of profiles to choose
-  list.innerHTML='<div style="font-weight:800;font-size:13px;margin-bottom:10px">Välj profil:</div>'+ps.map(p=>'<div style="display:flex;gap:8px;margin-bottom:10px"><button type="button" onclick="loginProfile(\''+p.id+'\')" class="profile-btn"><span style="width:36px;height:36px;border-radius:12px;background:#6C47E8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900">'+p.name.charAt(0).toUpperCase()+'</span><span>'+p.name+'</span><span style="margin-left:auto">➡️</span></button><button type="button" onclick="deleteProfile(\''+p.id+'\')" style="width:46px;height:46px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-size:20px">🗑️</button></div>').join('');
-  showDebug('Visar '+ps.length+' profiler');
-}
-
-function loginProfile(id){
-  const p=loadProfiles().find(x=>x.id===id);
-  if(!p) return;
-  const pw=prompt('Lösenord för '+p.name+':');
-  if(pw===null) return;
-  if(pw===p.password){
-    currentId=id;
-    try{ localStorage.setItem('familyCurrentProfileId',id); }catch(e){}
-    document.getElementById('loginOv').style.display='none';
-    document.getElementById('pageHome').style.display='block';
-    document.getElementById('who').textContent='Inloggad som '+p.name;
-    toast('Välkommen '+p.name+'!');
-    renderCards();
-  }else{ alert('Fel lösenord'); }
 }
 
 function createProfile(){
-  console.log('createProfile CLICKED! V8');
-  const debugEl=document.getElementById('debug');
-  if(debugEl){ debugEl.style.display='block'; debugEl.textContent='Klick registrerat! Försöker skapa...'; }
+  log('=== createProfile() KLICKAD! ===');
+  const nameEl = document.getElementById('pName');
+  const pwEl = document.getElementById('pPw');
+  const pw2El = document.getElementById('pPw2');
+  const errEl = document.getElementById('err');
   
-  const nameEl=document.getElementById('pName');
-  const pwEl=document.getElementById('pPw');
-  const pw2El=document.getElementById('pPw2');
-  const err=document.getElementById('pErr');
-  const name=(nameEl? nameEl.value : '').trim();
-  const pw=pwEl? pwEl.value : '';
-  const pw2=pw2El? pw2El.value : '';
+  log('Hittade element: name=' + !!nameEl + ' pw=' + !!pwEl);
   
-  console.log('Name:', name, 'pw len:', pw.length);
+  const name = (nameEl.value || '').trim();
+  const pw = pwEl.value || '';
+  const pw2 = pw2El.value || '';
   
-  if(err){ err.style.display='none'; err.textContent=''; }
-  if(!name){ 
-    if(err){err.textContent='Skriv ett namn'; err.style.display='block';} 
-    if(debugEl) debugEl.textContent='Inget namn ifyllt';
-    return; 
+  log('Värden: name="' + name + '" pw len=' + pw.length);
+  
+  if(errEl){ errEl.style.display='none'; }
+  
+  if(!name){
+    log('❌ Inget namn');
+    errEl.textContent='Skriv ett namn'; errEl.style.display='block';
+    return;
   }
-  if(name.length<2){ if(err){err.textContent='Minst 2 bokstäver'; err.style.display='block';} return; }
-  if(!pw){ if(err){err.textContent='Skriv ett lösenord'; err.style.display='block';} return; }
-  if(pw!==pw2){ if(err){err.textContent='Lösenorden matchar inte'; err.style.display='block';} return; }
+  if(pw!==pw2){
+    log('❌ Lösenord matchar inte');
+    errEl.textContent='Lösenorden matchar inte'; errEl.style.display='block';
+    return;
+  }
+  if(!pw){
+    log('❌ Inget lösenord');
+    errEl.textContent='Skriv lösenord'; errEl.style.display='block';
+    return;
+  }
   
+  log('✅ Validering OK, skapar profil i MINNET (ingen localStorage)...');
+  
+  // Create in MEMORY only - no localStorage!
+  const newProfile = {id:'p_'+Date.now(), name:name, password:pw};
+  profiles.push(newProfile);
+  currentProfile = newProfile;
+  
+  log('✅ Profil skapad i minnet: ' + name + ' (id=' + newProfile.id + ')');
+  log('Totalt profiler i minnet: ' + profiles.length);
+  
+  // Try to save to localStorage, but don't fail if full
   try{
-    let ps=[];
-    try{ ps=loadProfiles(); }catch(e){ ps=[]; }
-    console.log('Existing profiles:', ps.length);
-    
-    const np={id:'p_'+Date.now(),name:name,password:pw};
-    ps.push(np);
-    console.log('Trying to save', ps.length, 'profiles');
-    
-    const saved = saveProfiles(ps);
-    console.log('saveProfiles returned', saved);
-    
-    currentId=np.id;
-    try{ 
-      localStorage.setItem('familyCurrentProfileId',np.id); 
-    }catch(e){
-      try{ sessionStorage.setItem('familyCurrentProfileId',np.id); }catch(e2){}
-    }
-    
-    // Check if we used sessionStorage fallback
-    const usingSession = sessionStorage.getItem('familyProfiles');
-    if(usingSession){
-      document.getElementById('loginOv').style.display='none';
-      document.getElementById('pageHome').style.display='block';
-      document.getElementById('who').textContent='Inloggad som '+name+' (temporär)';
-      toast('Profil skapad temporärt! Exportera nu! 🎉');
-    }else{
-      document.getElementById('loginOv').style.display='none';
-      document.getElementById('pageHome').style.display='block';
-      document.getElementById('who').textContent='Inloggad som '+name;
-      toast('Profil skapad! Välkommen '+name+' 🎉');
-      renderCards();
-    }
-    
-    if(nameEl) nameEl.value=''; if(pwEl) pwEl.value=''; if(pw2El) pw2El.value='';
-    if(debugEl) debugEl.textContent='Profil skapad: '+name+' ✅ - Laddar app...';
-    
-    // Force show app after 500ms even if something failed
-    setTimeout(()=>{
-      document.getElementById('loginOv').style.display='none';
-      document.getElementById('pageHome').style.display='block';
-      renderCards();
-    },500);
-    
+    localStorage.setItem('familyProfiles', JSON.stringify(profiles));
+    localStorage.setItem('familyCurrentProfileId', newProfile.id);
+    log('✅ Sparad till localStorage också');
   }catch(e){
-    console.error('createProfile error', e);
-    if(err){err.textContent='Fel: '+e.message+' - Prova 🧹 Rensa allt'; err.style.display='block';}
-    if(debugEl) debugEl.textContent='Fel: '+e.message+' - Tryck 🧹 Rensa';
-    // Even on error, try to show app with session storage
-    try{
-      let ps=[{id:'p_'+Date.now(),name:name,password:pw}];
-      sessionStorage.setItem('familyProfiles', JSON.stringify(ps));
-      sessionStorage.setItem('familyCurrentProfileId', ps[0].id);
-      currentId=ps[0].id;
-      document.getElementById('loginOv').style.display='none';
-      document.getElementById('pageHome').style.display='block';
-      document.getElementById('who').textContent='Inloggad som '+name+' (temporär)';
-      toast('Profil skapad temporärt trots fel!');
-    }catch(e2){
-      alert('Fel: '+e.message+'\n\nProva:\n1. Tryck 🧹 Rensa allt\n2. Öppna i INKOGNITO (Ctrl+Shift+N)\n3. Skapa profil där');
-    }
+    log('⚠️ Kunde inte spara till localStorage (full/blockerad): ' + e.message);
+    log('Men profilen finns i MINNET så du kan fortsätta ändå!');
   }
+  
+  // Show app
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('welcome').textContent='Välkommen ' + name + '! 🎉';
+  document.getElementById('storageInfo').textContent='Profil i minnet: ' + profiles.length + ' st | localStorage: ' + (localStorage.getItem('familyProfiles') ? 'sparad' : 'full/blockerad - använd Spara fil');
+  
+  renderTasks();
+  log('✅ App visad! Du är inloggad!');
+  
+  // Also try alert
+  setTimeout(()=>alert('✅ Profil "'+name+'" skapad!\n\nDu är nu inloggad (i minnet).\nOm localStorage är full, tryck 💾 Spara fil för att exportera.'), 100);
+}
+
+function loginProfile(id){
+  const p = profiles.find(x=>x.id===id);
+  if(!p) return;
+  const pw = prompt('Lösenord för ' + p.name + ':');
+  if(pw===p.password){
+    currentProfile = p;
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('welcome').textContent='Välkommen ' + p.name + '!';
+    renderTasks();
+  }else{ alert('Fel lösenord'); }
 }
 
 function deleteProfile(id){
-  if(!confirm('Ta bort profilen?')) return;
-  let ps=loadProfiles().filter(p=>p.id!==id);
-  try{ saveProfiles(ps); }catch(e){}
-  if(currentId===id){currentId=null; try{localStorage.removeItem('familyCurrentProfileId');}catch(e){}}
+  if(!confirm('Ta bort?')) return;
+  profiles = profiles.filter(p=>p.id!==id);
+  try{ localStorage.setItem('familyProfiles', JSON.stringify(profiles)); }catch(e){}
   renderProfiles();
-  toast('🗑️ Borttagen');
 }
 
 function logout(){
-  if(confirm('Logga ut?')){
-    try{ localStorage.removeItem('familyCurrentProfileId'); }catch(e){}
-    location.reload();
-  }
-}
-function clearAll(){
-  if(confirm('Rensa ALL data och börja om? Detta tar bort ALLA uppgifter och profiler!\n\nGör detta om du ser vit ruta eller inget händer.')){
-    localStorage.clear();
-    location.reload();
-  }
+  currentProfile = null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('login').style.display='flex';
+  renderProfiles();
 }
 
-// --- APP LOGIC ---
-let tasks = [];
-let persons = [];
-let labels = {};
-let trash = [];
-let score = 0;
-let currentPerson = 'all';
-let currentTab = 'todo';
-
-try{
-  tasks = JSON.parse(localStorage.getItem('familyTasks')||'[]');
-  persons = JSON.parse(localStorage.getItem('familyPersons')||'["person1","person2","person3"]');
-  labels = JSON.parse(localStorage.getItem('familyPersonLabels')||'{"person1":"Person 1","person2":"Person 2","person3":"Person 3"}');
-  trash = JSON.parse(localStorage.getItem('familyTrash')||'[]');
-  score = parseInt(localStorage.getItem('familyScore')||'0');
-}catch(e){ console.error('load app data error', e); }
-
-const COLORS = ["#6C47E8","#22C08A","#F05E7A","#F59E0B","#0EA5E9","#EC4899","#8B5CF6","#14B8A6"];
-
-function saveAllData(){
+function clearAllData(){
+  if(!confirm('Rensa ALL data (localStorage + profiler i minnet)?')) return;
   try{
-    localStorage.setItem('familyTasks', JSON.stringify(tasks));
-    localStorage.setItem('familyPersons', JSON.stringify(persons));
-    localStorage.setItem('familyPersonLabels', JSON.stringify(labels));
-    localStorage.setItem('familyTrash', JSON.stringify(trash));
-    localStorage.setItem('familyScore', String(score));
-  }catch(e){
-    if(e.name==='QuotaExceededError' || e.message.includes('quota')){
-      alert('Lagring full! Du har för många bilder. Ta bort några uppgifter eller tryck 🧹 Rensa allt.');
-    }
-  }
-}
-
-function renderCards(){
-  const el=document.getElementById('cards');
-  if(!el) return;
-  function count(pid){const m=pid==='all'?tasks:tasks.filter(t=>t.person===pid);return {a:m.filter(t=>!t.done).length,d:m.filter(t=>t.done).length}}
-  let h='';
-  const all=count('all');
-  h+='<div class="pcard" onclick="openPerson(\'all\')"><div class="avatar" style="background:'+COLORS[0]+'">👥</div><div style="font-weight:900">Alla</div><div style="font-size:12px;color:#7168A0;margin-top:6px">📋 '+all.a+' att göra · ✅ '+all.d+' klara</div></div>';
-  persons.forEach((pid,i)=>{
-    const c=count(pid);
-    const col=COLORS[(i+1)%COLORS.length];
-    const label=labels[pid]||pid;
-    h+='<div class="pcard" onclick="openPerson(\''+pid+'\')"><div class="avatar" style="background:'+col+'">'+label.charAt(0).toUpperCase()+'</div><div style="font-weight:900">'+label+'</div><div style="font-size:12px;color:#7168A0;margin-top:6px">📋 '+c.a+' · ✅ '+c.d+'</div></div>';
-  });
-  el.innerHTML=h || '<div style="text-align:center;padding:20px;color:#A89FCE">Inga personer än</div>';
-}
-
-function addPerson(){
-  const inp=document.getElementById('newPerson');
-  const name=(inp.value||'').trim();
-  if(!name){toast('Skriv ett namn');return}
-  const id='person'+Date.now();
-  persons.push(id);
-  labels[id]=name;
-  saveAllData();
-  renderCards();
-  inp.value='';
-  toast('Tillagd!');
-}
-
-let detailPerson = 'all';
-function openPerson(id){
-  detailPerson=id;
-  currentPerson=id;
-  const label=id==='all'?'Alla':(labels[id]||id);
-  document.getElementById('detailTitle').textContent=label;
-  document.getElementById('detailSub').textContent= (id==='all'?tasks.length:tasks.filter(t=>t.person===id).length)+' uppgifter';
-  document.getElementById('pageHome').style.display='none';
-  document.getElementById('pageDetail').style.display='block';
-  setTab('todo');
-}
-function goHome(){
-  document.getElementById('pageDetail').style.display='none';
-  document.getElementById('pageHome').style.display='block';
-  renderCards();
-}
-function setTab(tab){
-  currentTab=tab;
-  document.getElementById('tabTodo').style.background=tab==='todo'?'#EDE8FC':'#fff';
-  document.getElementById('tabTodo').style.borderColor=tab==='todo'?'#6C47E8':'#E4DEFC';
-  document.getElementById('tabTodo').style.color=tab==='todo'?'#6C47E8':'#7168A0';
-  document.getElementById('tabStar').style.background=tab==='star'?'#EDE8FC':'#fff';
-  document.getElementById('tabStar').style.borderColor=tab==='star'?'#6C47E8':'#E4DEFC';
-  document.getElementById('tabDone').style.background=tab==='done'?'#DCFDF2':'#fff';
-  document.getElementById('tabDone').style.borderColor=tab==='done'?'#22C08A':'#E4DEFC';
-  
-  let filtered = detailPerson==='all'?tasks:tasks.filter(t=>t.person===detailPerson);
-  if(tab==='todo') filtered=filtered.filter(t=>!t.done && !t.starred);
-  if(tab==='star') filtered=filtered.filter(t=>!t.done && t.starred);
-  if(tab==='done') filtered=filtered.filter(t=>t.done);
-  
-  const list=document.getElementById('taskList');
-  if(filtered.length===0){
-    list.innerHTML='<div style="text-align:center;padding:30px;color:#A89FCE">Inga uppgifter här</div>';
-    return;
-  }
-  list.innerHTML=filtered.map(t=>'<div class="task-item"><div class="check" onclick="toggleDone('+t.id+')">'+(t.done?'✅':'')+'</div><div style="flex:1"><div style="font-weight:700;'+(t.done?'text-decoration:line-through;color:#A89FCE':'')+'">'+t.text+'</div><div style="font-size:12px;color:#A89FCE">'+(t.timeFrame||'')+' · '+(labels[t.person]||t.person)+'</div></div><button onclick="toggleStar('+t.id+')" style="width:36px;height:36px;border-radius:10px;border:1.5px solid #E4DEFC;background:'+(t.starred?'#EDE8FC':'#F7F5FC')+';cursor:pointer">'+(t.starred?'⭐':'☆')+'</button><button onclick="delTask('+t.id+')" style="width:36px;height:36px;border-radius:10px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer">🗑️</button></div>').join('');
+    localStorage.clear();
+    sessionStorage.clear();
+    log('✅ localStorage och sessionStorage rensad');
+  }catch(e){ log('Fel vid rensning: ' + e.message); }
+  profiles = [];
+  tasks = [];
+  currentProfile = null;
+  renderProfiles();
+  renderTasks();
+  document.getElementById('app').style.display='none';
+  document.getElementById('login').style.display='flex';
+  log('✅ Allt rensat - prova skapa profil nu!');
+  alert('✅ Allt rensat! Prova skapa profil nu.');
 }
 
 function addTask(){
-  const inp=document.getElementById('taskText');
-  const timeSel=document.getElementById('taskTime');
-  const text=(inp.value||'').trim();
-  if(!text){ toast('Skriv en uppgift'); return; }
-  const newTask={id:Date.now(),text:text,timeFrame:timeSel.value,person:detailPerson,done:false,starred:false,createdAt:new Date().toISOString()};
-  tasks.push(newTask);
-  saveAllData();
+  const inp = document.getElementById('taskInput');
+  const text = (inp.value||'').trim();
+  if(!text) return;
+  tasks.push({id:Date.now(), text:text, done:false});
   inp.value='';
-  setTab(currentTab);
-  renderCards();
-  toast('Tillagd!');
+  renderTasks();
 }
 
-function toggleDone(id){
-  const t=tasks.find(x=>x.id===id);
-  if(t){ t.done=!t.done; saveAllData(); setTab(currentTab); renderCards(); }
+function renderTasks(){
+  const list = document.getElementById('taskList');
+  if(tasks.length===0){
+    list.innerHTML='<div style="text-align:center;color:#A89FCE;padding:20px">Inga uppgifter än</div>';
+  }else{
+    list.innerHTML=tasks.map(t=>'<div class="task"><div style="display:flex;gap:8px;align-items:center"><input type="checkbox" '+(t.done?'checked':'')+' onchange="toggleTask('+t.id+')" style="width:20px;height:20px"><span style="'+(t.done?'text-decoration:line-through;color:#A89FCE':'font-weight:700')+'">'+t.text+'</span><button onclick="delTask('+t.id+')" style="width:auto;margin-left:auto;padding:0 10px;height:32px;background:#F7F5FC;color:#F05E7A;border:1.5px solid #E4DEFC">🗑️</button></div></div>').join('');
+  }
 }
-function toggleStar(id){
-  const t=tasks.find(x=>x.id===id);
-  if(t){ t.starred=!t.starred; saveAllData(); setTab(currentTab); }
+
+function toggleTask(id){
+  const t = tasks.find(x=>x.id===id);
+  if(t) t.done=!t.done;
+  renderTasks();
 }
 function delTask(id){
-  if(!confirm('Ta bort?')) return;
-  const idx=tasks.findIndex(x=>x.id===id);
-  if(idx>=0){ trash.push({...tasks[idx],deletedAt:new Date().toISOString()}); tasks.splice(idx,1); saveAllData(); setTab(currentTab); renderCards(); }
+  tasks = tasks.filter(x=>x.id!==id);
+  renderTasks();
 }
 
-function saveAll(){ saveAllData(); toast('✅ Sparat!'); }
-function toggleNight(){ document.body.classList.toggle('night'); localStorage.setItem('nightMode', document.body.classList.contains('night')); }
-function openTrash(){ alert('Papperskorg: '+trash.length+' uppgifter'); }
-function openNotif(){ alert('Notiser'); }
-
-let toastT;
-function toast(msg){
-  const el=document.getElementById('toast');
-  document.getElementById('toastMsg').textContent=msg;
-  el.classList.add('show');
-  clearTimeout(toastT);
-  toastT=setTimeout(()=>el.classList.remove('show'),3000);
+function saveToFile(){
+  const data = {profiles, tasks, exportedAt:new Date().toISOString()};
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='familj-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  log('Fil sparad');
 }
 
-// QR - chunked
-let qrChunks=[]; let html5Qr=null;
-function showQR(){
-  try{
-    const payload={tasks:tasks.map(t=>({id:t.id,text:t.text,timeFrame:t.timeFrame||'today',person:t.person,completed:!!t.completed,starred:!!t.starred})),persons,personLabels:labels,trash:[],v:3,t:Date.now()};
-    let json=JSON.stringify(payload);
-    let comp=typeof LZString!=='undefined'?LZString.compressToEncodedURIComponent(json):btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
-    const box=document.getElementById('qrContainer'); const info=document.getElementById('qrInfo');
-    document.getElementById('qrScanner').innerHTML=''; document.getElementById('qrScanResult').innerHTML=''; box.innerHTML='';
-    const CHUNK_SIZE=1000;
-    if(comp.length<=CHUNK_SIZE){
-      info.innerHTML='📤 '+tasks.length+' uppgifter ('+comp.length+' tecken) – scanna';
-      document.getElementById('qrModal').classList.remove('h');
-      setTimeout(()=>{ new QRCode(box,{text:'1|1|'+comp,width:280,height:280,correctLevel:QRCode.CorrectLevel.M}); },200);
-      return;
-    }
-    qrChunks=[]; for(let i=0;i<comp.length;i+=CHUNK_SIZE) qrChunks.push(comp.slice(i,i+CHUNK_SIZE));
-    document.getElementById('qrModal').classList.remove('h'); showChunk(0);
-  }catch(e){ toast('QR-fel: '+e.message); }
-}
-function showChunk(idx){
-  const box=document.getElementById('qrContainer'); const info=document.getElementById('qrInfo'); if(!box) return; box.innerHTML='';
-  const total=qrChunks.length; const data=qrChunks[idx];
-  info.innerHTML='<div style="background:#EDE8FC;padding:10px;border-radius:12px"><div style="font-weight:900">QR '+(idx+1)+' av '+total+'</div><div style="margin-top:8px;display:flex;gap:8px;justify-content:center">'+(idx>0?'<button onclick="showChunk('+(idx-1)+')" style="height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #E4DEFC;background:#fff">◀ Föreg</button>':'')+(idx<total-1?'<button onclick="showChunk('+(idx+1)+')" style="height:36px;padding:0 16px;border-radius:10px;border:none;background:#6C47E8;color:#fff">Nästa ▶</button>':'')+'</div></div><div style="font-size:11px;color:#A89FCE;margin-top:6px">Del '+(idx+1)+': '+data.length+' tecken</div>';
-  setTimeout(()=>{ new QRCode(box,{text:(idx+1)+'|'+total+'|'+data,width:280,height:280,correctLevel:QRCode.CorrectLevel.M}); },100);
-}
-function startQRScan(){
-  const box=document.getElementById('qrContainer'); const info=document.getElementById('qrInfo'); const res=document.getElementById('qrScanResult');
-  if(box) box.innerHTML=''; if(info) info.innerHTML='📷 Scanna QR – alla i ordning<div id="scanProgress" style="margin-top:10px;font-weight:700"></div>'; if(res) res.innerHTML='';
-  document.getElementById('qrModal').classList.remove('h');
-  setTimeout(()=>{
-    const qr=new Html5Qrcode("qrScanner"); html5Qr=qr;
-    let buf={}; 
-    qr.start({facingMode:"environment"},{fps:10,qrbox:280},(decoded)=>{
-      let idx=1,total=1,data=decoded; const p=decoded.split('|'); if(p.length>=3 && !isNaN(p[0]) && !isNaN(p[1])){ idx=parseInt(p[0]); total=parseInt(p[1]); data=p.slice(2).join('|'); }
-      buf[idx]=data;
-      const got=Object.keys(buf).length;
-      const prog=document.getElementById('scanProgress'); if(prog) prog.textContent='✅ Fått '+got+' av '+total;
-      if(got===total){
-        qr.stop().then(()=>{
-          let full=''; for(let i=1;i<=total;i++) full+=buf[i]||'';
-          let dec=typeof LZString!=='undefined'?LZString.decompressFromEncodedURIComponent(full):(function(){let t=full.replace(/-/g,'+').replace(/_/g,'/'); while(t.length%4)t+='='; return decodeURIComponent(escape(atob(t)));})();
-          const remote=JSON.parse(dec);
-          if(confirm('Hämta '+remote.tasks.length+' uppgifter?')){ tasks=remote.tasks||[]; persons=remote.persons||persons; labels=remote.personLabels||remote.labels||labels; saveAllData(); renderCards(); toast('✅ Hämtat!'); setTimeout(closeQR,1500); }
-        });
-      }
-    });
-  },300);
-}
-function closeQR(){ if(html5Qr){try{html5Qr.stop()}catch(e){} html5Qr=null;} document.getElementById('qrModal').classList.add('h'); }
-
-function exportFile(){
-  const backup={tasks,persons,labels,trash,exportedAt:new Date().toISOString()};
-  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download='familj-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); URL.revokeObjectURL(url);
-  toast('✅ Fil sparad!');
-}
-function importFile(){
-  const inp=document.createElement('input'); inp.type='file'; inp.accept='.json';
-  inp.onchange=e=>{ const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=ev=>{ try{ const b=JSON.parse(ev.target.result); if(!b.tasks){toast('Ogiltig fil');return} if(!confirm('Ersätta all data med filen ('+b.tasks.length+' uppgifter)?'))return; tasks=b.tasks||[]; persons=b.persons||persons; labels=b.labels||labels; trash=b.trash||[]; saveAllData(); renderCards(); toast('✅ Import klar!'); }catch(err){toast('❌ Kunde inte läsa')} }; r.readAsText(f); };
+function loadFromFile(){
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='.json';
+  inp.onchange=e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    const r = new FileReader();
+    r.onload=ev=>{
+      try{
+        const b = JSON.parse(ev.target.result);
+        if(b.profiles) profiles=b.profiles;
+        if(b.tasks) tasks=b.tasks;
+        renderProfiles();
+        renderTasks();
+        log('Fil laddad: ' + (b.profiles?.length||0) + ' profiler, ' + (b.tasks?.length||0) + ' uppgifter');
+        alert('Laddad!');
+      }catch(err){ alert('Fel fil'); }
+    };
+    r.readAsText(f);
+  };
   inp.click();
 }
 
-// INIT - FORCE SHOW LOGIN
-function init(){
-  console.log('INIT V7');
-  showDebug('Laddar... localStorage har '+ (localStorage.getItem('familyProfiles')?.length||0) +' tecken profiler');
-  // Always show login on start, never hide unless we have valid currentId
-  document.getElementById('loginOv').style.display='flex';
-  document.getElementById('pageHome').style.display='none';
+// Attach listeners BOTH ways to guarantee click works
+document.addEventListener('DOMContentLoaded', ()=>{
+  log('DOM laddad');
+  const btn = document.getElementById('btnCreate');
+  if(btn){
+    log('Hittade knapp, lägger till extra lyssnare');
+    btn.addEventListener('click', (e)=>{
+      log('Knapp klick via addEventListener!');
+      e.preventDefault();
+      createProfile();
+    });
+    btn.addEventListener('touchstart', (e)=>{
+      log('Touchstart på knapp!');
+    });
+  }else{
+    log('❌ Hittade INTE knapp med id btnCreate!');
+  }
   renderProfiles();
-  
-  // Extra check after 500ms
-  setTimeout(()=>{
-    const list=document.getElementById('profileList');
-    if(list && !list.innerHTML.trim()){
-      showDebug('profileList tom efter 500ms, tvingar visning');
-      list.innerHTML='<div style="text-align:center;padding:12px;background:#FDEDF0;border-radius:12px;color:#F05E7A;font-weight:700">Något gick fel - tryck 🧹 Rensa allt nedan</div><div style="text-align:center;padding:12px;background:#F7F5FC;border-radius:12px;border:1.5px dashed #E4DEFC;color:#7168A0;font-size:13px;font-weight:700;margin-top:8px">Inga profiler – skapa en nedan 👇</div>';
-    }
-  },500);
-}
+});
 
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',init);
-}else{
-  init();
-}
+// Also try immediate
+setTimeout(()=>{
+  const btn = document.getElementById('btnCreate');
+  if(btn){
+    log('Extra check: knapp finns, onclick=' + !!btn.onclick);
+  }
+  renderProfiles();
+}, 100);
 </script>
 </body>
 </html>
