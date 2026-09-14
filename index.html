@@ -46,62 +46,26 @@ body.night{--bg:#211D42;--surface:#2C2761;--surface2:#373072;--border:#4B4392;--
 </head>
 <body>
 
-
-<div class="login-ov" id="loginOv">
-  <div class="login-card">
-    <div style="text-align:center">
-      <div style="font-size:48px">👥</div>
-      <div style="font-weight:900;font-size:22px;margin-top:8px">Familjens Planerare</div>
-      <div style="font-size:13px;color:#7168A0;margin-top:6px">Välj profil eller skapa ny</div>
-    </div>
-    <div id="profileList" style="margin-top:18px"></div>
-    <div style="margin-top:18px;border-top:1.5px solid #E4DEFC;padding-top:16px">
-      <div style="font-weight:800;font-size:14px;margin-bottom:10px">➕ Skapa ny profil</div>
-      <input type="text" id="pName" class="input" placeholder="Namn t.ex. Mamma" maxlength="20">
-      <input type="password" id="pPw" class="input" placeholder="Lösenord">
-      <input type="password" id="pPw2" class="input" placeholder="Bekräfta lösenord">
-      <div id="pErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-bottom:10px;text-align:center"></div>
-      <button class="btn" onclick="createProfile()">Skapa profil</button>
-    </div>
-    <button class="btn-sec" onclick="clearAll()">🧹 Rensa allt (om fel)</button>
+<div class="login-ov" id="loginOv" style="display:flex;background:#F0EDF8;z-index:9999">
+<div class="login-card" style="background:#fff!important;color:#1E1535!important;border:2px solid #E4DEFC;max-width:400px;width:100%;padding:28px 20px">
+  <div style="text-align:center">
+    <div style="font-size:48px">👥</div>
+    <div style="font-weight:900;font-size:22px;margin-top:8px;color:#1E1535">Familjens Planerare</div>
+    <div style="font-size:13px;color:#7168A0;margin-top:6px">Välj profil eller skapa ny</div>
   </div>
+  <div id="profileList" style="margin-top:18px"></div>
+  <div style="margin-top:18px;border-top:1.5px solid #E4DEFC;padding-top:16px">
+    <div style="font-weight:800;font-size:14px;margin-bottom:10px;color:#1E1535">➕ Skapa ny profil</div>
+    <input type="text" id="pName" placeholder="Namn t.ex. Mamma" maxlength="20" style="width:100%;height:56px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535;margin-bottom:10px;font-family:Nunito,sans-serif">
+    <input type="password" id="pPw" placeholder="Lösenord" style="width:100%;height:56px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535;margin-bottom:10px">
+    <input type="password" id="pPw2" placeholder="Bekräfta lösenord" style="width:100%;height:56px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;color:#1E1535">
+    <div id="pErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-top:10px;text-align:center"></div>
+    <button type="button" onclick="createProfile()" style="width:100%;height:56px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;font-size:16px;cursor:pointer;margin-top:12px;font-family:Nunito,sans-serif">Skapa profil</button>
+  </div>
+  <button type="button" onclick="if(confirm('Rensa ALL data?')){localStorage.clear();location.reload()}" style="width:100%;height:46px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:700;cursor:pointer;margin-top:8px;font-family:Nunito,sans-serif">🧹 Rensa allt (om fel)</button>
+</div>
 </div>
 
-<div class="page" id="pageHome">
-  <header class="hdr">
-    <div class="hdr-top">
-      <div class="logo">📋</div>
-      <div style="flex:1"><div style="font-weight:900;font-size:18px">Familjens Planerare</div><div id="who" style="font-size:12px;color:#A89FCE"></div></div>
-      <div class="hdr-actions">
-        <button class="save-btn" onclick="saveAll()">💾 Spara</button>
-        <button class="icon-btn" onclick="toggleNight()">🌙</button>
-        <button class="icon-btn" onclick="logout()">🚪</button>
-      </div>
-    </div>
-    <div class="date-row">
-      <div class="date-block"><span id="clock" style="font-size:22px;font-weight:900">00:00</span><div id="date" style="font-size:13px;color:#7168A0;font-weight:700"></div></div>
-    </div>
-
-
-<div class="page" id="pageHome">
-<header class="hdr">
-<div class="hdr-toprow">
-<div class="hdr-logo">📋</div><div class="hdr-info"><div class="hdr-title">Familjens Planerare</div><div class="hdr-sub" id="profileBadge"></div></div>
-<div class="hdr-actions">
-<button class="save-btn" onclick="saveAndConfirm()">💾 Spara</button>
-<button class="icon-btn" onclick="togglePcMode()">🖥️</button>
-<button class="icon-btn" onclick="toggleNight()"><span id="nightIcon">🌙</span></button>
-<button class="icon-btn" onclick="logoutApp()">🚪</button>
-<button class="icon-btn" onclick="openNotif()">🔔<span class="bdg h" id="notifBdg">0</span></button>
-<button class="icon-btn" onclick="openTrash()">🗑️<span class="bdg h" id="trashBdg">0</span></button>
-</div></div>
-<div class="date-row"><div class="date-block"><span class="date-clock" id="clockDisplay">00:00</span><div class="date-text" id="dateText"></div></div><button class="cal-btn" onclick="toast('Kalender')">📅</button></div>
-</header>
-<div class="home-body">
-<div class="add-person-section"><div class="add-person-row"><input id="newPersonInput" placeholder="Lägg till person…" maxlength="20" onkeydown="if(event.key==='Enter')addPerson()"><button class="btn-add-person" onclick="addPerson()">➕ Lägg till</button></div></div>
-<div class="cards-section"><div id="cardsGrid"></div></div>
-<div class="sync-section"><div class="sync-card">
-<div class="sync-header"><span style="font-size:20px">🔗</span><div><div class="sync-title">QR-synk – 100% offline (Alt B)</div><div class="sync-sub">Ingen molntjänst, fixade knappar – inga blanka ikoner</div></div></div>
 <div class="sync-status"><span class="sync-status-dot"></span><span>Offline redo – dela via QR</span></div>
 <div style="background:var(--primary-soft);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13px;color:var(--text2);border:1.5px solid var(--border)">📱 Enhet 1: Visa QR → visa skärmen<br>📷 Enhet 2: Scanna QR → klar! Samma notes.</div>
 <div class="sync-actions"><button class="sync-btn-primary" onclick="showMyQR()">📤 Visa min QR</button><button class="sync-btn-secondary" onclick="startQRScan()">📷 Scanna QR</button><button class="sync-btn-secondary" onclick="exportLocalBackup()">💾 Fil</button><button class="sync-btn-secondary" onclick="importLocalBackup()">📂 Import</button><button class="sync-btn-secondary" onclick="openVersionHistory()">🕘 Historik</button></div>
@@ -138,97 +102,97 @@ function esc(s){const d=document.createElement('div');d.textContent=s;return d.i
 function saveData(){localStorage.setItem('familyTasks',JSON.stringify(tasks));localStorage.setItem('familyTrash',JSON.stringify(trash));localStorage.setItem('familyScore',score)}
 function savePersons(){localStorage.setItem('familyPersons',JSON.stringify(persons));localStorage.setItem('familyPersonLabels',JSON.stringify(personLabels))}
 
-function loadProfiles(){try{const v=localStorage.getItem('familyProfiles');if(!v) return [];const p=JSON.parse(v);return Array.isArray(p)?p:[];}catch(e){return []}}
+function loadProfiles(){try{const v=localStorage.getItem('familyProfiles');if(!v)return[];const p=JSON.parse(v);return Array.isArray(p)?p.filter(x=>x&&x.id&&x.name):[];}catch(e){return []}}
 function saveProfiles(p){localStorage.setItem('familyProfiles',JSON.stringify(p))}
-const CURRENT_PROFILE_KEY='familyCurrentProfileId';let currentProfileId=null;
-function checkLoginState(){
+let currentId=localStorage.getItem('familyCurrentProfileId');
+
+function renderProfiles(){
+  const list=document.getElementById('profileList');
+  if(!list) return;
+  const ps=loadProfiles();
+  if(ps.length===0){
+    list.innerHTML='<div style="text-align:center;padding:12px;background:#F7F5FC;border-radius:12px;border:1.5px dashed #E4DEFC;color:#7168A0;font-size:13px;font-weight:700">Inga profiler – skapa en nedan 👇</div>';
+    return;
+  }
+  if(currentId && ps.find(p=>p.id===currentId)){
+    const ov=document.getElementById('loginOv');
+    if(ov) ov.style.display='none';
+    const who=document.getElementById('who')||document.getElementById('profileBadge');
+    if(who) who.textContent='Inloggad som '+ps.find(p=>p.id===currentId).name;
+    return;
+  }
+  list.innerHTML='<div style="font-weight:800;font-size:13px;margin-bottom:10px;color:#1E1535">Välj profil (🗑️ för att ta bort):</div>'+ps.map(p=>'<div style="display:flex;gap:8px;margin-bottom:10px"><button type="button" onclick="loginProfile(\''+p.id+'\')" style="flex:1;display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-weight:800;text-align:left;color:#1E1535;font-family:Nunito,sans-serif"><span style="width:36px;height:36px;border-radius:12px;background:#6C47E8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900">'+p.name.charAt(0).toUpperCase()+'</span><span>'+p.name+'</span><span style="margin-left:auto">➡️</span></button><button type="button" onclick="deleteProfile(\''+p.id+'\')" style="width:46px;height:46px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-size:20px;flex-shrink:0">🗑️</button></div>').join('');
+}
+
+function loginProfile(id){
+  const p=loadProfiles().find(x=>x.id===id);
+  if(!p) return;
+  const pw=prompt('Lösenord för '+p.name+':');
+  if(pw===null) return;
+  if(pw===p.password){
+    currentId=id;
+    localStorage.setItem('familyCurrentProfileId',id);
+    const ov=document.getElementById('loginOv');
+    if(ov) ov.style.display='none';
+    const who=document.getElementById('who')||document.getElementById('profileBadge');
+    if(who) who.textContent='Inloggad som '+p.name;
+    if(typeof toast==='function') toast('Välkommen '+p.name+'!');
+    if(typeof renderCards==='function') renderCards();
+  }else{ alert('Fel lösenord'); }
+}
+
+function createProfile(){
+  console.log('createProfile clicked');
+  const nameEl=document.getElementById('pName');
+  const pwEl=document.getElementById('pPw');
+  const pw2El=document.getElementById('pPw2');
+  const err=document.getElementById('pErr');
+  const name=(nameEl? nameEl.value : '').trim();
+  const pw=pwEl? pwEl.value : '';
+  const pw2=pw2El? pw2El.value : '';
+  if(err) err.style.display='none';
+  if(!name){ if(err){err.textContent='Skriv ett namn'; err.style.display='block';} return; }
+  if(name.length<2){ if(err){err.textContent='Minst 2 bokstäver'; err.style.display='block';} return; }
+  if(!pw){ if(err){err.textContent='Skriv ett lösenord'; err.style.display='block';} return; }
+  if(pw!==pw2){ if(err){err.textContent='Lösenorden matchar inte'; err.style.display='block';} return; }
   try{
-    const profiles=loadProfiles();
-    if(profiles.length===0){showCreateForm();return}
-    const saved=localStorage.getItem(CURRENT_PROFILE_KEY);
-    const found=profiles.find(x=>x && x.id===saved);
-    if(saved && found){unlockApp(saved);return}
-    showProfileList();
+    const ps=loadProfiles();
+    const np={id:'p_'+Date.now(),name:name,password:pw};
+    ps.push(np);
+    saveProfiles(ps);
+    currentId=np.id;
+    localStorage.setItem('familyCurrentProfileId',np.id);
+    const ov=document.getElementById('loginOv');
+    if(ov) ov.style.display='none';
+    const who=document.getElementById('who')||document.getElementById('profileBadge');
+    if(who) who.textContent='Inloggad som '+name;
+    if(typeof toast==='function') toast('Profil skapad! Välkommen '+name);
+    if(typeof renderCards==='function') renderCards();
+    if(nameEl) nameEl.value=''; if(pwEl) pwEl.value=''; if(pw2El) pw2El.value='';
   }catch(e){
     console.error(e);
-    showCreateForm();
+    if(err){err.textContent='Fel: '+e.message; err.style.display='block';}
   }
 }
-function showProfileList(){
-  const profiles=loadProfiles().filter(p=>p&&p.id&&p.name);
-  const area=document.getElementById('profileListArea');
-  const createArea=document.getElementById('createArea');
-  if(!area) return;
-  if(profiles.length===0){showCreateForm();return}
-  area.innerHTML=profiles.map(p=>`
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-      <button onclick="showPasswordForm('${p.id}')" style="flex:1;display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;text-align:left;color:#1E1535">
-        <span style="width:36px;height:36px;border-radius:12px;background:#6C47E8;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900">${(p.name||'?').charAt(0).toUpperCase()}</span>
-        <span>${p.name}</span>
-        <span style="margin-left:auto">➡️</span>
-      </button>
-      <button onclick="deleteProfile('${p.id}')" style="width:44px;height:44px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;cursor:pointer;font-size:18px;flex-shrink:0" title="Ta bort">🗑️</button>
-    </div>
-  `).join('');
-  createArea.innerHTML=`<button onclick="showCreateForm()" style="width:100%;height:52px;border-radius:14px;border:2px dashed #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:800;cursor:pointer;margin-top:4px">➕ Ny profil</button>`;
+
+function deleteProfile(id){
+  if(!confirm('Ta bort profilen?')) return;
+  let ps=loadProfiles().filter(p=>p.id!==id);
+  saveProfiles(ps);
+  if(currentId===id){currentId=null; localStorage.removeItem('familyCurrentProfileId');}
+  renderProfiles();
+  if(typeof toast==='function') toast('🗑️ Borttagen');
 }
-function showPasswordForm(id){
-  const p=loadProfiles().find(x=>x.id===id);
-  if(!p) return;
-  const area=document.getElementById('profileListArea');
-  const createArea=document.getElementById('createArea');
-  area.innerHTML=`
-    <button onclick="showProfileList()" style="background:none;border:none;color:#7168A0;font-weight:700;cursor:pointer;display:flex;gap:6px;margin-bottom:12px;color:#1E1535">◀ Tillbaka</button>
-    <div style="text-align:center"><div style="font-size:40px">🔒</div><div style="font-weight:900;font-size:18px;margin-top:8px;color:#1E1535">${p.name}</div><div style="font-size:13px;color:#7168A0;margin-top:4px">Ange lösenord</div></div>
-    <input type="password" id="loginInput" placeholder="Lösenord" style="width:100%;height:54px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;margin-top:16px;text-align:center;color:#1E1535">
-    <div id="loginErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-top:10px;text-align:center">Fel lösenord</div>
-  `;
-  createArea.innerHTML=`<button onclick="submitLogin('${p.id}')" style="width:100%;height:54px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer;margin-top:10px">Logga in</button>`;
-  setTimeout(()=>{const i=document.getElementById('loginInput');if(i){i.focus(); i.addEventListener('keydown',e=>{if(e.key==='Enter') submitLogin('${p.id}')})}},100);
-}
-function submitLogin(id){
-  const val=document.getElementById('loginInput')?.value||'';
-  const p=loadProfiles().find(x=>x.id===id);
-  if(!p) return;
-  if(val===p.password){unlockApp(id)}else{const err=document.getElementById('loginErr');if(err)err.style.display='block';const inp=document.getElementById('loginInput');if(inp)inp.value='';}
-}
-function showCreateForm(){
-  const area=document.getElementById('profileListArea');
-  const createArea=document.getElementById('createArea');
-  const hasProfiles=loadProfiles().length>0;
-  area.innerHTML=`
-    <div style="text-align:center"><div style="font-size:40px">👤</div><div style="font-weight:900;font-size:18px;margin-top:8px;color:#1E1535">${hasProfiles?'Ny profil':'Skapa din första profil'}</div><div style="font-size:13px;color:#7168A0;margin-top:6px">Namn + lösenord skyddar appen</div></div>
-    <input type="text" id="newProfileName" placeholder="Namn t.ex. Mamma" maxlength="20" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;margin-top:16px;text-align:left;color:#1E1535">
-    <input type="password" id="newProfilePw" placeholder="Lösenord" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;margin-top:10px;text-align:center;color:#1E1535">
-    <input type="password" id="newProfilePw2" placeholder="Bekräfta lösenord" style="width:100%;height:52px;border-radius:14px;border:2px solid #E4DEFC;background:#F7F5FC;padding:0 16px;font-size:16px;font-weight:700;outline:none;margin-top:10px;text-align:center;color:#1E1535">
-    <div id="loginErr" style="display:none;color:#F05E7A;font-size:13px;font-weight:700;margin-top:10px;text-align:center"></div>
-  `;
-  createArea.innerHTML=`
-    <button onclick="doCreateProfile()" style="width:100%;height:54px;border-radius:14px;border:none;background:#6C47E8;color:#fff;font-weight:800;cursor:pointer;margin-top:12px">Skapa profil</button>
-    ${hasProfiles?`<button onclick="showProfileList()" style="width:100%;height:44px;border-radius:12px;border:1.5px solid #E4DEFC;background:#F7F5FC;color:#7168A0;font-weight:700;cursor:pointer;margin-top:8px">◀ Tillbaka till profiler</button>`:''}
-  `;
-}
-function doCreateProfile(){
-  const nameEl=document.getElementById('newProfileName');
-  const pwEl=document.getElementById('newProfilePw');
-  const pw2El=document.getElementById('newProfilePw2');
-  const errEl=document.getElementById('loginErr');
-  const name=nameEl?.value.trim()||'';
-  const pw=pwEl?.value||'';
-  const pw2=pw2El?.value||'';
-  if(!name){errEl.textContent='Skriv ett namn';errEl.style.display='block';return}
-  if(!pw){errEl.textContent='Skriv ett lösenord';errEl.style.display='block';return}
-  if(pw!==pw2){errEl.textContent='Lösenorden matchar inte';errEl.style.display='block';return}
-  const profiles=loadProfiles();
-  const np={id:'p_'+Date.now(),name:name,password:pw};
-  profiles.push(np);
-  saveProfiles(profiles);
-  unlockApp(np.id);
-  toast('Profil skapad! 🎉');
-}
-function unlockApp(pid){currentProfileId=pid;localStorage.setItem(CURRENT_PROFILE_KEY,pid);document.getElementById('loginOv').style.display='none';const prof=loadProfiles().find(p=>p.id===pid);const badge=document.getElementById('profileBadge');if(badge)badge.textContent=prof?'Inloggad som '+prof.name:'';}
-function logoutApp(){if(confirm('Logga ut?')){localStorage.removeItem(CURRENT_PROFILE_KEY);location.reload()}}
-function deleteProfile(id){const profiles=loadProfiles();const p=profiles.find(x=>x.id===id);if(!p)return;if(!confirm('Ta bort profilen "'+p.name+'"?'))return;const newProfiles=profiles.filter(x=>x.id!==id);saveProfiles(newProfiles);if(newProfiles.length===0){localStorage.removeItem(CURRENT_PROFILE_KEY);showCreateForm();toast('🗑️ Borttagen')}else{if(localStorage.getItem(CURRENT_PROFILE_KEY)===id)localStorage.removeItem(CURRENT_PROFILE_KEY);showProfileList();toast('🗑️ Borttagen')}}
+
+function logout(){ if(confirm('Logga ut?')){ localStorage.removeItem('familyCurrentProfileId'); location.reload(); } }
+function logoutApp(){ logout(); }
+
+// Compatibility wrappers for old code
+function checkLoginState(){ renderProfiles(); }
+function renderProfileList(){ renderProfiles(); }
+function selectProfile(id){ loginProfile(id); }
+function renderCreateProfileForm(){ renderProfiles(); }
+
 
 function toggleNight(){night=!night;localStorage.setItem('nightMode',night);applyNight()}function applyNight(){document.body.classList.toggle('night',night);document.getElementById('nightIcon').textContent=night?'☀️':'🌙'}
 function togglePcMode(){const on=!document.body.classList.contains('pc-mode');document.body.classList.toggle('pc-mode',on);localStorage.setItem('pcMode',on);toast(on?'🖥️ PC-vy':'📱 Mobilvy')}
@@ -249,117 +213,6 @@ function renderTrashModal(){const b=document.getElementById('trashBody');if(!tra
 function updateTrashBdg(){const b=document.getElementById('trashBdg');if(!b)return;b.textContent=trash.length;b.classList.toggle('h',trash.length===0)}
 function restoreFromTrash(id){const idx=trash.findIndex(t=>t.id===id);if(idx>-1){const t=trash.splice(idx,1)[0];delete t.deletedAt;t.completed=false;tasks.push(t);saveData();renderTrashModal();renderDetail();renderCards();toast('Återställd!')}}function delPerm(id){trash=trash.filter(t=>t.id!==id);saveData();renderTrashModal();}function emptyTrash(){if(confirm('Töm?')){trash=[];saveData();renderTrashModal();toast('Tömd')}}
 function openNotif(){const b=document.getElementById('notifBody');b.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Inga påminnelser</div>';document.getElementById('notifModal').classList.remove('h')}function closeNotif(){document.getElementById('notifModal').classList.add('h')}
-
-let qrChunks=[]; let currentChunk=0; let html5Qr=null;
-function showQR(){
-  try{
-    const payload={
-      tasks: tasks.map(t=>({id:t.id,text:t.text,timeFrame:t.timeFrame||t.time||'today',person:t.person,completed:!!t.completed,starred:!!t.starred})),
-      persons, personLabels, trash: [], v:3, t:Date.now()
-    };
-    let json=JSON.stringify(payload);
-    let comp;
-    if(typeof LZString!=='undefined' && LZString.compressToEncodedURIComponent){
-      comp=LZString.compressToEncodedURIComponent(json);
-    }else{
-      comp=btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
-    }
-    const box=document.getElementById('qrContainer');
-    const info=document.getElementById('qrInfo');
-    const scanEl=document.getElementById('qrScanner');
-    const resEl=document.getElementById('qrScanResult');
-    if(scanEl) scanEl.innerHTML=''; if(resEl) resEl.innerHTML=''; if(box) box.innerHTML='';
-    const CHUNK_SIZE=1000;
-    if(comp.length<=CHUNK_SIZE){
-      if(info) info.innerHTML='📤 '+tasks.length+' uppgifter ('+comp.length+' tecken) – scanna denna QR';
-      document.getElementById('qrModal').classList.remove('h');
-      setTimeout(()=>{ if(typeof QRCode==='undefined'){if(info) info.textContent='QR-bibliotek laddar...';return} new QRCode(box,{text:'1|1|'+comp,width:280,height:280,correctLevel:QRCode.CorrectLevel.M}); },200);
-      return;
-    }
-    qrChunks=[];
-    for(let i=0;i<comp.length;i+=CHUNK_SIZE){ qrChunks.push(comp.slice(i,i+CHUNK_SIZE)); }
-    currentChunk=0;
-    document.getElementById('qrModal').classList.remove('h');
-    showChunk(0);
-  }catch(e){ toast('QR-fel: '+e.message); }
-}
-function showChunk(idx){
-  currentChunk=idx;
-  const box=document.getElementById('qrContainer');
-  const info=document.getElementById('qrInfo');
-  const res=document.getElementById('qrScanResult');
-  if(!box) return;
-  box.innerHTML=''; if(res) res.innerHTML='';
-  const total=qrChunks.length;
-  const data=qrChunks[idx];
-  info.innerHTML=`
-    <div style="background:#EDE8FC;padding:10px;border-radius:12px;margin-bottom:10px">
-      <div style="font-weight:900;font-size:15px">QR ${idx+1} av ${total}</div>
-      <div style="font-size:12px;margin-top:4px">Scanna alla ${total} koder i ordning</div>
-      <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-        ${idx>0?`<button onclick="showChunk(${idx-1})" style="height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #E4DEFC;background:#fff;font-weight:700;cursor:pointer">◀ Föregående</button>`:''}
-        ${idx<total-1?`<button onclick="showChunk(${idx+1})" style="height:36px;padding:0 16px;border-radius:10px;border:none;background:#6C47E8;color:#fff;font-weight:700;cursor:pointer">Nästa ${idx+2}/${total} ▶</button>`:''}
-      </div>
-    </div>
-    <div style="font-size:11px;color:#A89FCE">Del ${idx+1}: ${data.length} tecken – totalt ${qrChunks.join('').length}</div>
-  `;
-  setTimeout(()=>{ if(typeof QRCode==='undefined') return; new QRCode(box,{text:(idx+1)+'|'+total+'|'+data,width:280,height:280,correctLevel:QRCode.CorrectLevel.M}); },100);
-}
-let scanBuffer={}; let scanTotal=0;
-function startQRScan(){
-  const box=document.getElementById('qrContainer');
-  const info=document.getElementById('qrInfo');
-  const res=document.getElementById('qrScanResult');
-  if(box) box.innerHTML='';
-  if(info) info.innerHTML='<div style="font-weight:800">📷 Scanna QR-koder</div><div style="font-size:12px;color:#7168A0;margin-top:4px">Scanna alla i ordning</div><div id="scanProgress" style="margin-top:10px;font-size:13px;font-weight:700"></div>';
-  if(res) res.innerHTML='';
-  document.getElementById('qrModal').classList.remove('h');
-  scanBuffer={}; scanTotal=0;
-  setTimeout(()=>{
-    try{
-      const qr=new Html5Qrcode("qrScanner");
-      html5Qr=qr;
-      qr.start({facingMode:"environment"},{fps:10,qrbox:280},(decoded)=>{
-        try{
-          let idx=1,total=1,data=decoded;
-          const parts=decoded.split('|');
-          if(parts.length>=3 && !isNaN(parts[0]) && !isNaN(parts[1])){
-            idx=parseInt(parts[0]); total=parseInt(parts[1]); data=parts.slice(2).join('|');
-          }
-          scanTotal=total;
-          scanBuffer[idx]=data;
-          const got=Object.keys(scanBuffer).length;
-          const prog=document.getElementById('scanProgress');
-          if(prog) prog.innerHTML='✅ Fått '+got+' av '+total+' delar: '+Object.keys(scanBuffer).sort((a,b)=>a-b).join(', ');
-          if(got===total){
-            qr.stop().then(()=>{
-              try{
-                let full='';
-                for(let i=1;i<=total;i++) full+=scanBuffer[i]||'';
-                let dec;
-                if(typeof LZString!=='undefined' && LZString.decompressFromEncodedURIComponent){ dec=LZString.decompressFromEncodedURIComponent(full); }
-                else{ let t=full.replace(/-/g,'+').replace(/_/g,'/'); while(t.length%4)t+='='; dec=decodeURIComponent(escape(atob(t))); }
-                if(!dec) throw new Error('Kunde inte packa upp');
-                const remote=JSON.parse(dec);
-                if(!remote.tasks) throw new Error('Ogiltig data');
-                if(!confirm('Hämta '+remote.tasks.length+' uppgifter från '+total+' QR-koder?')) return;
-                saveVersionSnapshot('Innan QR-import');
-                tasks=remote.tasks||[]; persons=remote.persons||persons; personLabels=remote.personLabels||remote.labels||personLabels;
-                saveData(); savePersons(); buildColorMap(); renderCards(); renderDetail();
-                if(res) res.innerHTML='<div style="background:#DCFDF2;color:#22C08A;padding:12px;border-radius:12px;font-weight:800">✅ Hämtat '+tasks.length+' uppgifter!</div>';
-                toast('✅ Hämtat via QR!'); setTimeout(closeQR,2000);
-              }catch(e){ if(res) res.innerHTML='<div style="background:#FDEDF0;color:#F05E7A;padding:10px;border-radius:10px">❌ '+e.message+'</div>'; }
-            });
-          }else{
-            if(res) res.innerHTML='<div style="background:#EDE8FC;padding:8px;border-radius:10px;font-size:13px">📷 Scanna nästa QR ('+(got+1)+' av '+total+')</div>';
-          }
-        }catch(e){}
-      },()=>{}).catch(e=>{ if(res) res.innerHTML='Kamera-fel: '+e; });
-    }catch(e){ if(document.getElementById('qrScanResult')) document.getElementById('qrScanResult').innerHTML='Fel: '+e.message; }
-  },300);
-}
-function closeQR(){ if(html5Qr){ try{ html5Qr.stop(); }catch(e){} html5Qr=null; } const m=document.getElementById('qrModal'); if(m) m.classList.add('h'); const s=document.getElementById('qrScanner'); if(s) s.innerHTML=''; const b=document.getElementById('qrContainer'); if(b) b.innerHTML=''; }
-
 function exportLocalBackup(){const backup={tasks,trash,persons,personLabels,score,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='familj-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(url);toast('✅ Fil sparad!')}
 function importLocalBackup(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const b=JSON.parse(ev.target.result);if(!b.tasks){toast('Ogiltig fil','error');return}if(!confirm('Ersätta all data?'))return;saveVersionSnapshot('Innan import');tasks=b.tasks||[];trash=b.trash||[];persons=b.persons||persons;personLabels=b.personLabels||personLabels;score=b.score||0;saveData();savePersons();buildColorMap();renderCards();renderDetail();toast('✅ Import klar!')}catch(err){toast('❌ Kunde inte läsa','error')}};r.readAsText(f)};inp.click()}
 function saveVersionSnapshot(label){try{const snap={id:Date.now()+Math.random(),time:new Date().toISOString(),label:label||'Snapshot',data:{tasks:JSON.parse(JSON.stringify(tasks)),trash:JSON.parse(JSON.stringify(trash)),persons:JSON.parse(JSON.stringify(persons)),personLabels:JSON.parse(JSON.stringify(personLabels)),score}};versionHistory.push(snap);if(versionHistory.length>8)versionHistory.shift();localStorage.setItem('familyVersionHistory',JSON.stringify(versionHistory))}catch(e){}}
@@ -367,13 +220,62 @@ function openVersionHistory(){const c=document.getElementById('versionList');if(
 function closeVersionHistory(){document.getElementById('versionModal').classList.add('h')}
 function restoreVersion(id){const snap=versionHistory.find(s=>String(s.id)===String(id));if(!snap)return;if(!confirm('Återställa?'))return;saveVersionSnapshot('Innan återställning');tasks=JSON.parse(JSON.stringify(snap.data.tasks));trash=JSON.parse(JSON.stringify(snap.data.trash));persons=JSON.parse(JSON.stringify(snap.data.persons));personLabels=JSON.parse(JSON.stringify(snap.data.personLabels));score=snap.data.score;saveData();savePersons();buildColorMap();renderCards();renderDetail();closeVersionHistory();toast('✅ Återställd!')}
 function saveAndConfirm(){saveData();savePersons();saveVersionSnapshot('Spara');toast('✅ Sparat!')}
-let toastT;function toast(msg){const el=document.getElementById('toast');if(!el) return;document.getElementById('toastMsg').textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000)}
-
-function openVersionHistory(){const c=document.getElementById('versionList');if(!versionHistory.length){c.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Inga versioner än</div>'}else{c.innerHTML=versionHistory.slice().reverse().map(s=>'<div style="display:flex;gap:10px;padding:12px;background:var(--surface2);border-radius:14px;margin-bottom:8px;border:1.5px solid var(--border)"><div style="flex:1"><div style="font-weight:800">'+esc(s.label)+'</div><div style="font-size:12px;color:var(--text3)">'+new Date(s.time).toLocaleString('sv-SE')+' · '+s.data.tasks.length+' uppgifter</div></div><button onclick="restoreVersion(\\''+s.id+'\\')" style="width:40px;height:40px;border:none;border-radius:10px;cursor:pointer">↩️</button></div>').join('')}document.getElementById('versionModal').classList.remove('h')}
-function closeVersionHistory(){document.getElementById('versionModal').classList.add('h')}
-function restoreVersion(id){const snap=versionHistory.find(s=>String(s.id)===String(id));if(!snap)return;if(!confirm('Återställa?'))return;saveVersionSnapshot('Innan återställning');tasks=JSON.parse(JSON.stringify(snap.data.tasks));trash=JSON.parse(JSON.stringify(snap.data.trash));persons=JSON.parse(JSON.stringify(snap.data.persons));personLabels=JSON.parse(JSON.stringify(snap.data.personLabels));score=snap.data.score;saveData();savePersons();buildColorMap();renderCards();renderDetail();closeVersionHistory();toast('✅ Återställd!')}
-function saveAndConfirm(){saveData();savePersons();saveVersionSnapshot('Spara');toast('✅ Sparat!')}
 let toastT;function toast(msg){const el=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000)}
+
+let qrChunks=[]; let currentChunk=0; let html5Qr=null;
+function showMyQR(){ showQR(); }
+function showQR(){
+  try{
+    const payload={
+      tasks: tasks.map(t=>({id:t.id,text:t.text,timeFrame:t.timeFrame||t.time||'today',person:t.person,completed:!!t.completed,starred:!!t.starred})),
+      persons, personLabels, trash: [], v:3, t:Date.now()
+    };
+    let json=JSON.stringify(payload);
+    let comp=typeof LZString!=='undefined'?LZString.compressToEncodedURIComponent(json):btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+    const box=document.getElementById('qrContainer'); const info=document.getElementById('qrInfo');
+    const scanEl=document.getElementById('qrScanner'); const resEl=document.getElementById('qrScanResult');
+    if(scanEl) scanEl.innerHTML=''; if(resEl) resEl.innerHTML=''; if(box) box.innerHTML='';
+    const CHUNK_SIZE=1000;
+    if(comp.length<=CHUNK_SIZE){
+      if(info) info.innerHTML='📤 '+tasks.length+' uppgifter ('+comp.length+' tecken) – scanna';
+      document.getElementById('qrModal').classList.remove('h');
+      setTimeout(()=>{ new QRCode(box,{text:'1|1|'+comp,width:280,height:280,correctLevel:QRCode.CorrectLevel.M}); },200);
+      return;
+    }
+    qrChunks=[]; for(let i=0;i<comp.length;i+=CHUNK_SIZE) qrChunks.push(comp.slice(i,i+CHUNK_SIZE));
+    document.getElementById('qrModal').classList.remove('h'); showChunk(0);
+  }catch(e){ if(typeof toast==='function') toast('QR-fel: '+e.message); }
+}
+function showChunk(idx){
+  currentChunk=idx; const box=document.getElementById('qrContainer'); const info=document.getElementById('qrInfo'); if(!box) return; box.innerHTML='';
+  const total=qrChunks.length; const data=qrChunks[idx];
+  info.innerHTML='<div style="background:#EDE8FC;padding:10px;border-radius:12px"><div style="font-weight:900">QR '+(idx+1)+' av '+total+'</div><div style="margin-top:8px;display:flex;gap:8px;justify-content:center">'+(idx>0?'<button onclick="showChunk('+(idx-1)+')" style="height:36px;padding:0 12px;border-radius:10px;border:1.5px solid #E4DEFC;background:#fff">◀ Föreg</button>':'')+(idx<total-1?'<button onclick="showChunk('+(idx+1)+')" style="height:36px;padding:0 16px;border-radius:10px;border:none;background:#6C47E8;color:#fff">Nästa ▶</button>':'')+'</div></div><div style="font-size:11px;color:#A89FCE;margin-top:6px">Del '+(idx+1)+': '+data.length+' tecken</div>';
+  setTimeout(()=>{ new QRCode(box,{text:(idx+1)+'|'+total+'|'+data,width:280,height:280,correctLevel:QRCode.CorrectLevel.M}); },100);
+}
+function startQRScan(){
+  const box=document.getElementById('qrContainer'); const info=document.getElementById('qrInfo'); const res=document.getElementById('qrScanResult');
+  if(box) box.innerHTML=''; if(info) info.innerHTML='📷 Scanna QR – alla i ordning<div id="scanProgress" style="margin-top:10px;font-weight:700"></div>'; if(res) res.innerHTML='';
+  document.getElementById('qrModal').classList.remove('h');
+  setTimeout(()=>{
+    const qr=new Html5Qrcode("qrScanner"); html5Qr=qr;
+    let buf={}; 
+    qr.start({facingMode:"environment"},{fps:10,qrbox:280},(decoded)=>{
+      let idx=1,total=1,data=decoded; const p=decoded.split('|'); if(p.length>=3 && !isNaN(p[0]) && !isNaN(p[1])){ idx=parseInt(p[0]); total=parseInt(p[1]); data=p.slice(2).join('|'); }
+      buf[idx]=data;
+      const got=Object.keys(buf).length;
+      const prog=document.getElementById('scanProgress'); if(prog) prog.textContent='✅ Fått '+got+' av '+total;
+      if(got===total){
+        qr.stop().then(()=>{
+          let full=''; for(let i=1;i<=total;i++) full+=buf[i]||'';
+          let dec=typeof LZString!=='undefined'?LZString.decompressFromEncodedURIComponent(full):(function(){let t=full.replace(/-/g,'+').replace(/_/g,'/'); while(t.length%4)t+='='; return decodeURIComponent(escape(atob(t)));})();
+          const remote=JSON.parse(dec);
+          if(confirm('Hämta '+remote.tasks.length+' uppgifter?')){ tasks=remote.tasks||[]; persons=remote.persons||persons; personLabels=remote.personLabels||remote.labels||personLabels; saveData(); savePersons(); buildColorMap(); renderCards(); if(typeof renderDetail==='function') renderDetail(); if(typeof toast==='function') toast('✅ Hämtat!'); setTimeout(closeQR,1500); }
+        });
+      }
+    });
+  },300);
+}
+function closeQR(){ if(html5Qr){try{html5Qr.stop()}catch(e){} html5Qr=null;} const m=document.getElementById('qrModal'); if(m) m.classList.add('h'); const s=document.getElementById('qrScanner'); if(s) s.innerHTML=''; const b=document.getElementById('qrContainer'); if(b) b.innerHTML=''; }
 
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',initApp);
